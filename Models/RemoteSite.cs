@@ -1,0 +1,60 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+
+using Microsoft.EntityFrameworkCore;
+
+namespace BlocklistManager.Models;
+
+[Table( "RemoteSite" )]
+[DisplayColumn( "Name" )]
+[PrimaryKey( "ID" )]
+[Index( "Name", additionalPropertyNames: [ "SiteUrl" ], IsUnique = true, Name = "IX_RemoteSite_Name" )]
+[Index( "FileTypeID", Name = "IX_RemoteSite_FileTypeID" )]
+public class RemoteSite
+{
+    [Key]
+    [DatabaseGenerated( DatabaseGeneratedOption.Identity )]
+    [Column( TypeName = "int" )]
+    public int ID { get; set; }
+
+    [Length( 2, 50 )]
+    [Column( TypeName = "nvarchar(50)" )]
+    public required string Name { get; set; }
+
+    public DateTime? LastDownloaded { get; set; }
+
+    [Length( 2, 255 )]
+    [Column( TypeName = "nvarchar(255)" )]
+    public string SiteUrl { get; set; } = string.Empty;
+
+    /// <summary>
+    /// A comma-separated array of download file paths
+    /// </summary>
+    [Required]
+    [Length( 2, 4000 )]
+    [Column( TypeName = "nvarchar(4000)" )]
+    public required string FileUrls { get; set; }
+
+    public IList<string> FilePaths
+    {
+        get
+        {
+            return FileUrls.Split( ',' )
+                           .Select( s => s.Trim( ) )
+                           .ToList( );
+        }
+    }
+
+    public int? FileTypeID { get; set; }
+
+    [ForeignKey( "FileTypeID" )]
+    [DeleteBehavior( DeleteBehavior.Restrict )]
+    public FileType? FileType { get; set; }
+
+    public bool Active { get; set; } = true;
+
+    public int MinimumIntervalMinutes { get; set; } = 30;
+}

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="threatlist">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" name="shodan">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ipv4" type="xs:string" />
+							<xs:element name="date" type="xs:date" />
+							<xs:element name="lastseen" type="xs:date" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

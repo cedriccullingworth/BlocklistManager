@@ -1,0 +1,257 @@
+Name	Group	Profile	Enabled	Action	Override	Program	Local Address	Remote Address	Protocol	Local Port	Remote Port	Authorized Computers	Authorized Local Principals	Local User Owner	PolicyAppId	Application Package	
+@(imported) Feodo_Blocklist	AutoBlocklistMaintainer	Public	Yes	Block	No	Any	Any	107.191.57.63	Any	Any	Any	Any	Any	Any	None	Any	
+@(imported) Internet Storm Center Shodan_Blocklist	AutoBlocklistMaintainer	Public	Yes	Block	No	Any	Any	64.227.90.185, 66.240.192.138, 66.240.205.34, 66.240.219.146, 66.240.219.173, 66.240.236.119, 71.6.135.131, 71.6.146.130, 71.6.146.185, 71.6.146.186, 71.6.147.198, 71.6.147.254, 71.6.158.166, 71.6.165.200, 71.6.167.142, 71.6.199.23, 80.82.77.33, 80.82.77.139, 85.25.43.94, 85.25.103.50, 89.248.167.131, 89.248.172.16, 93.120.27.62, 93.174.95.106, 94.102.49.190, 94.102.49.193, 137.184.112.103, 137.184.190.194, 143.110.239.2, 143.198.68.20, 165.227.55.4, 165.227.62.247, 185.142.236.34, 185.142.236.35, 185.142.236.36, 185.142.236.40, 185.142.236.43, 185.142.239.16, 185.165.190.17, 185.165.190.34, 188.138.9.50, 195.144.21.56, 198.20.69.74, 198.20.69.98, 198.20.70.114, 198.20.99.130, 216.117.2.180	Any	Any	Any	Any	Any	Any	None	Any	
+@{Microsoft.Todos_0.114.7122.0_x64__8wekyb3d8bbwe?ms-resource://Microsoft.Todos/Resources/app_name_ms_todo}	@{Microsoft.Todos_0.114.7122.0_x64__8wekyb3d8bbwe?ms-resource://Microsoft.Todos/Resources/app_name_ms_todo}	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.Todos_8wekyb3d8bbwe	
+@{MicrosoftWindows.Client.AIX_1000.26100.41.0_x64__cw5n1h2txyewy?ms-resource://MicrosoftWindows.Client.AIX/resources/ProductPkgDisplayName}	@{MicrosoftWindows.Client.AIX_1000.26100.41.0_x64__cw5n1h2txyewy?ms-resource://MicrosoftWindows.Client.AIX/resources/ProductPkgDisplayName}	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	MicrosoftWindows.Client.AIX_cw5n1h2txyewy	
+@{MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy?ms-resource://MicrosoftWindows.LKG.Search/Resources/ProductPkgDisplayName}	@{MicrosoftWindows.LKG.Search_1000.26100.1742.0_x64__cw5n1h2txyewy?ms-resource://MicrosoftWindows.LKG.Search/Resources/ProductPkgDisplayName}	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	MicrosoftWindows.LKG.Search_cw5n1h2txyewy	
+AllJoyn Router (TCP-Out)	AllJoyn Router	Domain, Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+AllJoyn Router (UDP-Out)	AllJoyn Router	Domain, Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	UDP	Any	Any	Any	Any	Any	None	Any	
+App Installer	App Installer	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.DesktopAppInstaller_8wekyb3d8bbwe	
+BranchCache Content Retrieval (HTTP-Out)	BranchCache - Content Retrieval (Uses HTTP)	All	No	Allow	No	SYSTEM	Any	Any	TCP	Any	80	Any	Any	Any	None	Any	
+BranchCache Hosted Cache Client (HTTP-Out)	BranchCache - Hosted Cache Client (Uses HTTPS)	All	No	Allow	No	SYSTEM	Any	Any	TCP	Any	80, 443	Any	Any	Any	None	Any	
+BranchCache Hosted Cache Server(HTTP-Out)	BranchCache - Hosted Cache Server (Uses HTTPS)	All	No	Allow	No	SYSTEM	Any	Any	TCP	80, 443	Any	Any	Any	Any	None	Any	
+BranchCache Peer Discovery (WSD-Out)	BranchCache - Peer Discovery (Uses WSD)	All	No	Allow	No	%systemroot%\system32\svchost.exe	Any	Local subnet	UDP	Any	3702	Any	Any	Any	None	Any	
+Captive Portal Flow	Captive Portal Flow	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.Windows.OOBENetworkCaptivePortal_cw5n1h2txyewy	
+Cast to Device functionality (qWave-TCP-Out)	Cast to Device functionality	Private, Public	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	PlayTo Renderers	TCP	Any	2177	Any	Any	Any	None	Any	
+Cast to Device functionality (qWave-UDP-Out)	Cast to Device functionality	Private, Public	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	PlayTo Renderers	UDP	Any	2177	Any	Any	Any	None	Any	
+Cast to Device streaming server (RTP-Streaming-Out)	Cast to Device functionality	Private	Yes	Allow	No	%SystemRoot%\system32\mdeserver.exe	Any	Local subnet	UDP	Any	Any	Any	Any	Any	None	Any	
+Cast to Device streaming server (RTP-Streaming-Out)	Cast to Device functionality	Public	Yes	Allow	No	%SystemRoot%\system32\mdeserver.exe	Any	PlayTo Renderers	UDP	Any	Any	Any	Any	Any	None	Any	
+Cast to Device streaming server (RTP-Streaming-Out)	Cast to Device functionality	Domain	Yes	Allow	No	%SystemRoot%\system32\mdeserver.exe	Any	Any	UDP	Any	Any	Any	Any	Any	None	Any	
+Cloud Identity (TCP-Out)	Cloud Identity	All	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	443	Any	Any	Any	None	Any	
+Connected Devices Platform - Wi-Fi Direct Transport (TCP-Out)	Connected Devices Platform	Public	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Connected Devices Platform (TCP-Out)	Connected Devices Platform	Domain, Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Connected Devices Platform (UDP-Out)	Connected Devices Platform	Domain, Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	UDP	Any	Any	Any	Any	Any	None	Any	
+Connected User Experiences and Telemetry	DiagTrack	All	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	443	Any	Any	Any	None	Any	
+Core Networking - DNS (UDP-Out)	Core Networking	All	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	UDP	Any	53	Any	Any	Any	None	Any	
+Core Networking - Dynamic Host Configuration Protocol (DHCP-Out)	Core Networking	All	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	UDP	68	67	Any	Any	Any	None	Any	
+Core Networking - Dynamic Host Configuration Protocol for IPv6(DHCPV6-Out)	Core Networking	All	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	UDP	546	547	Any	Any	Any	None	Any	
+Core Networking - Group Policy (LSASS-Out)	Core Networking	Domain	Yes	Allow	No	%SystemRoot%\system32\lsass.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Group Policy (NP-Out)	Core Networking	Domain	Yes	Allow	No	System	Any	Any	TCP	Any	445	Any	Any	Any	None	Any	
+Core Networking - Group Policy (TCP-Out)	Core Networking	Domain	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Internet Group Management Protocol (IGMP-Out)	Core Networking	All	Yes	Allow	No	System	Any	Any	IGMP	Any	Any	Any	Any	Any	None	Any	
+Core Networking - IPHTTPS (TCP-Out)	Core Networking	All	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	IPHTTPS	Any	Any	Any	None	Any	
+Core Networking - IPv6 (IPv6-Out)	Core Networking	All	Yes	Allow	No	System	Any	Any	IPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Multicast Listener Done (ICMPv6-Out)	Core Networking	All	Yes	Allow	No	System	Any	Local subnet	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Multicast Listener Query (ICMPv6-Out)	Core Networking	All	Yes	Allow	No	System	Any	Local subnet	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Multicast Listener Report (ICMPv6-Out)	Core Networking	All	Yes	Allow	No	System	Any	Local subnet	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Multicast Listener Report v2 (ICMPv6-Out)	Core Networking	All	Yes	Allow	No	System	Any	Local subnet	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Neighbor Discovery Advertisement (ICMPv6-Out)	Core Networking	All	Yes	Allow	No	System	Any	Any	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Neighbor Discovery Solicitation (ICMPv6-Out)	Core Networking	All	Yes	Allow	No	System	Any	Any	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Packet Too Big (ICMPv6-Out)	Core Networking	All	Yes	Allow	No	System	Any	Any	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Parameter Problem (ICMPv6-Out)	Core Networking	All	Yes	Allow	No	System	Any	Any	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Router Advertisement (ICMPv6-Out)	Core Networking	All	Yes	Allow	No	System	fe80::/64	Local subnet, ff02::1, fe80::/64	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Router Solicitation (ICMPv6-Out)	Core Networking	All	Yes	Allow	No	System	Any	Local subnet, ff02::2, fe80::/64	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Teredo (UDP-Out)	Core Networking	All	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	UDP	Any	Any	Any	Any	Any	None	Any	
+Core Networking - Time Exceeded (ICMPv6-Out)	Core Networking	All	Yes	Allow	No	System	Any	Any	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking Diagnostics - ICMP Echo Request (ICMPv4-Out)	Core Networking Diagnostics	Domain	No	Allow	No	System	Any	Any	ICMPv4	Any	Any	Any	Any	Any	None	Any	
+Core Networking Diagnostics - ICMP Echo Request (ICMPv4-Out)	Core Networking Diagnostics	Private, Public	No	Allow	No	System	Any	Local subnet	ICMPv4	Any	Any	Any	Any	Any	None	Any	
+Core Networking Diagnostics - ICMP Echo Request (ICMPv6-Out)	Core Networking Diagnostics	Domain	No	Allow	No	System	Any	Any	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Core Networking Diagnostics - ICMP Echo Request (ICMPv6-Out)	Core Networking Diagnostics	Private, Public	No	Allow	No	System	Any	Local subnet	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+Desktop App Web Viewer	Desktop App Web Viewer	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.Win32WebViewHost_cw5n1h2txyewy	
+Distributed Transaction Coordinator (TCP-Out)	Distributed Transaction Coordinator	Domain	No	Allow	No	%SystemRoot%\system32\msdtc.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Distributed Transaction Coordinator (TCP-Out)	Distributed Transaction Coordinator	Private, Public	No	Allow	No	%SystemRoot%\system32\msdtc.exe	Any	Local subnet	TCP	Any	Any	Any	Any	Any	None	Any	
+DuckDuckGo Private Browser	DuckDuckGo Private Browser	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	63909DuckDuckGoInc.DuckDuckGoPrivateBrowser_qzdjx70tn762j	
+Email and accounts	Email and accounts	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.AccountsControl_cw5n1h2txyewy	
+File and Printer Sharing (Echo Request - ICMPv4-Out)	File and Printer Sharing	Public	No	Allow	No	System	Any	Local subnet	ICMPv4	Any	Any	Any	Any	Any	None	Any	
+File and Printer Sharing (Echo Request - ICMPv4-Out)	File and Printer Sharing	Private	Yes	Allow	No	System	Any	Local subnet	ICMPv4	Any	Any	Any	Any	Any	None	Any	
+File and Printer Sharing (Echo Request - ICMPv4-Out)	File and Printer Sharing	Domain	No	Allow	No	System	Any	Any	ICMPv4	Any	Any	Any	Any	Any	None	Any	
+File and Printer Sharing (Echo Request - ICMPv6-Out)	File and Printer Sharing	Private	Yes	Allow	No	System	Any	Local subnet	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+File and Printer Sharing (Echo Request - ICMPv6-Out)	File and Printer Sharing	Domain	No	Allow	No	System	Any	Any	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+File and Printer Sharing (Echo Request - ICMPv6-Out)	File and Printer Sharing	Public	No	Allow	No	System	Any	Local subnet	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+File and Printer Sharing (LLMNR-UDP-Out)	File and Printer Sharing	Domain, Public	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	5355	Any	Any	Any	None	Any	
+File and Printer Sharing (LLMNR-UDP-Out)	File and Printer Sharing	Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	5355	Any	Any	Any	None	Any	
+File and Printer Sharing (NB-Datagram-Out)	File and Printer Sharing	Public	No	Allow	No	System	Any	Local subnet	UDP	Any	138	Any	Any	Any	None	Any	
+File and Printer Sharing (NB-Datagram-Out)	File and Printer Sharing	Domain	No	Allow	No	System	Any	Any	UDP	Any	138	Any	Any	Any	None	Any	
+File and Printer Sharing (NB-Datagram-Out)	File and Printer Sharing	Private	Yes	Allow	No	System	Any	Local subnet	UDP	Any	138	Any	Any	Any	None	Any	
+File and Printer Sharing (NB-Name-Out)	File and Printer Sharing	Domain	No	Allow	No	System	Any	Any	UDP	Any	137	Any	Any	Any	None	Any	
+File and Printer Sharing (NB-Name-Out)	File and Printer Sharing	Public	No	Allow	No	System	Any	Local subnet	UDP	Any	137	Any	Any	Any	None	Any	
+File and Printer Sharing (NB-Name-Out)	File and Printer Sharing	Private	Yes	Allow	No	System	Any	Local subnet	UDP	Any	137	Any	Any	Any	None	Any	
+File and Printer Sharing (NB-Session-Out)	File and Printer Sharing	Private	Yes	Allow	No	System	Any	Local subnet	TCP	Any	139	Any	Any	Any	None	Any	
+File and Printer Sharing (NB-Session-Out)	File and Printer Sharing	Public	No	Allow	No	System	Any	Local subnet	TCP	Any	139	Any	Any	Any	None	Any	
+File and Printer Sharing (NB-Session-Out)	File and Printer Sharing	Domain	No	Allow	No	System	Any	Any	TCP	Any	139	Any	Any	Any	None	Any	
+File and Printer Sharing (Restrictive) (Echo Request - ICMPv4-Out)	File and Printer Sharing (Restrictive)	All	No	Allow	No	System	Any	Any	ICMPv4	Any	Any	Any	Any	Any	None	Any	
+File and Printer Sharing (Restrictive) (Echo Request - ICMPv6-Out)	File and Printer Sharing (Restrictive)	All	No	Allow	No	System	Any	Any	ICMPv6	Any	Any	Any	Any	Any	None	Any	
+File and Printer Sharing (Restrictive) (LLMNR-UDP-Out)	File and Printer Sharing (Restrictive)	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	5355	Any	Any	Any	None	Any	
+File and Printer Sharing (Restrictive) (SMB-Out)	File and Printer Sharing (Restrictive)	All	No	Allow	No	System	Any	Any	TCP	Any	445	Any	Any	Any	None	Any	
+File and Printer Sharing (SMB-Out)	File and Printer Sharing	Public	No	Allow	No	System	Any	Local subnet	TCP	Any	445	Any	Any	Any	None	Any	
+File and Printer Sharing (SMB-Out)	File and Printer Sharing	Private	Yes	Allow	No	System	Any	Local subnet	TCP	Any	445	Any	Any	Any	None	Any	
+File and Printer Sharing (SMB-Out)	File and Printer Sharing	Domain	No	Allow	No	System	Any	Any	TCP	Any	445	Any	Any	Any	None	Any	
+Game Bar	Game Bar	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.XboxGamingOverlay_8wekyb3d8bbwe	
+Get Help	Get Help	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.GetHelp_8wekyb3d8bbwe	
+Intel® Graphics Command Center	Intel® Graphics Command Center	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	AppUp.IntelGraphicsExperience_8j3eq9eme6ctt	
+iSCSI Service (TCP-Out)	iSCSI Service	Domain	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+iSCSI Service (TCP-Out)	iSCSI Service	Private, Public	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	Any	Any	Any	Any	None	Any	
+mDNS (UDP-Out)	mDNS	Public	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	5353	Any	Any	Any	None	Any	
+mDNS (UDP-Out)	mDNS	Domain	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	UDP	Any	5353	Any	Any	Any	None	Any	
+mDNS (UDP-Out)	mDNS	Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	5353	Any	Any	Any	None	Any	
+Media Center Extenders - Device Provisioning (TCP-Out)	Media Center Extenders	All	No	Allow	No	%SystemRoot%\ehome\mcx2prov.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Media Center Extenders - Device Validation (TCP-Out)	Media Center Extenders	All	No	Allow	No	%SystemRoot%\ehome\mcrmgr.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Media Center Extenders - Media Streaming (TCP-Out)	Media Center Extenders	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	Any	Any	Any	Any	None	Any	
+Media Center Extenders - Media Streaming (UDP-Out)	Media Center Extenders	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	1900	Any	Any	Any	Any	None	Any	
+Media Center Extenders - qWave (TCP-Out)	Media Center Extenders	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	2177	Any	Any	Any	None	Any	
+Media Center Extenders - qWave (UDP-Out)	Media Center Extenders	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	2177	Any	Any	Any	None	Any	
+Media Center Extenders - RTSP (TCP-Out)	Media Center Extenders	All	No	Allow	No	%SystemRoot%\ehome\ehshell.exe	Any	Local subnet	TCP	Any	Any	Any	Any	Any	None	Any	
+Media Center Extenders - Service (TCP-Out)	Media Center Extenders	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	Any	Any	Any	Any	None	Any	
+Media Center Extenders - SSDP (UDP-Out)	Media Center Extenders	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	1900	Any	Any	Any	None	Any	
+Media Center Extenders - UPnP (TCP-Out)	Media Center Extenders	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	Any	Any	Any	Any	None	Any	
+Media Center Extenders - WMDRM-ND/RTP/RTCP (UDP-Out)	Media Center Extenders	All	No	Allow	No	%SystemRoot%\ehome\ehshell.exe	Any	Local subnet	UDP	Any	Any	Any	Any	Any	None	Any	
+Microsoft Content	Microsoft Content	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy	
+Microsoft Family Safety	Microsoft Family Safety	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.Windows.ParentalControls_cw5n1h2txyewy	
+Microsoft Media Foundation Network Source OUT [TCP ALL]	Microsoft Media Foundation Network Source	All	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	554, 8554-8558	Any	Any	Any	None	Any	
+Microsoft Sticky Notes	Microsoft Sticky Notes	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.MicrosoftStickyNotes_8wekyb3d8bbwe	
+Microsoft Store	Microsoft Store	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.WindowsStore_8wekyb3d8bbwe	
+ms-resource:AppDisplayName	{78E1CD88-49E3-476E-B926-580E596AD309}	All	Yes	Allow	No	C:\Program Files\WindowsApps\B9ECED6F.ASUSPCAssistant_4.0.24.0_x64__qmba6cd70vzyy\MyASUS\AsusMyASUS.exe	Any	Any	UDP	Any	Any	Any	Any	Any	None	Any	
+ms-resource:AppDisplayName	{78E1CD88-49E3-476E-B926-580E596AD309}	All	Yes	Allow	No	C:\Program Files\WindowsApps\B9ECED6F.ASUSPCAssistant_4.0.24.0_x64__qmba6cd70vzyy\MyASUS\AsusMyASUS.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+MyASUS	MyASUS	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	B9ECED6F.ASUSPCAssistant_qmba6cd70vzyy	
+Narrator	Narrator	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.Windows.NarratorQuickStart_8wekyb3d8bbwe	
+NcsiUwpApp	NcsiUwpApp	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	NcsiUwpApp_8wekyb3d8bbwe	
+Network Discovery (LLMNR-UDP-Out)	Network Discovery	Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	5355	Any	Any	Any	None	Any	
+Network Discovery (LLMNR-UDP-Out)	Network Discovery	Domain, Public	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	5355	Any	Any	Any	None	Any	
+Network Discovery (NB-Datagram-Out)	Network Discovery	Domain	No	Allow	No	System	Any	Any	UDP	Any	138	Any	Any	Any	None	Any	
+Network Discovery (NB-Datagram-Out)	Network Discovery	Private	Yes	Allow	No	System	Any	Local subnet	UDP	Any	138	Any	Any	Any	None	Any	
+Network Discovery (NB-Datagram-Out)	Network Discovery	Public	No	Allow	No	System	Any	Local subnet	UDP	Any	138	Any	Any	Any	None	Any	
+Network Discovery (NB-Name-Out)	Network Discovery	Domain	No	Allow	No	System	Any	Any	UDP	Any	137	Any	Any	Any	None	Any	
+Network Discovery (NB-Name-Out)	Network Discovery	Public	No	Allow	No	System	Any	Local subnet	UDP	Any	137	Any	Any	Any	None	Any	
+Network Discovery (NB-Name-Out)	Network Discovery	Private	Yes	Allow	No	System	Any	Local subnet	UDP	Any	137	Any	Any	Any	None	Any	
+Network Discovery (Pub WSD-Out)	Network Discovery	Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	3702	Any	Any	Any	None	Any	
+Network Discovery (Pub WSD-Out)	Network Discovery	Domain, Public	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	3702	Any	Any	Any	None	Any	
+Network Discovery (SSDP-Out)	Network Discovery	Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	1900	Any	Any	Any	None	Any	
+Network Discovery (SSDP-Out)	Network Discovery	Domain, Public	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	1900	Any	Any	Any	None	Any	
+Network Discovery (UPnPHost-Out)	Network Discovery	Domain, Public	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	2869	Any	Any	Any	None	Any	
+Network Discovery (UPnPHost-Out)	Network Discovery	Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	2869	Any	Any	Any	None	Any	
+Network Discovery (UPnP-Out)	Network Discovery	Domain	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	2869	Any	Any	Any	None	Any	
+Network Discovery (UPnP-Out)	Network Discovery	Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	2869	Any	Any	Any	None	Any	
+Network Discovery (UPnP-Out)	Network Discovery	Public	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	2869	Any	Any	Any	None	Any	
+Network Discovery (WSD Events-Out)	Network Discovery	Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	5357	Any	Any	Any	None	Any	
+Network Discovery (WSD Events-Out)	Network Discovery	Public	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	5357	Any	Any	Any	None	Any	
+Network Discovery (WSD Events-Out)	Network Discovery	Domain	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	5357	Any	Any	Any	None	Any	
+Network Discovery (WSD EventsSecure-Out)	Network Discovery	Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	5358	Any	Any	Any	None	Any	
+Network Discovery (WSD EventsSecure-Out)	Network Discovery	Domain	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	5358	Any	Any	Any	None	Any	
+Network Discovery (WSD EventsSecure-Out)	Network Discovery	Public	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	5358	Any	Any	Any	None	Any	
+Network Discovery (WSD-Out)	Network Discovery	Domain, Public	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	3702	Any	Any	Any	None	Any	
+Network Discovery (WSD-Out)	Network Discovery	Private	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	3702	Any	Any	Any	None	Any	
+Print Queue	Print Queue	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.Windows.PrintQueueActionCenter_cw5n1h2txyewy	
+Proximity sharing over TCP (TCP sharing-Out)	Proximity Sharing	All	Yes	Allow	No	%SystemRoot%\system32\proximityuxhost.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Recommended Troubleshooting Client (HTTP/HTTPS Out)	Recommended Troubleshooting	All	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	80, 443	Any	Any	Any	None	Any	
+Remote Assistance (PNRP-Out)	Remote Assistance	Public	No	Allow	No	%systemroot%\system32\svchost.exe	Any	Any	UDP	Any	Any	Any	Any	Any	None	Any	
+Remote Assistance (PNRP-Out)	Remote Assistance	Domain, Private	No	Allow	No	%systemroot%\system32\svchost.exe	Any	Any	UDP	Any	Any	Any	Any	Any	None	Any	
+Remote Assistance (RA Server TCP-Out)	Remote Assistance	Domain	No	Allow	No	%SystemRoot%\system32\raserver.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Remote Assistance (SSDP TCP-Out)	Remote Assistance	Domain, Private	No	Allow	No	System	Any	Local subnet	TCP	Any	Any	Any	Any	Any	None	Any	
+Remote Assistance (SSDP UDP-Out)	Remote Assistance	Domain, Private	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	1900	Any	Any	Any	None	Any	
+Remote Assistance (TCP-Out)	Remote Assistance	Public	No	Allow	No	%SystemRoot%\system32\msra.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Remote Assistance (TCP-Out)	Remote Assistance	Domain, Private	No	Allow	No	%SystemRoot%\system32\msra.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Routing and Remote Access (GRE-Out)	Routing and Remote Access	All	No	Allow	No	System	Any	Any	GRE	Any	Any	Any	Any	Any	None	Any	
+Routing and Remote Access (L2TP-Out)	Routing and Remote Access	All	No	Allow	No	System	Any	Any	UDP	Any	1701	Any	Any	Any	None	Any	
+Routing and Remote Access (PPTP-Out)	Routing and Remote Access	All	No	Allow	No	System	Any	Any	TCP	Any	1723	Any	Any	Any	None	Any	
+Skype	Skype	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.SkypeApp_kzf8qxf38zg5c	
+Skype	{78E1CD88-49E3-476E-B926-580E596AD309}	All	Yes	Allow	No	C:\Program Files\WindowsApps\Microsoft.SkypeApp_15.130.3205.0_x64__kzf8qxf38zg5c\Skype\Skype.exe	Any	Any	UDP	Any	Any	Any	Any	Any	None	Any	
+Skype	{78E1CD88-49E3-476E-B926-580E596AD309}	All	Yes	Allow	No	C:\Program Files\WindowsApps\Microsoft.SkypeApp_15.130.3205.0_x64__kzf8qxf38zg5c\Skype\Skype.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Start	Start	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy	
+Store Experience Host	Store Experience Host	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.StorePurchaseApp_8wekyb3d8bbwe	
+Take a Test	Take a Test	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.Windows.SecureAssessmentBrowser_cw5n1h2txyewy	
+telemetry_a.ads1.msn.com		All	Yes	Block	No	Any	Any	185.13.160.61, 198.78.208.254	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_a-0001.a-msedge.net		All	Yes	Block	No	Any	Any	204.79.197.200	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_a23-218-212-69.deploy.static.akamaitechnologies.com		All	Yes	Block	No	Any	Any	23.218.212.69	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_ads.msn.com		All	Yes	Block	No	Any	Any	8.254.209.254, 104.82.14.146, 157.56.23.91, 157.56.91.82, 185.13.160.61, 207.123.56.252	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_az361816.vo.msecnd.net		All	Yes	Block	No	Any	Any	68.232.34.200	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_choice.microsoft.com		All	Yes	Block	No	Any	Any	157.56.91.77	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_compatexchange.cloudapp.net		All	Yes	Block	No	Any	Any	23.99.10.11	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_corp.sts.microsoft.com		All	Yes	Block	No	Any	Any	131.107.113.238	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_corpext.msitadfs.glbdns2.microsoft.com		All	Yes	Block	No	Any	Any	131.107.113.238	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_cs1.wpc.v0cdn.net		All	Yes	Block	No	Any	Any	68.232.34.200	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_cs1.wpc.v0cdn.net		All	Yes	Block	No	Any	Any	68.232.34.200	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_dart.l.doubleclick.net		All	Yes	Block	No	Any	Any	173.194.113.219, 173.194.113.220, 216.58.209.166	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_df.telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.52.100.7	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_df.telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.52.100.7	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_diagnostics.support.microsoft.com		All	Yes	Block	No	Any	Any	157.56.121.89	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_fe2.update.microsoft.com.akadns.net		All	Yes	Block	No	Any	Any	66.119.144.190, 134.170.51.190, 134.170.53.29, 134.170.53.30, 134.170.58.118, 134.170.58.121, 134.170.58.123, 134.170.58.189	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_feedback.microsoft-hohm.com		All	Yes	Block	No	Any	Any	64.4.6.100, 65.55.39.10	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_feedback.search.microsoft.com		All	Yes	Block	No	Any	Any	157.55.129.21	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_feedback.windows.com		All	Yes	Block	No	Any	Any	134.170.185.70	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_global.msads.net.c.footprint.net		All	Yes	Block	No	Any	Any	8.254.209.254, 185.13.160.61, 207.123.56.252	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_i1.services.social.microsoft.com		All	Yes	Block	No	Any	Any	104.82.22.249	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_i1.services.social.microsoft.com		All	Yes	Block	No	Any	Any	104.82.22.249	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_msnbot-65-55-108-23.search.msn.com		All	Yes	Block	No	Any	Any	65.55.108.23	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_oca.telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.55.252.63	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_oca.telemetry.microsoft.com.nsatc.net		All	Yes	Block	No	Any	Any	65.55.252.63	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_pre.footprintpredict.com		All	Yes	Block	No	Any	Any	204.79.197.200	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_pre.footprintpredict.com		All	Yes	Block	No	Any	Any	204.79.197.200	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_preview.msn.com		All	Yes	Block	No	Any	Any	23.102.21.4	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_rad.msn.com		All	Yes	Block	No	Any	Any	207.46.194.25	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_redir.metaservices.microsoft.com		All	Yes	Block	No	Any	Any	194.44.4.200, 194.44.4.208	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_reports.wes.df.telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.52.100.91	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_reports.wes.df.telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.52.100.91	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_services.wes.df.telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.52.100.92	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_settings-sandbox.data.microsoft.com		All	Yes	Block	No	Any	Any	111.221.29.177	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_sls.update.microsoft.com.akadns.net		All	Yes	Block	No	Any	Any	157.56.77.139	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_sqm.df.telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.52.100.94	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_sqm.telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.55.252.93	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_ssw.live.com		All	Yes	Block	No	Any	Any	207.46.101.29	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_statsfe1.ws.microsoft.com		All	Yes	Block	No	Any	Any	134.170.115.60	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_statsfe1.ws.microsoft.com		All	Yes	Block	No	Any	Any	134.170.115.60	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_statsfe2.update.microsoft.com.akadns.net		All	Yes	Block	No	Any	Any	64.4.54.22	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_statsfe2.ws.microsoft.com		All	Yes	Block	No	Any	Any	64.4.54.22	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_survey.watson.microsoft.com		All	Yes	Block	No	Any	Any	207.68.166.254	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_telecommand.telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.55.252.92	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_telemetry.appex.bing.net		All	Yes	Block	No	Any	Any	168.63.108.233	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.52.100.9	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_telemetry.urs.microsoft.com		All	Yes	Block	No	Any	Any	157.56.74.250	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_vortex.data.microsoft.com		All	Yes	Block	No	Any	Any	191.232.139.254	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_vortex-sandbox.data.microsoft.com		All	Yes	Block	No	Any	Any	64.4.54.32	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_vortex-sandbox.data.microsoft.com		All	Yes	Block	No	Any	Any	64.4.54.32	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_watson.live.com		All	Yes	Block	No	Any	Any	207.46.223.94	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_watson.microsoft.com		All	Yes	Block	No	Any	Any	65.55.252.71	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_watson.ppe.telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.52.100.11	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_watson.telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.52.108.29, 65.55.252.43	Any	Any	Any	Any	Any	Any	None	Any	
+telemetry_wes.df.telemetry.microsoft.com		All	Yes	Block	No	Any	Any	65.52.100.93	Any	Any	Any	Any	Any	Any	None	Any	
+TPM Virtual Smart Card Management (TCP-Out)	TPM Virtual Smart Card Management	Private, Public	No	Allow	No	%SystemRoot%\system32\RmtTpmVscMgrSvr.exe	Any	Local subnet	TCP	Any	Any	Any	Any	Any	None	Any	
+TPM Virtual Smart Card Management (TCP-Out)	TPM Virtual Smart Card Management	Domain	No	Allow	No	%SystemRoot%\system32\RmtTpmVscMgrSvr.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+WFD ASP Coordination Protocol (UDP-Out)	WLAN Service - WFD Application Services Platform Coordination Protocol (Uses UDP)	All	Yes	Allow	No	%systemroot%\system32\svchost.exe	Any	Local subnet	UDP	7235	7235	Any	Any	Any	None	Any	
+WFD Driver-only (TCP-Out)	WLAN Service - WFD Services Kernel Mode Driver Rules	All	Yes	Allow	No	System	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+WFD Driver-only (UDP-Out)	WLAN Service - WFD Services Kernel Mode Driver Rules	All	Yes	Allow	No	System	Any	Any	UDP	Any	Any	Any	Any	Any	None	Any	
+WhatsApp	WhatsApp	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	5319275A.WhatsAppDesktop_cv1g1gvanyjgm	
+Widgets Platform Runtime	Widgets Platform Runtime	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.WidgetsPlatformRuntime_8wekyb3d8bbwe	
+Wi-Fi Direct Network Discovery (Out)	Wi-Fi Direct Network Discovery	Public	Yes	Allow	No	%SystemRoot%\system32\dashost.exe	Any	Any	Any	Any	Any	Any	S-1-5-92-3339056971-1291069075-3798698925-2882100687-0	Any	None	Any	
+Wi-Fi Direct Scan Service Use (Out)	Wi-Fi Direct Network Discovery	Public	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	Any	Any	Any	Any	Any	Any	None	Any	
+Wi-Fi Direct Spooler Use (Out)	Wi-Fi Direct Network Discovery	Public	Yes	Allow	No	%SystemRoot%\system32\spoolsv.exe	Any	Any	Any	Any	Any	Any	Any	Any	None	Any	
+Windows Calculator	Windows Calculator	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.WindowsCalculator_8wekyb3d8bbwe	
+Windows Camera	Windows Camera	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.WindowsCamera_8wekyb3d8bbwe	
+Windows Collaboration Computer Name Registration Service (PNRP-Out)	Windows Collaboration Computer Name Registration Service	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	UDP	Any	3540	Any	Any	Any	None	Any	
+Windows Collaboration Computer Name Registration Service (SSDP-Out)	Windows Collaboration Computer Name Registration Service	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	1900	Any	Any	Any	None	Any	
+Windows Default Lock Screen	Windows Default Lock Screen	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.LockApp_cw5n1h2txyewy	
+Windows Defender SmartScreen	Windows Defender SmartScreen	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.Windows.Apprep.ChxApp_cw5n1h2txyewy	
+Windows Device Management Certificate Installer (TCP out)	Windows Device Management	All	Yes	Allow	No	%SystemRoot%\system32\dmcertinst.exe	Any	Any	TCP	49152-65535	Any	Any	Any	Any	None	Any	
+Windows Device Management Device Enroller (TCP out)	Windows Device Management	All	Yes	Allow	No	%SystemRoot%\system32\deviceenroller.exe	Any	Any	TCP	49152-65535	80, 443	Any	Any	Any	None	Any	
+Windows Device Management Enrollment Service (TCP out)	Windows Device Management	All	Yes	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	49152-65535	Any	Any	Any	Any	None	Any	
+Windows Device Management Sync Client (TCP out)	Windows Device Management	All	Yes	Allow	No	%SystemRoot%\system32\omadmclient.exe	Any	Any	TCP	49152-65535	Any	Any	Any	Any	None	Any	
+Windows Feature Experience Pack	Windows Feature Experience Pack	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	MicrosoftWindows.Client.CBS_cw5n1h2txyewy	
+Windows Feature Experience Pack	Windows Feature Experience Pack	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	MicrosoftWindows.Client.Core_cw5n1h2txyewy	
+Windows Feature Experience Pack	Windows Feature Experience Pack	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	MicrosoftWindows.Client.OOBE_cw5n1h2txyewy	
+Windows Feature Experience Pack	Windows Feature Experience Pack	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	MicrosoftWindows.LKG.TwinSxS_cw5n1h2txyewy	
+Windows Feature Experience Pack	Windows Feature Experience Pack	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	MicrosoftWindows.Client.Photon_cw5n1h2txyewy	
+Windows Feature Experience Pack	Windows Feature Experience Pack	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	MicrosoftWindows.Client.FileExp_cw5n1h2txyewy	
+Windows Feature Experience Pack	Windows Feature Experience Pack	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	MicrosoftWindows.LKG.IrisService_cw5n1h2txyewy	
+Windows Feature Experience Pack	Windows Feature Experience Pack	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	MicrosoftWindows.LKG.AccountsService_cw5n1h2txyewy	
+Windows Management Instrumentation (WMI-Out)	Windows Management Instrumentation (WMI)	Domain	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Windows Management Instrumentation (WMI-Out)	Windows Management Instrumentation (WMI)	Private, Public	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	Any	Any	Any	Any	None	Any	
+Windows Media Player	Windows Media Player	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.ZuneMusic_8wekyb3d8bbwe	
+Windows Peer to Peer Collaboration Foundation (PNRP-Out)	Windows Peer to Peer Collaboration Foundation	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Any	UDP	Any	3540	Any	Any	Any	None	Any	
+Windows Peer to Peer Collaboration Foundation (SSDP-Out)	Windows Peer to Peer Collaboration Foundation	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	1900	Any	Any	Any	None	Any	
+Windows Peer to Peer Collaboration Foundation (TCP-Out)	Windows Peer to Peer Collaboration Foundation	All	No	Allow	No	%SystemRoot%\system32\p2phost.exe	Any	Any	TCP	Any	Any	Any	Any	Any	None	Any	
+Windows Peer to Peer Collaboration Foundation (WSD-Out)	Windows Peer to Peer Collaboration Foundation	All	No	Allow	No	%SystemRoot%\system32\p2phost.exe	Any	Local subnet	UDP	Any	3702	Any	Any	Any	None	Any	
+Windows Print	Windows Print	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Windows.PrintDialog_cw5n1h2txyewy	
+Windows Security	Windows Security	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.SecHealthUI_8wekyb3d8bbwe	
+Windows Shell Experience	Windows Shell Experience	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.Windows.PeopleExperienceHost_cw5n1h2txyewy	
+Windows Terminal	Windows Terminal	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.WindowsTerminal_8wekyb3d8bbwe	
+Windows Web Experience Pack	Windows Web Experience Pack	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	MicrosoftWindows.Client.WebExperience_cw5n1h2txyewy	
+Wireless Display (TCP-Out)	Wireless Display	All	Yes	Allow	No	%systemroot%\system32\WUDFHost.exe	Any	Any	TCP	Any	Any	Any	NT AUTHORITY\USER MODE DRIVERS	Any	None	Any	
+Wireless Display (UDP-Out)	Wireless Display	All	Yes	Allow	No	%systemroot%\system32\WUDFHost.exe	Any	Any	UDP	Any	Any	Any	NT AUTHORITY\USER MODE DRIVERS	Any	None	Any	
+Wireless Portable Devices (SSDP-Out)	Wireless Portable Devices	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	UDP	Any	1900	Any	Any	Any	None	Any	
+Wireless Portable Devices (TCP-Out)	Wireless Portable Devices	Private, Public	No	Allow	No	%SystemRoot%\system32\wudfhost.exe	Any	Local subnet	TCP	Any	15740	Any	Any	Any	None	Any	
+Wireless Portable Devices (TCP-Out)	Wireless Portable Devices	Domain	No	Allow	No	%SystemRoot%\system32\wudfhost.exe	Any	Any	TCP	Any	15740	Any	Any	Any	None	Any	
+Wireless Portable Devices (UPnPHost-Out)	Wireless Portable Devices	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	2869	Any	Any	Any	None	Any	
+Wireless Portable Devices (UPnP-Out)	Wireless Portable Devices	All	No	Allow	No	%SystemRoot%\system32\svchost.exe	Any	Local subnet	TCP	Any	2869	Any	Any	Any	None	Any	
+Work or school account	Work or school account	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.AAD.BrokerPlugin_cw5n1h2txyewy	
+Xbox Game UI	Xbox Game UI	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.XboxGameCallableUI_cw5n1h2txyewy	
+Xbox Identity Provider	Xbox Identity Provider	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	SBSNB2\Cedric	None	Microsoft.XboxIdentityProvider_8wekyb3d8bbwe	
+Your account	Your account	All	Yes	Allow	No	Any	Any	Any	Any	Any	Any	Any	Any	NT AUTHORITY\SYSTEM	None	Microsoft.Windows.CloudExperienceHost_cw5n1h2txyewy	
