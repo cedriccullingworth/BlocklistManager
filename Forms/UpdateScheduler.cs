@@ -27,7 +27,7 @@ public partial class UpdateScheduler : Form
     private readonly string _assemblyFullName;
     private readonly string _activeUser;
     private readonly string _taskName = "Update Blocklist Firewall Entries";
-    private Version _version = new ( 1, 0 );
+    private Version _version = new( 1, 0 );
 
     //public Microsoft.Win32.TaskScheduler.Task ScheduledTask { get; set; }
 
@@ -54,7 +54,7 @@ public partial class UpdateScheduler : Form
         this.RecurrenceComboBox.SelectedIndex = 0; // Every x number of <frequency>, default value 1 e.g. every 1 day
         this.LoadSitesComboBox( );
 
-        if ( _activeUser is not null && ((List<string>)this.AccountsComboBox.DataSource! ).Any( a => a == Environment.UserDomainName + '\\' + Environment.UserName ) )
+        if ( _activeUser is not null && ( (List<string>)this.AccountsComboBox.DataSource! ).Any( a => a == Environment.UserDomainName + '\\' + Environment.UserName ) )
         {
             this.AccountsComboBox.SelectedItem = _activeUser;
             this.AuthorLabel.Text = $"Author:  {_activeUser}";
@@ -70,7 +70,7 @@ public partial class UpdateScheduler : Form
         {
             StartDatePicker.Value = existing.NextRunTime.Date;
             StartTimePicker.Value = new DateTime( existing.NextRunTime.Year, existing.NextRunTime.Month, existing.NextRunTime.Day, existing.NextRunTime.Hour, existing.NextRunTime.Minute, existing.NextRunTime.Second );
-            ExecAction action = (ExecAction)existing.Definition.Actions.First();
+            ExecAction action = (ExecAction)existing.Definition.Actions.First( );
             if ( action is not null )
             {
                 ArgumentsText.Text = action.Arguments;
@@ -79,7 +79,7 @@ public partial class UpdateScheduler : Form
                 sitesPart = sitesPart[ ..sitesPart.IndexOf( ' ' ) ];
                 string[] sites = sitesPart.Split( ';' );
 
-                if ( sites.First( ).Equals( "allcurrent", StringComparison.CurrentCultureIgnoreCase ) )
+                if ( sites.First( ).Equals( "allcurrent", StringComparison.OrdinalIgnoreCase ) )
                     this.SelectAllCheckBox.Checked = true;
                 else
                 {
@@ -97,12 +97,12 @@ public partial class UpdateScheduler : Form
                 TaskTriggerType.Daily => this.FrequencyComboBox.Items[ 1 ],
                 _ => this.FrequencyComboBox.Items[ 0 ],
             };
-            
+
             _version = existing.Definition.RegistrationInfo.Version;
             if ( _version is null )
                 _version = new Version( 1, 0 );
             else
-            { 
+            {
                 if ( _version.Minor >= 9 )
                     _version = new Version( _version.Major + 1, 0 );
                 else
@@ -116,13 +116,13 @@ public partial class UpdateScheduler : Form
 
     private void LoadSitesComboBox( )
     {
-        using BlocklistDbContext context = new ( );
+        using BlocklistDbContext context = new( );
         var sites = context.ListRemoteSites( null )
                                          .OrderBy( o => o.Name )
                                          .ToList( );
 
-        IList<ListViewItem> items = sites.Select( s => new ListViewItem( ) { Text = s.Name, Checked = true, Tag = s.ID } )
-                                         .ToList( );
+        //IList<ListViewItem> items = sites.Select( s => new ListViewItem( ) { Text = s.Name, Checked = true, Tag = s.ID } )
+        //                                 .ToList( );
         this.SitesList.View = View.List;
         foreach ( var site in sites )
             this.SitesList.Items.Add( new ListViewItem( site.Name ) { Checked = true, Tag = site.ID } );
@@ -154,7 +154,7 @@ public partial class UpdateScheduler : Form
 
         var existingTask = TaskService.Instance.FindTask( _applicationShortName );
         //TaskPrincipal principal = new System.Security.Principal.WindowsIdentity( _activeUser );
-        
+
         //if ( existingTask is not null )
         //    TaskService.Instance.RootFolder.DeleteTask( _taskName, false );
 
@@ -236,19 +236,19 @@ public partial class UpdateScheduler : Form
         {
             case "Hourly":
                 {
-                    repetition = new ( TimeSpan.FromHours( 1 /*Convert.ToInt32( this.RecurrenceComboBox.SelectedItem )*/ ), maxDuration, true );
+                    repetition = new( TimeSpan.FromHours( 1 /*Convert.ToInt32( this.RecurrenceComboBox.SelectedItem )*/ ), maxDuration, true );
                     repetition.Duration = TimeSpan.FromHours( 1 );
                     break;
                 }
             case "Weekly":
                 {
-                    repetition = new ( TimeSpan.FromDays( 7 /*Convert.ToInt32( this.RecurrenceComboBox.SelectedItem )*/ ), maxDuration, true );
+                    repetition = new( TimeSpan.FromDays( 7 /*Convert.ToInt32( this.RecurrenceComboBox.SelectedItem )*/ ), maxDuration, true );
                     repetition.Duration = TimeSpan.FromDays( 7 );
                     break;
                 }
             default: // Daily
                 {
-                    repetition = new ( TimeSpan.FromDays( 1 /*Convert.ToInt32( this.RecurrenceComboBox.SelectedItem )*/ ), maxDuration, true );
+                    repetition = new( TimeSpan.FromDays( 1 /*Convert.ToInt32( this.RecurrenceComboBox.SelectedItem )*/ ), maxDuration, true );
                     repetition.Duration = TimeSpan.FromDays( 1 );
                     break;
                 }
@@ -295,7 +295,7 @@ public partial class UpdateScheduler : Form
         return trigger;
     }
 
-    private DateTime DetermineStartTime( ) => new 
+    private DateTime DetermineStartTime( ) => new
         (
             StartDatePicker.Value.Date.Year,
             StartDatePicker.Value.Date.Month,
@@ -346,7 +346,7 @@ public partial class UpdateScheduler : Form
     private void BrowseFoldersButton_Click( object sender, EventArgs e )
     {
         string appLogPath = $"{Assembly.GetExecutingAssembly( ).Location}\\Log";
-        using FolderBrowserDialog dialog = new ( )
+        using FolderBrowserDialog dialog = new( )
         {
             SelectedPath = appLogPath,
             Description = "Select a directory for log files",
@@ -391,19 +391,19 @@ public partial class UpdateScheduler : Form
             if ( _compatibleOperatingSystems.Count < 1 )
             {
                 _compatibleOperatingSystems = [];
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsVista, CompatibleSchedulerVersion = TaskCompatibility.V2 } );
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2008, CompatibleSchedulerVersion = TaskCompatibility.V2 } );
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2008R2, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.Windows7, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2012, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.Windows8, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.Windows81, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2012R2, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2016, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2019, CompatibleSchedulerVersion = TaskCompatibility.V2_2 } );
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.Windows10, CompatibleSchedulerVersion = TaskCompatibility.V2_3 } );
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.Windows11, CompatibleSchedulerVersion = TaskCompatibility.V2_3 } );
-                _compatibleOperatingSystems.Add( new ( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2022, CompatibleSchedulerVersion = TaskCompatibility.V2_3 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsVista, CompatibleSchedulerVersion = TaskCompatibility.V2 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2008, CompatibleSchedulerVersion = TaskCompatibility.V2 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2008R2, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.Windows7, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2012, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.Windows8, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.Windows81, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2012R2, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2016, CompatibleSchedulerVersion = TaskCompatibility.V2_1 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2019, CompatibleSchedulerVersion = TaskCompatibility.V2_2 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.Windows10, CompatibleSchedulerVersion = TaskCompatibility.V2_3 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.Windows11, CompatibleSchedulerVersion = TaskCompatibility.V2_3 } );
+                _compatibleOperatingSystems.Add( new( ) { OperatingSystem = OSVersionExtension.OperatingSystem.WindowsServer2022, CompatibleSchedulerVersion = TaskCompatibility.V2_3 } );
             }
 
             return _compatibleOperatingSystems.Any( c => c.OperatingSystem == OSVersion.GetOperatingSystem( ) );
@@ -411,7 +411,7 @@ public partial class UpdateScheduler : Form
     }
 }
 
-internal class OSSchedulerVersion
+internal sealed class OSSchedulerVersion
 {
     internal OSVersionExtension.OperatingSystem OperatingSystem { get; set; }
 

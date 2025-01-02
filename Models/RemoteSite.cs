@@ -18,13 +18,13 @@ public class RemoteSite
     [Key]
     [DatabaseGenerated( DatabaseGeneratedOption.Identity )]
     [Column( TypeName = "int" )]
-    public int ID { get; set; }
+    public int ID { get; set; } = 0;
 
     [Length( 2, 50 )]
-    [Column( TypeName = "nvarchar(50)" )]
+    [Column( TypeName = "nvarchar(128)" )]
     public required string Name { get; set; }
 
-    public DateTime? LastDownloaded { get; set; }
+    public DateTime? LastDownloaded { get; set; } = DateTime.UtcNow;
 
     [Length( 2, 255 )]
     [Column( TypeName = "nvarchar(255)" )]
@@ -48,7 +48,7 @@ public class RemoteSite
         }
     }
 
-    public int? FileTypeID { get; set; }
+    public int? FileTypeID { get; set; } = 1;
 
     [ForeignKey( "FileTypeID" )]
     [DeleteBehavior( DeleteBehavior.Restrict )]

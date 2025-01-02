@@ -14,7 +14,7 @@ public partial class FileType
 {
     [Key]
     [Column( TypeName = "int" )]
-    public int ID { get; set; }
+    public int ID { get; set; } = 1;
 
     [Length( 2, 50 )]
     [Column( TypeName = "nvarchar(50)" )]

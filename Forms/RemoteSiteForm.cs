@@ -3,7 +3,6 @@ using System.Linq;
 using System.Windows.Forms;
 
 using BlocklistManager.Classes;
-using BlocklistManager.Forms;
 using BlocklistManager.Models;
 
 using SBS.Utilities;
@@ -36,7 +35,7 @@ public partial class RemoteSiteForm : Form
                 FileUrls = String.Join( $",", FileUrlsArrayText.Lines ),
                 // FileType = (FileType)FileTypeComboBox.SelectedItem!,
                 FileTypeID = ( (FileType)FileTypeComboBox.SelectedItem! ).ID,
-                Active = true,
+                Active = ActiveCheckBox.Checked,
                 MinimumIntervalMinutes = 0,
             };
 
@@ -56,6 +55,7 @@ public partial class RemoteSiteForm : Form
     {
         this.OKButton.Enabled = false;
         this.TestButton.Enabled = false;
+        this.ActiveCheckBox.Checked = true;
 
         if ( this.DownloadSite != null )
         {
@@ -66,6 +66,8 @@ public partial class RemoteSiteForm : Form
             {
                 this.FileUrlsArrayText.Text += Environment.NewLine + this.DownloadSite.FilePaths[ i ];
             }
+
+            this.ActiveCheckBox.Checked = this.DownloadSite.Active;
         }
 
         this.FileTypeComboBox.DisplayMember = "Description";
@@ -75,25 +77,23 @@ public partial class RemoteSiteForm : Form
 
     private void TestButton_Click( object sender, EventArgs e )
     {
-        TestOutputForm frm = new( );
         try
         {
             this.OKButton.Enabled = false;
             if ( SiteUrlIsValid( ) )
             {
                 this.Cursor = Cursors.WaitCursor;
-                var data = Maintain.DownloadBlocklists( null, DownloadSite );
+                var data = Maintain.DownloadBlocklists( null, [ DownloadSite ] );
                 this.Cursor = Cursors.Default;
 
-                if ( data is not null )
+                if ( data is not null && data.Count > 0 )
                 {
-                    frm.Data = data;
-                    frm.ShowDialog( );
+                    MessageBox.Show( "Data was collected successfully" );
                     this.OKButton.Enabled = true;
                 }
             }
         }
-        catch (Exception ex ) 
+        catch ( Exception ex )
         {
             MessageBox.Show( $"Download test failed\r\n{StringUtilities.ExceptionMessage( "Test", ex )}" );
         }
@@ -139,7 +139,7 @@ public partial class RemoteSiteForm : Form
             if ( DownloadSite.FileUrls.Length > 0 )
                 TestButton.Enabled = true;
         }
-        catch 
+        catch
         {
             MessageBox.Show( "Multiple URLS should be separated by commas" );
         }
@@ -150,7 +150,7 @@ public partial class RemoteSiteForm : Form
         if ( FileTypeComboBox.SelectedItem is null )
             MessageBox.Show( "Select a file type" );
         else
-            DownloadSite.FileTypeID = (( FileType )this.FileTypeComboBox.SelectedItem ).ID;
+            DownloadSite.FileTypeID = ( (FileType)this.FileTypeComboBox.SelectedItem ).ID;
     }
 
     //private void AddFileUrlButton_Click(object sender, EventArgs e)

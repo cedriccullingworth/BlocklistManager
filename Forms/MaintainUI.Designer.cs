@@ -31,6 +31,7 @@ namespace BlocklistManager
         /// </summary>
         private void InitializeComponent( )
         {
+            this.components = new System.ComponentModel.Container( );
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager( typeof( MaintainUI ) );
             this.label1 = new Label( );
             this.RemoteSites = new DataGridView( );
@@ -50,14 +51,17 @@ namespace BlocklistManager
             this.ShowAllCheckBox = new CheckBox( );
             this.OptionsMenu = new MenuStrip( );
             this.RemoteSite_Add = new ToolStripMenuItem( );
-            this.RemoteSite_Remove = new ToolStripMenuItem( );
             this.RemoteSite_Edit = new ToolStripMenuItem( );
             this.ProcessAllButton = new Button( );
+            this.SiteMenuStrip = new ContextMenuStrip( this.components );
+            this.EditSiteMenuItem = new ToolStripMenuItem( );
+            this.AddSiteMenuItem = new ToolStripMenuItem( );
             ( (System.ComponentModel.ISupportInitialize)this.RemoteSites ).BeginInit( );
             ( (System.ComponentModel.ISupportInitialize)this.FirewallRulesData ).BeginInit( );
             ( (System.ComponentModel.ISupportInitialize)this.RemoteData ).BeginInit( );
             this.StatusBar.SuspendLayout( );
             this.OptionsMenu.SuspendLayout( );
+            this.SiteMenuStrip.SuspendLayout( );
             this.SuspendLayout( );
             // 
             // label1
@@ -84,6 +88,7 @@ namespace BlocklistManager
             this.RemoteSites.Size = new Size( 1268, 140 );
             this.RemoteSites.TabIndex = 1;
             this.RemoteSites.Click +=  this.RemoteSites_Click ;
+            this.RemoteSites.MouseDown +=  this.RemoteSites_MouseDown ;
             // 
             // label2
             // 
@@ -122,7 +127,7 @@ namespace BlocklistManager
             this.UpdateButton.Name = "UpdateButton";
             this.UpdateButton.Size = new Size( 127, 42 );
             this.UpdateButton.TabIndex = 8;
-            this.UpdateButton.Text = "&Replace Existing Firewall Entries";
+            this.UpdateButton.Text = "&Replace Site Firewall Entries";
             this.UpdateButton.UseVisualStyleBackColor = true;
             this.UpdateButton.Click +=  this.ReplaceButton_Click ;
             // 
@@ -153,7 +158,7 @@ namespace BlocklistManager
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new Size( 127, 42 );
             this.DeleteButton.TabIndex = 12;
-            this.DeleteButton.Text = "&Delete Existing Firewall Entries";
+            this.DeleteButton.Text = "&Delete Site Firewall Entries";
             this.DeleteButton.UseVisualStyleBackColor = true;
             this.DeleteButton.Click +=  this.DeleteButton_Click ;
             // 
@@ -215,7 +220,7 @@ namespace BlocklistManager
             // 
             // OptionsMenu
             // 
-            this.OptionsMenu.Items.AddRange( new ToolStripItem[] { this.RemoteSite_Add, this.RemoteSite_Remove, this.RemoteSite_Edit } );
+            this.OptionsMenu.Items.AddRange( new ToolStripItem[] { this.RemoteSite_Add, this.RemoteSite_Edit } );
             this.OptionsMenu.Location = new Point( 0, 0 );
             this.OptionsMenu.Name = "OptionsMenu";
             this.OptionsMenu.Size = new Size( 1294, 24 );
@@ -230,18 +235,11 @@ namespace BlocklistManager
             this.RemoteSite_Add.Visible = false;
             this.RemoteSite_Add.Click +=  this.RemoteSite_Add_Click ;
             // 
-            // RemoteSite_Remove
-            // 
-            this.RemoteSite_Remove.Name = "RemoteSite_Remove";
-            this.RemoteSite_Remove.Size = new Size( 144, 20 );
-            this.RemoteSite_Remove.Text = "&Disable the selected site";
-            this.RemoteSite_Remove.Click +=  this.RemoteSite_Disable_Click ;
-            // 
             // RemoteSite_Edit
             // 
             this.RemoteSite_Edit.Name = "RemoteSite_Edit";
-            this.RemoteSite_Edit.Size = new Size( 191, 20 );
-            this.RemoteSite_Edit.Text = "&Edit the Selected DownloadSite...";
+            this.RemoteSite_Edit.Size = new Size( 135, 20 );
+            this.RemoteSite_Edit.Text = "&Edit the selected site...";
             this.RemoteSite_Edit.Click +=  this.RemoteSite_Edit_Click ;
             // 
             // ProcessAllButton
@@ -254,6 +252,24 @@ namespace BlocklistManager
             this.ProcessAllButton.Text = "&Process All";
             this.ProcessAllButton.UseVisualStyleBackColor = true;
             this.ProcessAllButton.Click +=  this.ProcessAllButton_Click ;
+            // 
+            // SiteMenuStrip
+            // 
+            this.SiteMenuStrip.Items.AddRange( new ToolStripItem[] { this.EditSiteMenuItem, this.AddSiteMenuItem } );
+            this.SiteMenuStrip.Name = "SiteMenuStrip";
+            this.SiteMenuStrip.Size = new Size( 191, 70 );
+            // 
+            // EditSiteMenuItem
+            // 
+            this.EditSiteMenuItem.Name = "EditSiteMenuItem";
+            this.EditSiteMenuItem.Size = new Size( 190, 22 );
+            this.EditSiteMenuItem.Text = "&Edit the selected site...";
+            // 
+            // AddSiteMenuItem
+            // 
+            this.AddSiteMenuItem.Name = "AddSiteMenuItem";
+            this.AddSiteMenuItem.Size = new Size( 190, 22 );
+            this.AddSiteMenuItem.Text = "&Add a download site";
             // 
             // MaintainUI
             // 
@@ -288,6 +304,7 @@ namespace BlocklistManager
             this.StatusBar.PerformLayout( );
             this.OptionsMenu.ResumeLayout( false );
             this.OptionsMenu.PerformLayout( );
+            this.SiteMenuStrip.ResumeLayout( false );
             this.ResumeLayout( false );
             this.PerformLayout( );
         }
@@ -311,9 +328,11 @@ namespace BlocklistManager
         internal CheckBox ShowAllCheckBox;
         private MenuStrip OptionsMenu;
         private ToolStripMenuItem RemoteSite_Add;
-        private ToolStripMenuItem RemoteSite_Remove;
         private ToolStripMenuItem RemoteSite_Edit;
         private ToolStripProgressBar StatusProgress;
         internal Button ProcessAllButton;
+        private ContextMenuStrip SiteMenuStrip;
+        private ToolStripMenuItem EditSiteMenuItem;
+        private ToolStripMenuItem AddSiteMenuItem;
     }
 }

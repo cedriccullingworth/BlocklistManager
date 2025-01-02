@@ -1,81 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
 using BlocklistManager.Interfaces;
 using BlocklistManager.Models;
 
-using WindowsFirewallHelper.Addresses;
 using WindowsFirewallHelper;
+using WindowsFirewallHelper.Addresses;
 
 namespace BlocklistManager.Classes;
 
-internal class DataTranslatorDelimited : IDataTranslator
+internal sealed class DataTranslatorDelimited : IDataTranslator
 {
     public List<CandidateEntry> TranslateFileData( RemoteSite site, string data )
-    { 
+    {
         List<string> lineData = Maintain.TextToStringList( data );
         lineData = lineData.Where( w => !w.StartsWith( '#' ) )
                            .Where( w => !w.StartsWith( ';' ) )
                            .Where( w => !string.IsNullOrEmpty( w ) )
                            .ToList( );
 
-        return site.FileType.Name switch
+        return site.FileType!.Name switch
         {
+            // TODO: Separate James Brine and MyIP, test both 
             // Only James Brine at this stage, will need splitting out when another CSV format arrives
-            "CSV" => lineData.Select( s => s.Split( ',', StringSplitOptions.TrimEntries ) )
-                             .Where( w => Maintain.InternetAddressType( w[ 0 ] ) != Maintain.IPAddressType.Invalid )
-                             .Select( s => new CandidateEntry( )
-                             {
-                                 IPAddress = s[ 0 ],
-                                 Name = site.Name,
-                                 Description = site.Name,
-                                 Ports = [],
-                                 Protocol = FirewallProtocol.Any,
-                                 AddressType = Maintain.InternetAddressType( s[ 0 ] ),
-                                 Country = "-",
-                                 Malware = s.Length > 1 ? s[ 1 ] : "-",
-                                 Status = "-",
-                             } )
-                             .ToList( ),
+            "CSV" => /*site.ID == 24 ? */TranslateCommaDelimited( site, lineData ), // : TranslateMyIP( site, lineData ),
             "TAB" => TranslateTabDelimited( site, lineData ),
-            _ => []
+            _ => throw new InvalidOperationException( )
         };
     }
 
+    private static List<CandidateEntry> TranslateCommaDelimited( RemoteSite site, List<string> lineData ) => lineData
+                                 .Select( s => s.Replace( "# ", "," ).Replace( "#", string.Empty ) )
+                                 .Select( s => s.Split( ',', StringSplitOptions.TrimEntries ) )
+                                 .Where( w => Maintain.InternetAddressType( w[ 0 ] ) != Maintain.IPAddressType.Invalid )
+                                 .Select( s => new CandidateEntry( site.Name, s[ 0 ], null, [], [], FirewallProtocol.Any ) )
+                                 .ToList( );
+
+    //private static List<CandidateEntry> TranslateMyIP( RemoteSite site, List<string> lineData ) => lineData.Take( 10 )
+    //                             .Select( s => s.Replace( "# ", "," ).Replace( "#", string.Empty ) )
+    //                             .Select( s => s.Split( ",", StringSplitOptions.TrimEntries ) )
+    //                             .Where( w => Maintain.InternetAddressType( w[ 0 ] ) != Maintain.IPAddressType.Invalid )
+    //                             .Select( s => new CandidateEntry( site.Name, s[ 0 ], null, [], [], FirewallProtocol.Any ) )
+    //                             .ToList( );
+
     public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream ) => throw new NotImplementedException( );
 
-    private List<CandidateEntry> TranslateTabDelimited( RemoteSite site, List<string> dataLines )
+    private static List<CandidateEntry> TranslateTabDelimited( RemoteSite site, List<string> dataLines )
     {
         return site.Name switch
         {
             "ScriptzTeam" => ReadDelimitedDataScriptzTeam( '\t', dataLines, site ),
             "Internet Storm Center DShield" => ReadDelimitedDataDShield( '\t', dataLines, site ),
-            _  => []
+            _ => []
         };
     }
 
-    private List<CandidateEntry> ReadDelimitedDataScriptzTeam( char delimiter, List<string> allText, RemoteSite site ) =>
-        [ .. allText.Select( s => s.Split( delimiter ) )
-                                    .Select( s => new CandidateEntry( )
-                                    {
-                                        //                                        Name = site.Name,
-                                        //Name = $"@(imported) {site.Name}_Blocklist",
-                                        Name = site.Name,
-                                        IPAddress = s[ 0 ],
-                                        Country = "-",
-                                        Description = site.Name,
-                                        AddressType = Maintain.InternetAddressType( s[ 0 ] ),
-                                    } )
-                                    .OrderBy( t => Convert.ToInt32( t.IPAddress!.Split( '.' )[ 0 ] ) )
-                                    .ThenBy( t => Convert.ToInt32( t.IPAddress!.Split( '.' )[ 1 ] ) )
-                                    .ThenBy( t => Convert.ToInt32( t.IPAddress!.Split( '.' )[ 2 ] ) )
-                                    .ThenBy( t => Convert.ToInt32( t.IPAddress!.Split( '.' )[ 3 ] ) ) ];
+    private static List<CandidateEntry> ReadDelimitedDataScriptzTeam( char delimiter, List<string> allText, RemoteSite site ) =>
+        allText.Select( s => s.Split( delimiter ) )
+                                    .Select( s => new CandidateEntry( site.Name, s[ 0 ], null, [], [], FirewallProtocol.Any ) )
+                                    .ToList( );
 
-    private List<CandidateEntry> ReadDelimitedDataDShield( char delimiter, List<string> allText, RemoteSite site )
+    private static List<CandidateEntry> ReadDelimitedDataDShield( char delimiter, List<string> allText, RemoteSite site )
     {
+        CultureInfo culture = CultureInfo.InvariantCulture;
         char period = '.';
         List<CandidateEntry> candidates = [];
         var entries = allText.Select( s => s.Split( delimiter ) )
@@ -83,8 +73,8 @@ internal class DataTranslatorDelimited : IDataTranslator
                 {
                     rangeStart = s[ 0 ],
                     rangeEnd = s[ 1 ],
-                    Subnet = (ushort)( string.IsNullOrEmpty( s[ 2 ] ) ? 0 : Convert.ToUInt16( s[ 2 ] ) ),
-                    TargetsScanned = Convert.ToInt64( s[ 3 ] ),
+                    Subnet = (ushort)( string.IsNullOrEmpty( s[ 2 ] ) ? 0 : Convert.ToUInt16( s[ 2 ], culture ) ),
+                    TargetsScanned = Convert.ToInt64( s[ 3 ], culture ),
                     NetworkName = s[ 4 ],
                     Country = s[ 5 ],
                     EmailAddress = s[ 6 ],
@@ -94,36 +84,23 @@ internal class DataTranslatorDelimited : IDataTranslator
         foreach ( DShieldEntry entry in entries )
         {
             byte[] startBytes = entry.rangeStart.Split( period )
-                                                .Select( s => (byte)Convert.ToInt32( s ) )
+                                                .Select( s => (byte)Convert.ToInt32( s, culture ) )
                                                 .ToArray( ),
                    endBytes = entry.rangeEnd.Split( period )
-                                            .Select( s => (byte)Convert.ToInt32( s ) )
+                                            .Select( s => (byte)Convert.ToInt32( s, culture ) )
                                             .ToArray( );
             SingleIP rangeStart = new( startBytes ), rangeEnd = new( endBytes );
             IPRange addressRange = new( rangeStart, rangeEnd );
 
-            candidates.Add( new CandidateEntry( )
-            {
-                //IPAddress = newAddress,
-                IPAddressRange = addressRange,
-                //                Name = site.Name,
-                //Name = $"@(imported) {site.Name}_Blocklist",
-                Name = site.Name,
-                Description = site.Name,
-                Country = entry.Country,
-                AddressType = Maintain.InternetAddressType( addressRange.StartAddress.ToString() ),
-            } );
+            candidates.Add( new CandidateEntry( site.Name, null, addressRange, [], [], FirewallProtocol.Any ) );
         }
 
-        return candidates; /* [ .. candidates.OrderBy( o => Convert.ToInt32( o.IPAddressRange!.StartAddress.ToString( ).Split( period )[ 0 ] ) )
-                .ThenBy( o => Convert.ToInt32( o.IPAddressRange!.StartAddress.ToString( ).Split( period )[ 1 ] ) )
-                .ThenBy( o => Convert.ToInt32( o.IPAddressRange!.StartAddress.ToString( ).Split( period )[ 2 ] ) )
-                .ThenBy( o => Convert.ToInt32( o.IPAddressRange!.StartAddress.ToString( ).Split( period )[ 3 ] ) ) ];*/
+        return candidates;
     }
 
     private bool disposedValue;
 
-    protected virtual void Dispose( bool disposing )
+    private void Dispose( bool disposing )
     {
         if ( !disposedValue )
         {

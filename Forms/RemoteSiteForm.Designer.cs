@@ -43,6 +43,7 @@ partial class RemoteSiteForm
         this.label4 = new Label( );
         this.FileTypeComboBox = new ComboBox( );
         this.TestButton = new Button( );
+        this.ActiveCheckBox = new CheckBox( );
         this.SuspendLayout( );
         // 
         // label1
@@ -102,7 +103,7 @@ partial class RemoteSiteForm
         // OKButton
         // 
         this.OKButton.DialogResult = DialogResult.OK;
-        this.OKButton.Location = new Point( 1073, 105 );
+        this.OKButton.Location = new Point( 1061, 127 );
         this.OKButton.Name = "OKButton";
         this.OKButton.Size = new Size( 59, 32 );
         this.OKButton.TabIndex = 6;
@@ -112,7 +113,7 @@ partial class RemoteSiteForm
         // 
         // CancelButton
         // 
-        this.CancelButton.Location = new Point( 1073, 140 );
+        this.CancelButton.Location = new Point( 1061, 162 );
         this.CancelButton.Name = "CancelButton";
         this.CancelButton.Size = new Size( 61, 34 );
         this.CancelButton.TabIndex = 7;
@@ -142,19 +143,31 @@ partial class RemoteSiteForm
         // TestButton
         // 
         this.TestButton.DialogResult = DialogResult.OK;
-        this.TestButton.Location = new Point( 983, 90 );
+        this.TestButton.Location = new Point( 972, 90 );
         this.TestButton.Name = "TestButton";
         this.TestButton.Size = new Size( 59, 47 );
         this.TestButton.TabIndex = 10;
-        this.TestButton.Text = "&Test";
+        this.TestButton.Text = "&Validate";
         this.TestButton.UseVisualStyleBackColor = true;
         this.TestButton.Click +=  this.TestButton_Click ;
+        // 
+        // ActiveCheckBox
+        // 
+        this.ActiveCheckBox.AutoSize = true;
+        this.ActiveCheckBox.CheckAlign = ContentAlignment.MiddleRight;
+        this.ActiveCheckBox.Location = new Point( 23, 177 );
+        this.ActiveCheckBox.Name = "ActiveCheckBox";
+        this.ActiveCheckBox.Size = new Size( 230, 19 );
+        this.ActiveCheckBox.TabIndex = 11;
+        this.ActiveCheckBox.Text = "&Active                                                         ";
+        this.ActiveCheckBox.UseVisualStyleBackColor = true;
         // 
         // RemoteSiteForm
         // 
         this.AutoScaleDimensions = new SizeF( 7F, 15F );
         this.AutoScaleMode = AutoScaleMode.Font;
-        this.ClientSize = new Size( 1146, 181 );
+        this.ClientSize = new Size( 1146, 208 );
+        this.Controls.Add( this.ActiveCheckBox );
         this.Controls.Add( this.TestButton );
         this.Controls.Add( this.FileTypeComboBox );
         this.Controls.Add( this.label4 );
@@ -183,8 +196,9 @@ partial class RemoteSiteForm
     private TextBox SiteUrlText;
     private TextBox FileUrlsArrayText;
     private Button OKButton;
-    private Button CancelButton;
+    private new Button CancelButton;
     private Label label4;
     private ComboBox FileTypeComboBox;
     private Button TestButton;
+    private CheckBox ActiveCheckBox;
 }

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace BlocklistManager.Classes;
 
-internal class PathInfo
+internal sealed class PathInfo
 {
     internal PathInfo( string absoluteUri, bool isDir )
     {
@@ -40,6 +41,7 @@ internal class PathInfo
 
     public override string ToString( )
     {
-        return string.Format( "{0} IsDir {1} ChildCount {2} AbsUrl {3}", RelativeUrl, IsDir, Children.Count, AbsoluteUrlStr );
+        CultureInfo culture = CultureInfo.InvariantCulture;
+        return string.Format( culture, "{0} IsDir {1} ChildCount {2} AbsUrl {3}", RelativeUrl, IsDir, Children.Count, AbsoluteUrlStr );
     }
 }

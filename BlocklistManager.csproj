@@ -8,10 +8,20 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+	<ApplicationVersion>1.5 alpha</ApplicationVersion>
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <BaseOutputPath>bin\</BaseOutputPath>
     <StartupObject>BlocklistManager.Program</StartupObject>
     <ApplicationIcon>BlocklistManager.ico</ApplicationIcon>
+    <Copyright>Cedric Cullingworth</Copyright>
+    <PackageIcon>BlocklistManager.png</PackageIcon>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>blocklist blacklist blocklists blacklists firewall security information</PackageTags>
+    <AssemblyVersion>1.5.0</AssemblyVersion>
+    <FileVersion>1.5.0</FileVersion>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <NeutralLanguage>en-GB</NeutralLanguage>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -27,6 +37,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="BlocklistAPI\**" />
+    <EmbeddedResource Remove="BlocklistAPI\**" />
+    <None Remove="BlocklistAPI\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Classes\HtmlDataCollector.cs" />
     <Compile Remove="Classes\HttpHelper.cs" />
     <Compile Remove="Classes\ZipDataCollector.cs" />
@@ -38,16 +54,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.13.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
-    <PackageReference Include="MimeKit" Version="4.8.0" />
     <PackageReference Include="SharpCompress" Version="0.38.0" />
     <PackageReference Include="TaskScheduler" Version="2.11.0" />
     <PackageReference Include="WindowsFirewallHelper" Version="2.2.0.86" />
@@ -77,6 +87,10 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="BlocklistManager.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -93,6 +107,10 @@
     <Reference Include="SBS.Utilities">
       <HintPath>..\SBS.Utilities\bin\Release\net8.0\SBS.Utilities.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DataBackup\" />
   </ItemGroup>
 
 </Project>

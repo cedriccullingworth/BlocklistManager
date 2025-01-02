@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
@@ -17,11 +14,10 @@ using BlockListManager;
 using SBS.Utilities;
 
 using WindowsFirewallHelper;
-using WindowsFirewallHelper.Addresses;
 
 namespace BlocklistManager.Classes;
 
-public class DataTranslatorXml : IDataTranslator, IDisposable
+internal sealed class DataTranslatorXml : IDataTranslator, IDisposable
 {
     public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream )
     {
@@ -29,19 +25,20 @@ public class DataTranslatorXml : IDataTranslator, IDisposable
 
         return site.ID switch
         {
-            11 => this.TranslateShodan( site, dataStream ),
-            17 => this.TranslateCyberCrimeTracker( site, dataStream ),
+            11 => TranslateShodan( site, dataStream ),
+            17 => TranslateCyberCrimeTracker( site, dataStream ),
             _ => []
         };
 
     }
 
-    private List<CandidateEntry> TranslateCyberCrimeTracker( RemoteSite site, Stream dataStream, string logFilePath = "" )
+    private static List<CandidateEntry> TranslateCyberCrimeTracker( RemoteSite site, Stream dataStream, string logFilePath = "" )
     {
         try
-        { 
+        {
+            XmlReader reader = new XmlTextReader( dataStream );
             XmlSerializer serializer = new XmlSerializer( typeof( rss ) );
-            var rssData = serializer.Deserialize( dataStream );
+            var rssData = serializer.Deserialize( reader );
             if ( rssData is not null )
             {
                 rss data = (rss)rssData;
@@ -53,23 +50,8 @@ public class DataTranslatorXml : IDataTranslator, IDisposable
                                                         .Distinct( );
 
                 // Remove duplicate IP addresses (as found in https://cybercrime-tracker.net/rss.xml
-                return addressesOnly.Select( s => new CandidateEntry( )
-                {
-                    IPAddress = s,
-                    Name = site.Name,
-                    Description = site.Name,
-                    Country = "-",
-                    Malware = "-",
-                    Ports = [],
-                    Protocol = FirewallProtocol.Any,
-                    Status = "online",
-                    AddressType = Maintain.InternetAddressType( s ),
-                } )
-                //.OrderBy( o => o.Sort[ 0 ] )
-                //.ThenBy( o => o.Sort[ 1 ] )
-                //.ThenBy( o => o.Sort[ 2 ] )
-                //.ThenBy( o => o.Sort[ 3 ] )
-                .ToList( );
+                return addressesOnly.Select( s => new CandidateEntry( site.Name, s.Trim( ), null, [], [], FirewallProtocol.Any ) )
+                                    .ToList( );
             }
         }
         catch ( Exception ex )
@@ -83,30 +65,17 @@ public class DataTranslatorXml : IDataTranslator, IDisposable
         return [];
     }
 
-    private List<CandidateEntry> TranslateShodan( RemoteSite site, Stream dataStream, string logFilePath = "" )
+    private static List<CandidateEntry> TranslateShodan( RemoteSite site, Stream dataStream, string logFilePath = "" )
     {
         try
         {
+            XmlReader reader = new XmlTextReader( dataStream );
             XmlSerializer serializer = new XmlSerializer( typeof( threatlist ) );
-            threatlist threats = (threatlist)serializer.Deserialize( dataStream )!;
-            IEnumerable<threatlistShodan> typed = threats.shodan!.Select( s => s );
+            threatlist threats = (threatlist)serializer.Deserialize( reader )!;
+            //IEnumerable<threatlistShodan> typed = threats.shodan!; //.Select( s => s );
 
-            var processing = typed.Select( s => new CandidateEntry( )
-            {
-                IPAddress = s.ipv4,
-                //                            Name = site.Name,
-                //Name = $"@(imported) {site.Name}_Blocklist",
-                Name = site.Name,
-                Description = site.Name,
-                Malware = "-",
-                AddressType = Maintain.InternetAddressType( s.ipv4 ),
-            } );
-            //.OrderBy( t => Convert.ToInt32( t.IPAddress!.Split( '.' )[ 0 ] ) )
-            //.ThenBy( t => Convert.ToInt32( t.IPAddress!.Split( '.' )[ 1 ] ) )
-            //.ThenBy( t => Convert.ToInt32( t.IPAddress!.Split( '.' )[ 2 ] ) )
-            //.ThenBy( t => Convert.ToInt32( t.IPAddress!.Split( '.' )[ 3 ] ) );
-
-            return processing.ToList( );
+            return threats.shodan!.Select( s => new CandidateEntry( site.Name, s.ipv4, null, [], [], FirewallProtocol.Any ) )
+                          .ToList( );
         }
         catch ( Exception ex )
         {
@@ -121,7 +90,7 @@ public class DataTranslatorXml : IDataTranslator, IDisposable
 
     private bool disposedValue;
 
-    protected virtual void Dispose( bool disposing )
+    private void Dispose( bool disposing )
     {
         if ( !disposedValue )
         {

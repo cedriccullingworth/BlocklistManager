@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -8,9 +9,11 @@ using System.Windows.Forms;
 using BlocklistManager.Interfaces;
 using BlocklistManager.Models;
 
+using WindowsFirewallHelper;
+
 namespace BlocklistManager.Classes;
 
-public class DataTranslatorJson : IDataTranslator
+public sealed class DataTranslatorJson : IDataTranslator
 {
     // TODO
     public List<CandidateEntry> TranslateFileData( RemoteSite site, string data )
@@ -26,6 +29,7 @@ public class DataTranslatorJson : IDataTranslator
 
     private static List<CandidateEntry> TranslateFeodo( RemoteSite site, JsonDocument doc )
     {
+        CultureInfo culture = CultureInfo.CurrentCulture;
         List<FeodoEntry> processed = [];
         var jsonArray = doc.RootElement
                                     .EnumerateArray( );
@@ -64,7 +68,7 @@ public class DataTranslatorJson : IDataTranslator
                                 ushort[] ushorts = !string.IsNullOrEmpty( detail.Value )
                                                     ? detail.Value
                                                             .Split( ',', StringSplitOptions.TrimEntries )
-                                                            .Select( s => Convert.ToUInt16( s ) )
+                                                            .Select( s => Convert.ToUInt16( s, culture ) )
                                                             .ToArray( )
                                                     : [ 0 ];
                                 feodoEntry.ports = ushorts;
@@ -82,7 +86,7 @@ public class DataTranslatorJson : IDataTranslator
                             }
                         case "as_number":
                             {
-                                feodoEntry.as_number = Convert.ToInt32( detail.Value );
+                                feodoEntry.as_number = Convert.ToInt32( detail.Value, culture );
                                 break;
                             }
                         case "as_name":
@@ -122,24 +126,13 @@ public class DataTranslatorJson : IDataTranslator
         }
 
         // Removed: // Number = Convert.ToString(s.as_number),
-        return processed.Select( s => new CandidateEntry( )
-                                                    {
-                                                        IPAddress = s.ip_address,
-                                                        Ports = s.ports,
-                                                        Status = s.status,
-                                                        Name = site.Name,
-                                                        Description = site.Name,
-                                                        Country = s.country,
-                                                        Malware = s.malware,
-                                                        AddressType = Maintain.InternetAddressType( s.ip_address ),
-                                                    } 
-                                )
-                        .ToList();
+        return processed.Select( s => new CandidateEntry( site.Name, s.ip_address, null, [], s.ports, FirewallProtocol.Any ) )
+                        .ToList( );
     }
 
     private bool disposedValue;
 
-    protected virtual void Dispose( bool disposing )
+    private void Dispose( bool disposing )
     {
         if ( !disposedValue )
         {

@@ -369,7 +369,7 @@ partial class UpdateScheduler
     private TextBox ArgumentsText;
     private Label label8;
     private Button OKButton;
-    private Button CancelButton;
+    private new Button CancelButton;
     private ListView SitesList;
     private Label label9;
     private FolderBrowserDialog LogFolderDialog;

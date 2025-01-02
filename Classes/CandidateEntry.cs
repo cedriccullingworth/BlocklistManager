@@ -1,101 +1,157 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Net;
-
-using Microsoft.IdentityModel.Tokens;
 
 using WindowsFirewallHelper;
 using WindowsFirewallHelper.Addresses;
 
+using static BlocklistManager.Classes.Maintain;
+
 namespace BlocklistManager.Classes;
 
-public record class CandidateEntry : IComparable<CandidateEntry>, IDisposable
+public sealed record class CandidateEntry( string? nameArg, string? iPAddressArg, IPRange? iPAddressRangeArg, IAddress[] iPAddressSetArg, ushort[] portsArg, FirewallProtocol protocolArg ) : IComparable<CandidateEntry>, IDisposable
 {
+
     private long[] _sort = [ 0, 0, 0, 0 ];
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="iPAddress"></param>
+    /// <param name="iPAddressRange"></param>
+    /// <param name="iPAddressSet"></param>
+    /// <param name="ports"></param>
+    /// <param name="protocol"></param>
+    //public CandidateEntry( string? nameArg, string? iPAddressArg, IPRange? iPAddressRangeArg, IAddress[] iPAddressSetArg, ushort[] portsArg, FirewallProtocol protocolArg )
+    //{
+    //    this.Name = nameArg;
+    //    this.IPAddress = iPAddressArg;
+    //    this.IPAddressRange = iPAddressRangeArg;
+    //    this.IPAddressSet = iPAddressSetArg;
+    //    this.Ports = portsArg;
+    //    this.Protocol = protocolArg;
+    //}
 
     [Display( Description = "Name" )]
     [Length( 2, 50 )]
     [UnconditionalSuppressMessage( "Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>" )]
-    public string? Name { get; set; } = null;
+    public string? Name { get; set; } = nameArg;
 
     //    [Required]
     [Display( Description = "IP Address" )]
-    public string? IPAddress { get; set; } = null;
+    public string? IPAddress { get; set; } = iPAddressArg;
 
     [Display( Description = "IP Address Range" )]
-    public IPRange? IPAddressRange { get; set; } = null;
+    public IPRange? IPAddressRange { get; set; } = iPAddressRangeArg;
 
     [Display( AutoGenerateField = true, Description = "IP Address Batch", Name = "IPAddressSet" )]
-    public IAddress[] IPAddressSet { get; set; } = [];
+    public IAddress[] IPAddressSet { get; set; } = iPAddressSetArg;
 
-    public string? IPAddressBatch
-    {
-        get
-        {
-            return Maintain.IAddressesToString( this.IPAddressSet );
-        }
-    }
+    public string? IPAddressBatch => Maintain.IAddressesToString( this.IPAddressSet );
+    //{
+    //    get
+    //    {
+    //        return Maintain.IAddressesToString( this.IPAddressSet );
+    //    }
+    //}
 
-    internal Maintain.IPAddressType AddressType { get; set; } = Maintain.IPAddressType.IPv4;
+    internal IPAddressType AddressType => this.DetermineAddressType( ); // string.IsNullOrEmpty( this.IPAddress ) ? IPAddressType.Invalid : this.IPAddress.IndexOf( ':' ) > 0 ? IPAddressType.IPv6 : IPAddressType.IPv4; // { get; set; } = Maintain.IPAddressType.IPv4;
 
     [Display( Description = "Ports (default 'Any')" )]
-    public ushort[] Ports { get; set; } = [];
+    public ushort[] Ports { get; set; } = portsArg;
 
-    [Display( Description = "Protocol" )]
-    public FirewallProtocol Protocol { get; set; } = FirewallProtocol.Any;
+    [Display( Description = "Protocol (default 'Any')" )]
+    public FirewallProtocol Protocol { get; set; } = protocolArg;
 
-    [Display( Description = "Status" )]
-    public string? Status { get; set; } = "-";
+    /* Removed because none of these are used for the firewall rules */
+    //[Display( Description = "Status" )]
+    //public string? Status { get; set; } = "-";
 
     //public string? Number { get; set; }
 
-    [Length( 2, 255 )]
-    internal string? Description { get; set; } = null;
+    //[Length( 2, 255 )]
+    //internal string? Description { get; set; } = null;
 
-    [Display( Description = "Country" )]
-    [Length( 2, 50 )]
-    public string? Country { get; set; } = null;
+    //[Display( Description = "Country" )]
+    //[Length( 2, 50 )]
+    //public string? Country { get; set; } = null;
 
-    [Display( Description = "Malware Name" )]
-    public string? Malware { get; set; }
+    //[Display( Description = "Malware Name" )]
+    //public string? Malware { get; set; }
 
     [Display( AutoGenerateField = false )]
-    internal long[] Sort
+    internal long[] Sort => DetermineSort( );
+
+    internal long Sort0 => this.Sort[ 0 ];
+    internal long Sort1 => this.Sort.Length > 0 ? this.Sort[ 1 ] : 0;
+    internal long Sort2 => this.Sort.Length > 1 ? this.Sort[ 2 ] : 0;
+    internal long Sort3 => this.Sort.Length > 2 ? this.Sort[ 3 ] : 0;
+
+    private IPAddressType DetermineAddressType( )
+    {
+        string tmpAddress = string.Empty;
+        if ( string.IsNullOrEmpty( this.IPAddress ) && this.IPAddressRange is not null )
+            tmpAddress = this.IPAddressRange!.StartAddress.ToString( );
+        else if ( !string.IsNullOrEmpty( this.IPAddressBatch ) )
+            tmpAddress = this.IPAddressSet[ 0 ].ToString( );
+        else
+            tmpAddress = this.IPAddress!;
+
+
+        if ( tmpAddress.IndexOf( ':' ) > 0 )
+            return IPAddressType.IPv6;
+        else
+            return IPAddressType.IPv4;
+    }
+
+    private IPAddress? RepresentativeIPAddress
     {
         get
         {
-            if ( _sort[ 0 ] > 0 )
-                return _sort;
-            else
-            {
-                IPAddress address = System.Net.IPAddress.Parse( "8.8.8.8" );
-                if ( !string.IsNullOrEmpty( IPAddressBatch ) )
-                    address = System.Net.IPAddress.Parse( IPAddressBatch!.Split( ';' )[ 0 ] );
-                else if ( !string.IsNullOrEmpty( IPAddress ) )
-                    address = System.Net.IPAddress.Parse( IPAddress );
-                else if ( IPAddressRange is not null && IPAddressRange.StartAddress is not null )
-                    address = IPAddressRange.StartAddress;
+            string addressToUse = string.Empty;
+            if ( !string.IsNullOrEmpty( this.IPAddress ) )
+                return System.Net.IPAddress.Parse( this.IPAddress!.Split( ';' )[ 0 ] );
+            else if ( !string.IsNullOrEmpty( IPAddressBatch ) )
+                return System.Net.IPAddress.Parse( IPAddressBatch!.Split( ';' )[ 0 ] );
+            else if ( IPAddressRange is not null && IPAddressRange.StartAddress is not null )
+                return IPAddressRange.StartAddress;
+            else return null;
+        }
+    }
 
-                if ( AddressType == Maintain.IPAddressType.IPv4 )
+    private long[] DetermineSort( )
+    {
+        if ( _sort.Sum( ) > 0 ) // _sort[ 0 ] > 0 && _sort[ 3 ] > 0 )
+            return _sort;
+        else
+        {
+            _sort = [ 0, 0, 0, 0 ];
+            IPAddress? address = this.RepresentativeIPAddress;
+            CultureInfo culture = CultureInfo.InvariantCulture;
+
+            if ( address is not null )
+            {
+                if ( this.AddressType == IPAddressType.IPv4 )
                 {
                     _sort = address.GetAddressBytes( )
                                    .Select( s => Convert.ToInt64( s ) )
                                    .ToArray( );
                 }
-                else if ( AddressType == Maintain.IPAddressType.IPv6 )
+                else if ( this.AddressType == IPAddressType.IPv6 )
                 {
                     //byte[] bytes = address.GetAddressBytes( );
-                    string[] addressParts = address.ToString( )
+                    string[] addressParts = address!.ToString( )
                                                    .Split( ':' )
                                                    .Where( w => !string.IsNullOrEmpty( w ) )
                                                    .ToArray( );
 
                     List<long> sort = addressParts
-                            .Select( s => long.Parse( s, System.Globalization.NumberStyles.HexNumber ) )
+                            .Select( s => long.Parse( s, System.Globalization.NumberStyles.HexNumber, culture ) )
                             .Where( w => w != 0 )
                             .ToList( );
 
@@ -109,9 +165,9 @@ public record class CandidateEntry : IComparable<CandidateEntry>, IDisposable
                 }
                 else
                     _sort = [ 0, 0, 0, 0 ];
-
-                return _sort;
             }
+
+            return _sort;
         }
     }
 
@@ -155,7 +211,7 @@ public record class CandidateEntry : IComparable<CandidateEntry>, IDisposable
 
     private bool disposedValue;
 
-    protected virtual void Dispose( bool disposing )
+    private void Dispose( bool disposing )
     {
         if ( !disposedValue )
         {
