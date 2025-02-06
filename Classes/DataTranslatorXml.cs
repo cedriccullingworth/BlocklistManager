@@ -9,20 +9,16 @@ using System.Xml.Serialization;
 using BlocklistManager.Interfaces;
 using BlocklistManager.Models;
 
-using BlockListManager;
-
 using SBS.Utilities;
 
 using WindowsFirewallHelper;
 
 namespace BlocklistManager.Classes;
 
-internal sealed class DataTranslatorXml : IDataTranslator, IDisposable
+internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
 {
     public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream )
     {
-        List<CandidateEntry> results = [];
-
         return site.ID switch
         {
             11 => TranslateShodan( site, dataStream ),
@@ -32,12 +28,14 @@ internal sealed class DataTranslatorXml : IDataTranslator, IDisposable
 
     }
 
-    private static List<CandidateEntry> TranslateCyberCrimeTracker( RemoteSite site, Stream dataStream, string logFilePath = "" )
+#pragma warning disable CA1822 // Mark members as static
+    private List<CandidateEntry> TranslateCyberCrimeTracker( RemoteSite site, Stream dataStream, string logFilePath = "" )
+#pragma warning restore CA1822 // Mark members as static
     {
         try
         {
             XmlReader reader = new XmlTextReader( dataStream );
-            XmlSerializer serializer = new XmlSerializer( typeof( rss ) );
+            XmlSerializer serializer = new( typeof( rss ) );
             var rssData = serializer.Deserialize( reader );
             if ( rssData is not null )
             {
@@ -65,12 +63,14 @@ internal sealed class DataTranslatorXml : IDataTranslator, IDisposable
         return [];
     }
 
-    private static List<CandidateEntry> TranslateShodan( RemoteSite site, Stream dataStream, string logFilePath = "" )
+#pragma warning disable CA1822 // Mark members as static
+    private List<CandidateEntry> TranslateShodan( RemoteSite site, Stream dataStream, string logFilePath = "" )
+#pragma warning restore CA1822 // Mark members as static
     {
         try
         {
             XmlReader reader = new XmlTextReader( dataStream );
-            XmlSerializer serializer = new XmlSerializer( typeof( threatlist ) );
+            XmlSerializer serializer = new( typeof( threatlist ) );
             threatlist threats = (threatlist)serializer.Deserialize( reader )!;
             //IEnumerable<threatlistShodan> typed = threats.shodan!; //.Select( s => s );
 
@@ -119,5 +119,13 @@ internal sealed class DataTranslatorXml : IDataTranslator, IDisposable
         GC.SuppressFinalize( this );
     }
 
-    public List<CandidateEntry> TranslateFileData( RemoteSite site, string data ) => throw new NotImplementedException( );
+    public List<CandidateEntry> TranslateFileData( RemoteSite site, string data )
+    {
+        throw new NotImplementedException( );
+    }
+
+    List<CandidateEntry> IDataTranslator.TranslateDataStream( RemoteSite site, Stream dataStream )
+    {
+        throw new System.NotImplementedException( );
+    }
 }

@@ -42,10 +42,10 @@ public record class FirewallRule( string Name, FirewallAction Action, FirewallDi
     {
         get
         {
-            if ( this.RemoteAddresses is null )
+            if ( RemoteAddresses is null )
                 return null;
             else
-                return IAddressesToString( this.RemoteAddresses );
+                return IAddressesToString( RemoteAddresses );
         }
     }
 
@@ -110,14 +110,14 @@ public record class FirewallRule( string Name, FirewallAction Action, FirewallDi
         {
             CultureInfo culture = CultureInfo.InvariantCulture;
             long[] parts = [];
-            IPAddressType addressType = this.RemoteAddresses[ 0 ]
+            IPAddressType addressType = RemoteAddresses[ 0 ]
                                             .ToString( )
                                             .IndexOf( ':' ) > 0 ? IPAddressType.IPv6 : IPAddressType.IPv4;
 
-            if ( this.RemoteAddresses.Length == 1 && this.RemoteAddresses[ 0 ].ToString( ).IndexOf( '-' ) > 0 )
+            if ( RemoteAddresses.Length == 1 && RemoteAddresses[ 0 ].ToString( ).IndexOf( '-' ) > 0 )
             {
-                int endOfStartAddress = this.RemoteAddresses[ 0 ].ToString( ).IndexOf( '-' );
-                string firstAddress = this.RemoteAddresses[ 0 ].ToString( )[ ..endOfStartAddress ];
+                int endOfStartAddress = RemoteAddresses[ 0 ].ToString( ).IndexOf( '-' );
+                string firstAddress = RemoteAddresses[ 0 ].ToString( )[ ..endOfStartAddress ];
 
                 string[] partsAsStrings = ( addressType == IPAddressType.IPv4
                                                 ? firstAddress.Split( '.' )
@@ -142,9 +142,9 @@ public record class FirewallRule( string Name, FirewallAction Action, FirewallDi
                     Debug.Print( firstAddress );
                 }
             }
-            else if ( this.RemoteAddresses is not null && this.RemoteAddresses.Length > 0 )
+            else if ( RemoteAddresses is not null && RemoteAddresses.Length > 0 )
             {
-                string firstAddress = this.RemoteAddresses[ 0 ].ToString( );
+                string firstAddress = RemoteAddresses[ 0 ].ToString( );
                 string[] partsAsStrings = ( addressType == IPAddressType.IPv4
                                                                 ? firstAddress.Split( '.' )
                                                                 : firstAddress.Split( ':' ) )

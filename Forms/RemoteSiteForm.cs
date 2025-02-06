@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -11,6 +12,7 @@ namespace BlocklistManager;
 
 public partial class RemoteSiteForm : Form
 {
+    [DesignerSerializationVisibility( DesignerSerializationVisibility.Visible )]
     public RemoteSite DownloadSite { get; set; } = new( ) { Name = "", FileUrls = string.Empty, Active = false, FileTypeID = 1, FileType = Maintain.FILETYPES.First( f => f.ID == 1 ) };
 
     public RemoteSiteForm( )
@@ -20,8 +22,8 @@ public partial class RemoteSiteForm : Form
 
     private void CancelButton_Click( object sender, EventArgs e )
     {
-        this.Close( );
-        this.Dispose( );
+        Close( );
+        Dispose( );
     }
 
     private void OKButton_Click( object sender, EventArgs e )
@@ -44,8 +46,8 @@ public partial class RemoteSiteForm : Form
                 if ( Maintain.AddRemoteSite( site ) is not null )
                 {
                     MessageBox.Show( $"{site.Name} was saved successfully, ID {site.ID}" );
-                    this.Close( );
-                    this.Dispose( );
+                    Close( );
+                    Dispose( );
                 }
             }
         }
@@ -53,43 +55,43 @@ public partial class RemoteSiteForm : Form
 
     private void RemoteSiteForm_Load( object sender, EventArgs e )
     {
-        this.OKButton.Enabled = false;
-        this.TestButton.Enabled = false;
-        this.ActiveCheckBox.Checked = true;
+        OKButton.Enabled = false;
+        TestButton.Enabled = false;
+        ActiveCheckBox.Checked = true;
 
-        if ( this.DownloadSite != null )
+        if ( DownloadSite != null )
         {
-            this.NameText.Text = this.DownloadSite.Name;
-            this.SiteUrlText.Text = this.DownloadSite.SiteUrl;
-            this.FileUrlsArrayText.Text = this.DownloadSite.FilePaths[ 0 ];
-            for ( int i = 1; i < this.DownloadSite.FilePaths.Count; i++ )
+            NameText.Text = DownloadSite.Name;
+            SiteUrlText.Text = DownloadSite.SiteUrl;
+            FileUrlsArrayText.Text = DownloadSite.FilePaths[ 0 ];
+            for ( int i = 1; i < DownloadSite.FilePaths.Count; i++ )
             {
-                this.FileUrlsArrayText.Text += Environment.NewLine + this.DownloadSite.FilePaths[ i ];
+                FileUrlsArrayText.Text += Environment.NewLine + DownloadSite.FilePaths[ i ];
             }
 
-            this.ActiveCheckBox.Checked = this.DownloadSite.Active;
+            ActiveCheckBox.Checked = DownloadSite.Active;
         }
 
-        this.FileTypeComboBox.DisplayMember = "Description";
-        this.FileTypeComboBox.DataSource = Maintain.FILETYPES;
-        this.FileTypeComboBox.SelectedItem = this.FileTypeComboBox.Items.Cast<FileType>( ).First( f => f.ID == 1 );
+        FileTypeComboBox.DisplayMember = "Description";
+        FileTypeComboBox.DataSource = Maintain.FILETYPES;
+        FileTypeComboBox.SelectedItem = FileTypeComboBox.Items.Cast<FileType>( ).First( f => f.ID == 1 );
     }
 
     private void TestButton_Click( object sender, EventArgs e )
     {
         try
         {
-            this.OKButton.Enabled = false;
+            OKButton.Enabled = false;
             if ( SiteUrlIsValid( ) )
             {
-                this.Cursor = Cursors.WaitCursor;
+                Cursor = Cursors.WaitCursor;
                 var data = Maintain.DownloadBlocklists( null, [ DownloadSite ] );
-                this.Cursor = Cursors.Default;
+                Cursor = Cursors.Default;
 
                 if ( data is not null && data.Count > 0 )
                 {
                     MessageBox.Show( "Data was collected successfully" );
-                    this.OKButton.Enabled = true;
+                    OKButton.Enabled = true;
                 }
             }
         }
@@ -103,31 +105,31 @@ public partial class RemoteSiteForm : Form
     {
         try
         {
-            bool siteUrlIsValid = Maintain.UrlHostExists( this.SiteUrlText.Text );
+            bool siteUrlIsValid = Maintain.UrlHostExists( SiteUrlText.Text );
             if ( !siteUrlIsValid )
             {
-                this.OKButton.Enabled = false;
-                MessageBox.Show( $"The download site's URL ('{this.SiteUrlText.Text}') is invalid\r\nPlease correct this and try again." );
+                OKButton.Enabled = false;
+                MessageBox.Show( $"The download site's URL ('{SiteUrlText.Text}') is invalid\r\nPlease correct this and try again." );
             }
 
             return siteUrlIsValid;
         }
         catch
         {
-            this.OKButton.Enabled = false;
-            MessageBox.Show( $"The download site's URL ('{this.SiteUrlText.Text}') is invalid\r\nPlease correct this and try again." );
+            OKButton.Enabled = false;
+            MessageBox.Show( $"The download site's URL ('{SiteUrlText.Text}') is invalid\r\nPlease correct this and try again." );
             return false;
         }
     }
 
     private void NameText_Leave( object sender, EventArgs e )
     {
-        DownloadSite.Name = this.NameText.Text;
+        DownloadSite.Name = NameText.Text;
     }
 
     private void SiteUrlText_Leave( object sender, EventArgs e )
     {
-        DownloadSite.SiteUrl = this.SiteUrlText.Text;
+        DownloadSite.SiteUrl = SiteUrlText.Text;
     }
 
     private void FileUrlsArrayText_Leave( object sender, EventArgs e )
@@ -135,7 +137,7 @@ public partial class RemoteSiteForm : Form
         TestButton.Enabled = false;
         try
         {
-            DownloadSite.FileUrls = string.Join( ',', this.FileUrlsArrayText.Text.Split( ',' ) );
+            DownloadSite.FileUrls = string.Join( ',', FileUrlsArrayText.Text.Split( ',' ) );
             if ( DownloadSite.FileUrls.Length > 0 )
                 TestButton.Enabled = true;
         }
@@ -150,7 +152,7 @@ public partial class RemoteSiteForm : Form
         if ( FileTypeComboBox.SelectedItem is null )
             MessageBox.Show( "Select a file type" );
         else
-            DownloadSite.FileTypeID = ( (FileType)this.FileTypeComboBox.SelectedItem ).ID;
+            DownloadSite.FileTypeID = ( (FileType)FileTypeComboBox.SelectedItem ).ID;
     }
 
     //private void AddFileUrlButton_Click(object sender, EventArgs e)

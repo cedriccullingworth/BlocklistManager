@@ -9,7 +9,7 @@ namespace BlocklistManager.Interfaces;
 
 public interface IDataTranslator : IDisposable
 {
-    public List<CandidateEntry> TranslateFileData( RemoteSite site, string data );
+    List<CandidateEntry> TranslateFileData( RemoteSite site, string data );
 
-    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream );
+    List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream );
 }

@@ -28,7 +28,10 @@ internal sealed class DataTranslatorText : IDataTranslator
         };
     }
 
-    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream ) => throw new NotImplementedException( );
+    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream )
+    {
+        throw new NotImplementedException( );
+    }
 
     private static List<CandidateEntry> TranslateAlien( RemoteSite site, string textData )
     {
@@ -143,5 +146,10 @@ internal sealed class DataTranslatorText : IDataTranslator
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose( disposing: true );
         GC.SuppressFinalize( this );
+    }
+
+    List<CandidateEntry> IDataTranslator.TranslateDataStream( RemoteSite site, Stream dataStream )
+    {
+        throw new NotImplementedException( );
     }
 }

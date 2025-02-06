@@ -199,7 +199,7 @@ partial class UpdateScheduler
         // 
         // CancelButton
         // 
-        this.CancelButton.Location = new Point( 700, 492 );
+        this.CancelButton.Location = new Point( 700, 519 );
         this.CancelButton.Name = "CancelButton";
         this.CancelButton.Size = new Size( 75, 23 );
         this.CancelButton.TabIndex = 17;
@@ -316,6 +316,7 @@ partial class UpdateScheduler
         this.AcceptButton = this.OKButton;
         this.AutoScaleDimensions = new SizeF( 7F, 15F );
         this.AutoScaleMode = AutoScaleMode.Font;
+        this.CancelButton = this.CancelButton;
         this.ClientSize = new Size( 800, 591 );
         this.Controls.Add( this.label1 );
         this.Controls.Add( this.ApplicationName );

@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Windows.Forms;
 
 using BlocklistManager.Classes;
-using BlocklistManager.Context;
 using BlocklistManager.Models;
 
 using SBS.Utilities;
@@ -48,8 +47,8 @@ internal static class Program
         _appName = Assembly.GetEntryAssembly( )!.GetName( )!.Name!;
 
         // Create the database if it doesn't exist yet
-        BlocklistDbContextFactory factory = new BlocklistDbContextFactory( );
-        using BlocklistDbContext context = factory.CreateDbContext( args );
+        // BlocklistDbContextFactory factory = new( );
+        // using BlocklistDbContext context = factory.CreateDbContext( args );
 
         if ( args.Length == 0 )
         {
@@ -82,28 +81,20 @@ internal static class Program
                 }
             }
 
-            DateTime now = new DateTime( DateTime.UtcNow.Ticks, DateTimeKind.Utc );
+            DateTime now = new( DateTime.UtcNow.Ticks, DateTimeKind.Utc );
             CultureInfo culture = CultureInfo.CurrentCulture;
             string startedAt = now.ToLocalTime( ).ToString( "F", culture.DateTimeFormat );
             Logger.Log( string.Empty, string.Empty );
             Logger.Log( _appName!, $"................. BLOCKLIST UPDATES STARTED AT {startedAt} .................\r\n" );
 
-            //if ( allActive )
-            //{
-            //    ProcessAllActiveSites( sites );
-            //}
-            //else if ( sites.Count > 0 )
-            //{
-            Maintain.ProcessDownloads( sites, null, true );
-            //}
-            //else
-            //{
-            //    Logger.Log( _appName!, "No Firewall updates can be executed before 30 minutes after their last updated time... or no defined download sites were found\r\n" );
-            //}
+            int processedCount = 0;
+            Maintain.ProcessDownloads( sites, null, true, out processedCount, out int ipAddressCount );
 
             now = new DateTime( DateTime.UtcNow.Ticks, DateTimeKind.Utc );
             string endedAt = now.ToLocalTime( ).ToString( "T", culture.DateTimeFormat );
             Logger.Log( _appName!, $"................. END OF BLOCKLIST UPDATES (STARTED AT {startedAt}, ENDED AT {endedAt}) .................\r\n" );
+
+            Logger.Log( _appName!, $"Processed {ipAddressCount} IP addresses/ranges and created {processedCount * 2} ({processedCount} inbound, {processedCount} outbound) firewall rules" );
         }
     }
 

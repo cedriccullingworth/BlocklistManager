@@ -5,7 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
-using BlocklistManager.Context;
+using BlocklistManager.Classes;
+using BlocklistManager.Models;
 
 using Microsoft.Win32.TaskScheduler;
 
@@ -37,32 +38,24 @@ public partial class UpdateScheduler : Form
         _assemblyFullName = $"{_applicationDirectory}\\{_applicationShortName}.exe";
         //ScheduledTask = Microsoft.Win32.TaskScheduler.Task;
         List<string> accounts = AdminUsers/*  UserAccounts */.Select( s => $"{s.DomainOrComputerName}\\{s.UserName}" ).ToList( );
-        this.AccountsComboBox.DataSource = accounts;
-        this.ApplicationName.Text = _applicationShortName;
-        this.AuthorLabel.Text = $"Author:  {Environment.UserName}";
-        this.LogFolder.Text = $"{_applicationDirectory}\\Log";
-        this.Notes.Text = CurrentNotes;
-        this.TaskNameLabel.Text = $"Scheduled Task Name:     {_taskName} (Version {_version})";
-        this.ArgumentsText.Text = @$"/Sites:AllCurrent /LogPath:{this.LogFolder.Text}";
+        AccountsComboBox.DataSource = accounts;
+        ApplicationName.Text = _applicationShortName;
+        AuthorLabel.Text = $"Author:  {Environment.UserName}";
+        LogFolder.Text = $"{_applicationDirectory}\\Log";
+        Notes.Text = CurrentNotes;
+        TaskNameLabel.Text = $"Scheduled Task Name:     {_taskName} (Version {_version})";
+        ArgumentsText.Text = @$"/Sites:AllCurrent /LogPath:{LogFolder.Text}";
 
         _activeUser = accounts.FirstOrDefault( c => c == $"{Environment.UserDomainName}\\{Environment.UserName}" ) ?? $"{Environment.UserDomainName}\\{Environment.UserName}";
     }
 
     private void UpdateScheduler_Load( object sender, EventArgs e )
     {
-        this.FrequencyComboBox.SelectedIndex = 1; // Daily
-        this.RecurrenceComboBox.SelectedIndex = 0; // Every x number of <frequency>, default value 1 e.g. every 1 day
-        this.LoadSitesComboBox( );
-
-        if ( _activeUser is not null && ( (List<string>)this.AccountsComboBox.DataSource! ).Any( a => a == Environment.UserDomainName + '\\' + Environment.UserName ) )
-        {
-            this.AccountsComboBox.SelectedItem = _activeUser;
-            this.AuthorLabel.Text = $"Author:  {_activeUser}";
-        }
-        else
-            this.AuthorLabel.Text = $"Author:  {Environment.UserDomainName}\\{Environment.UserName}";
-
-        ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{this.LogFolder.Text}";
+        FrequencyComboBox.SelectedIndex = 1; // Daily
+        RecurrenceComboBox.SelectedIndex = 0; // Every x number of <frequency>, default value 1 e.g. every 1 day
+        LoadSitesComboBox( );
+        SetAuthorLabel( );
+        ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{LogFolder.Text}";
 
         // UseExisting( );
         var existing = TaskService.Instance.GetTask( $"{_applicationShortName}\\{_taskName}" );
@@ -80,10 +73,10 @@ public partial class UpdateScheduler : Form
                 string[] sites = sitesPart.Split( ';' );
 
                 if ( sites.First( ).Equals( "allcurrent", StringComparison.OrdinalIgnoreCase ) )
-                    this.SelectAllCheckBox.Checked = true;
+                    SelectAllCheckBox.Checked = true;
                 else
                 {
-                    foreach ( ListViewItem siteEntry in this.SitesList.Items )
+                    foreach ( ListViewItem siteEntry in SitesList.Items )
                     {
                         siteEntry.Checked = sites.Any( c => c == siteEntry.Tag!.ToString( ) );
                     }
@@ -91,81 +84,104 @@ public partial class UpdateScheduler : Form
             }
 
             Trigger trig = existing.Definition.Triggers.First( );
-            this.FrequencyComboBox.SelectedItem = trig.TriggerType switch
+            FrequencyComboBox.SelectedItem = trig.TriggerType switch
             {
-                TaskTriggerType.Weekly => this.FrequencyComboBox.Items[ 2 ],
-                TaskTriggerType.Daily => this.FrequencyComboBox.Items[ 1 ],
-                _ => this.FrequencyComboBox.Items[ 0 ],
+                TaskTriggerType.Weekly => FrequencyComboBox.Items[ 2 ],
+                TaskTriggerType.Daily => FrequencyComboBox.Items[ 1 ],
+                _ => FrequencyComboBox.Items[ 0 ],
             };
 
-            _version = existing.Definition.RegistrationInfo.Version;
-            if ( _version is null )
-                _version = new Version( 1, 0 );
-            else
-            {
-                if ( _version.Minor >= 9 )
-                    _version = new Version( _version.Major + 1, 0 );
-                else
-                    _version = new Version( _version.Major, _version.Minor + 1 );
-            }
+            CalculateTaskVersionNumber( existing! );
         }
 
-        this.TaskNameLabel.Text = $"Scheduled Task Name:     {_taskName} (Version {_version})";
-        this.Refresh( );
+        TaskNameLabel.Text = $"Scheduled Task Name:     {_taskName} (Version {_version})";
+        Refresh( );
+    }
+
+    private void SetAuthorLabel( )
+    {
+        if ( _activeUser is not null && ( (List<string>)AccountsComboBox.DataSource! ).Any( a => a == Environment.UserDomainName + '\\' + Environment.UserName ) )
+        {
+            AccountsComboBox.SelectedItem = _activeUser;
+            AuthorLabel.Text = $"Author:  {_activeUser}";
+        }
+        else
+            AuthorLabel.Text = $"Author:  {Environment.UserDomainName}\\{Environment.UserName}";
+    }
+
+    private void CalculateTaskVersionNumber( Task existing )
+    {
+        _version = existing.Definition.RegistrationInfo.Version;
+        if ( _version is null )
+            _version = new Version( 1, 0 );
+        else
+        {
+            if ( _version.Minor >= 9 )
+                _version = new Version( _version.Major + 1, 0 );
+            else
+                _version = new Version( _version.Major, _version.Minor + 1 );
+        }
     }
 
     private void LoadSitesComboBox( )
     {
-        using BlocklistDbContext context = new( );
-        var sites = context.ListRemoteSites( null )
+        if ( Maintain.ConnectedDevice is null )
+        {
+            MessageBox.Show( "Unable to determine your network address.  Please connect a device and try again." );
+            return;
+        }
+
+        List<RemoteSite> sites = ( new BlocklistData( ) ).ListDownloadSites( Maintain.ConnectedDevice!.ID, null ); /* context.ListRemoteSites( null )
                                          .OrderBy( o => o.Name )
-                                         .ToList( );
+                                         .ToList( );*/
 
         //IList<ListViewItem> items = sites.Select( s => new ListViewItem( ) { Text = s.Name, Checked = true, Tag = s.ID } )
         //                                 .ToList( );
-        this.SitesList.View = View.List;
+        SitesList.View = View.List;
         foreach ( var site in sites )
-            this.SitesList.Items.Add( new ListViewItem( site.Name ) { Checked = true, Tag = site.ID } );
+            SitesList.Items.Add( new ListViewItem( site.Name ) { Checked = true, Tag = site.ID } );
 
-        this.SelectAllCheckBox.Checked = true;
-        this.SelectAllCheckBox.CheckedChanged += this.SelectAllCheckBox_CheckedChanged!;
-        this.SitesList.ItemChecked += this.SitesList_ItemChecked!;
+        SelectAllCheckBox.Checked = true;
+        SelectAllCheckBox.CheckedChanged += SelectAllCheckBox_CheckedChanged!;
+        SitesList.ItemChecked += SitesList_ItemChecked!;
     }
 
     private void CancelButton_Click( object sender, EventArgs e )
     {
-        this.Close( );
+        Close( );
     }
 
     private void SitesList_ItemChecked( object sender, ItemCheckedEventArgs e )
     {
-        this.SelectAllCheckBox.Checked = AllSitesChecked( );
+        SelectAllCheckBox.Checked = AllSitesChecked( );
     }
 
-    private bool AllSitesChecked( ) => this.SitesList.Items.Cast<ListViewItem>( ).Count( c => c.Checked ) == SitesList.Items.Count;
+    private bool AllSitesChecked( )
+    {
+        return SitesList.Items.Cast<ListViewItem>( ).Count( c => c.Checked ) == SitesList.Items.Count;
+    }
 
     private void OKButton_Click( object sender, EventArgs e )
     {
-        if ( !Directory.Exists( this.LogFolder.Text ) )
-            Directory.CreateDirectory( this.LogFolder.Text );
+        if ( !Directory.Exists( LogFolder.Text ) )
+            Directory.CreateDirectory( LogFolder.Text );
 
         // This works
         // TaskService.Instance.AddTask( "Test", DefineTrigger( ), new ExecAction( $"{_applicationDirectory}\\{_applicationShortName}.exe", ArgumentsText.Text, LogFolder.Text ));
 
-        var existingTask = TaskService.Instance.FindTask( _applicationShortName );
+        //        Task existingTask = TaskService.Instance.FindTask( _applicationShortName );
         //TaskPrincipal principal = new System.Security.Principal.WindowsIdentity( _activeUser );
 
         //if ( existingTask is not null )
         //    TaskService.Instance.RootFolder.DeleteTask( _taskName, false );
 
-        TaskDefinition? taskDefinition = this.CreateTaskDefinition( );
+        TaskDefinition? taskDefinition = CreateTaskDefinition( );
 
         // Register the task in the scheduler root folder of the local machine
         try
         {
             var folder = TaskService.Instance.GetFolder( _applicationShortName );
-            if ( folder is null )
-                folder = TaskService.Instance.RootFolder.CreateFolder( _applicationShortName );
+            folder ??= TaskService.Instance.RootFolder.CreateFolder( _applicationShortName );
             folder.RegisterTaskDefinition( _taskName, taskDefinition, TaskCreation.CreateOrUpdate, System.Security.Principal.WindowsIdentity.GetCurrent( ).Name );
         }
         catch ( Exception ex )
@@ -173,7 +189,7 @@ public partial class UpdateScheduler : Form
             MessageBox.Show( $"Unable to create the scheduled task.\r\n{ex.Message}" );
         }
 
-        this.Close( );
+        Close( );
     }
 
     private TaskDefinition? CreateTaskDefinition( )
@@ -226,13 +242,13 @@ public partial class UpdateScheduler : Form
     private Trigger DefineTrigger( )
     {
         Trigger trigger = DefineTriggerBase( );
-        if ( this.FrequencyComboBox.SelectedItem is null )
+        if ( FrequencyComboBox.SelectedItem is null )
             return trigger;
 
         TimeSpan maxDuration = trigger.EndBoundary - trigger.StartBoundary;
-        RepetitionPattern repetition = new( TimeSpan.FromDays( 1 ), maxDuration, true );
+        RepetitionPattern repetition; // = new( TimeSpan.FromDays( 1 ), maxDuration, true );
 
-        switch ( this.FrequencyComboBox.SelectedItem )
+        switch ( FrequencyComboBox.SelectedItem )
         {
             case "Hourly":
                 {
@@ -261,7 +277,7 @@ public partial class UpdateScheduler : Form
     private Trigger DefineTriggerBase( )
     {
         Trigger trigger;
-        if ( this.FrequencyComboBox.SelectedItem!.ToString( ) == "Hourly" )
+        if ( FrequencyComboBox.SelectedItem!.ToString( ) == "Hourly" )
         {
             trigger = new TimeTrigger( )
             {
@@ -271,7 +287,7 @@ public partial class UpdateScheduler : Form
                 ExecutionTimeLimit = TimeSpan.FromHours( 2 ),
             };
         }
-        else if ( this.FrequencyComboBox.SelectedItem!.ToString( ) == "Weekly" )
+        else if ( FrequencyComboBox.SelectedItem!.ToString( ) == "Weekly" )
         {
             trigger = new WeeklyTrigger
             {
@@ -295,7 +311,9 @@ public partial class UpdateScheduler : Form
         return trigger;
     }
 
-    private DateTime DetermineStartTime( ) => new
+    private DateTime DetermineStartTime( )
+    {
+        return new
         (
             StartDatePicker.Value.Date.Year,
             StartDatePicker.Value.Date.Month,
@@ -304,29 +322,30 @@ public partial class UpdateScheduler : Form
             StartTimePicker.Value.Minute,
             StartTimePicker.Value.Second
         );
+    }
 
     private void DefineRegistrationInfo( TaskDefinition definition )
     {
         definition.RegistrationInfo.Author = _activeUser;
         definition.RegistrationInfo.Version = _version;
         definition.RegistrationInfo.Date = DateTime.Now;
-        definition.RegistrationInfo.Description = this.TaskNameLabel.Text[ ( this.TaskNameLabel.Text.IndexOf( ':' ) + 1 ).. ].Trim( );
+        definition.RegistrationInfo.Description = TaskNameLabel.Text[ ( TaskNameLabel.Text.IndexOf( ':' ) + 1 ).. ].Trim( );
         definition.RegistrationInfo.Source = Assembly.GetExecutingAssembly( ).GetName( ).Name;
     }
 
     private void SelectAllCheckBox_CheckedChanged( object sender, EventArgs e )
     {
-        if ( this.SelectAllCheckBox.Checked )
+        if ( SelectAllCheckBox.Checked )
         {
-            foreach ( ListViewItem item in this.SitesList.Items.Cast<ListViewItem>( ).Where( w => w.Checked != this.SelectAllCheckBox.Checked ) )
+            foreach ( ListViewItem item in SitesList.Items.Cast<ListViewItem>( ).Where( w => w.Checked != SelectAllCheckBox.Checked ) )
             {
                 item.Checked = true; // this.SelectAllCheckBox.Checked;
             }
         }
 
-        if ( this.SitesList.Items
+        if ( SitesList.Items
                      .Cast<ListViewItem>( )
-                     .Count( w => w.Checked ) == this.SitesList.Items.Count )
+                     .Count( w => w.Checked ) == SitesList.Items.Count )
         {
             _remoteSiteIDs = "AllCurrent";
         }
@@ -339,7 +358,7 @@ public partial class UpdateScheduler : Form
                                                 );
         }
 
-        ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{this.LogFolder.Text}";
+        ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{LogFolder.Text}";
         ArgumentsText.Refresh( );
     }
 
@@ -356,14 +375,14 @@ public partial class UpdateScheduler : Form
         };
 
         dialog.ShowDialog( this );
-        this.LogFolder.Text = dialog.SelectedPath;
-        ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{this.LogFolder.Text}";
+        LogFolder.Text = dialog.SelectedPath;
+        ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{LogFolder.Text}";
         ArgumentsText.Refresh( );
     }
 
     private void LogFolder_Leave( object sender, EventArgs e )
     {
-        ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{this.LogFolder.Text}";
+        ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{LogFolder.Text}";
     }
 
     private string CurrentNotes
@@ -372,12 +391,12 @@ public partial class UpdateScheduler : Form
         {
             if ( !CompatibleOSVersion )
             {
-                this.OKButton.Enabled = false;
+                OKButton.Enabled = false;
                 return $"This application cannot schedule updates under this operating system ({OSVersion.GetOperatingSystem( )})";
             }
             else
                 //return $"NOTES:\r\n    The updates task will only run when the computer is logged in;\r\n    The task can only run on computers running Windows;\r\n    The task will be run as Administrator if possible;\r\n    The task will on run if the computer is on AC power and will stop if the computer switches to battery;\r\n    The task can be run on demand in the Windows Task Scheduler;\r\n    The task will be terminated if it runs for longer than 2 hours;\r\n    The task will not start if another instance is already running;\r\n    The task will run under the creating user's account.\r\n\r\n";
-                return $"NOTES:\r\n  The updates task will only run when the computer is logged in;\r\n  The task can only run on computers running Windows 7 or later versions;\r\n  The task will be run as Administrator if possible;\r\n  The task will only run when the computer is on AC power and will stop if the computer switches to battery;\r\n  The task can be run on demand in the Windows Task Scheduler;\r\n  The task will be terminated if it runs for longer than 2 hours;\r\n  The task will not start if another instance is already running;\r\n  The task will run under the creating user's account.\r\n";
+                return $"NOTES:\r\n  The updates task will only run when the computer is logged in;\r\n  The task can only run on computers running Windows 7 or later versions;\r\n  The task will be run as Administrator if possible;\r\n  The task will only run when the computer is on AC power and will stop if the computer switches to battery;\r\n  The task can be run on demand in the Windows Task Scheduler;\r\n  The task will be terminated if it runs for longer than 2 hours;\r\n  The task will not start if another instance is already running;\r\n  The task will be created/updated under the creating user's account ({Environment.UserDomainName}\\{Environment.UserName}).\r\n";
         }
     }
 

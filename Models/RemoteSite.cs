@@ -38,15 +38,9 @@ public class RemoteSite
     [Column( TypeName = "nvarchar(4000)" )]
     public required string FileUrls { get; set; }
 
-    public IList<string> FilePaths
-    {
-        get
-        {
-            return FileUrls.Split( ',' )
+    public IList<string> FilePaths => FileUrls.Split( ',' )
                            .Select( s => s.Trim( ) )
                            .ToList( );
-        }
-    }
 
     public int? FileTypeID { get; set; } = 1;
 

@@ -15,25 +15,13 @@ internal sealed class PathInfo
 
     internal Uri AbsoluteUrl { get; set; }
 
-    internal string AbsoluteUrlStr
-    {
-        get { return AbsoluteUrl.ToString( ); }
-    }
+    internal string AbsoluteUrlStr => AbsoluteUrl.ToString( );
 
-    internal string RootUrl
-    {
-        get { return AbsoluteUrl.GetLeftPart( UriPartial.Authority ); }
-    }
+    internal string RootUrl => AbsoluteUrl.GetLeftPart( UriPartial.Authority );
 
-    internal string RelativeUrl
-    {
-        get { return AbsoluteUrl.PathAndQuery; }
-    }
+    internal string RelativeUrl => AbsoluteUrl.PathAndQuery;
 
-    internal string Query
-    {
-        get { return AbsoluteUrl.Query; }
-    }
+    internal string Query => AbsoluteUrl.Query;
 
     internal bool IsDir { get; set; }
     internal List<PathInfo> Children { get; set; }

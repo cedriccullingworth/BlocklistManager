@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Security;
-using System.Reflection;
 using System.Windows.Forms;
 
 using BlocklistManager.Models;
@@ -21,9 +20,13 @@ internal sealed class Downloader : IDisposable
 {
     private const int TIMEOUT_SECONDS = 30;
 
-    private static readonly string _appName = Assembly.GetEntryAssembly( )!.GetName( )!.Name!;
+    // private static readonly string _appName = Assembly.GetEntryAssembly( )!.GetName( )!.Name!;
 
-    public string ReadData( string filePath ) => throw new NotImplementedException( );
+    public string ReadData( string filePath )
+    {
+        throw new NotImplementedException( );
+    }
+
     public static string ReadData( RemoteSite site, out string? fileExtension, string url )
     {
         string textData = "";
@@ -66,7 +69,7 @@ internal sealed class Downloader : IDisposable
     /// <returns>The unchanged downloaded text</returns>
     private static string DownloadText( RemoteSite site, string url, ref string textData )
     {
-        string extension = string.Empty;
+        // string extension; // = string.Empty;
         textData = string.Empty;
 
         HttpClient client = new( )

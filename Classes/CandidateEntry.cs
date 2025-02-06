@@ -52,7 +52,7 @@ public sealed record class CandidateEntry( string? nameArg, string? iPAddressArg
     [Display( AutoGenerateField = true, Description = "IP Address Batch", Name = "IPAddressSet" )]
     public IAddress[] IPAddressSet { get; set; } = iPAddressSetArg;
 
-    public string? IPAddressBatch => Maintain.IAddressesToString( this.IPAddressSet );
+    public string? IPAddressBatch => Maintain.IAddressesToString( IPAddressSet );
     //{
     //    get
     //    {
@@ -60,7 +60,7 @@ public sealed record class CandidateEntry( string? nameArg, string? iPAddressArg
     //    }
     //}
 
-    internal IPAddressType AddressType => this.DetermineAddressType( ); // string.IsNullOrEmpty( this.IPAddress ) ? IPAddressType.Invalid : this.IPAddress.IndexOf( ':' ) > 0 ? IPAddressType.IPv6 : IPAddressType.IPv4; // { get; set; } = Maintain.IPAddressType.IPv4;
+    internal IPAddressType AddressType => DetermineAddressType( ); // string.IsNullOrEmpty( this.IPAddress ) ? IPAddressType.Invalid : this.IPAddress.IndexOf( ':' ) > 0 ? IPAddressType.IPv6 : IPAddressType.IPv4; // { get; set; } = Maintain.IPAddressType.IPv4;
 
     [Display( Description = "Ports (default 'Any')" )]
     public ushort[] Ports { get; set; } = portsArg;
@@ -87,20 +87,20 @@ public sealed record class CandidateEntry( string? nameArg, string? iPAddressArg
     [Display( AutoGenerateField = false )]
     internal long[] Sort => DetermineSort( );
 
-    internal long Sort0 => this.Sort[ 0 ];
-    internal long Sort1 => this.Sort.Length > 0 ? this.Sort[ 1 ] : 0;
-    internal long Sort2 => this.Sort.Length > 1 ? this.Sort[ 2 ] : 0;
-    internal long Sort3 => this.Sort.Length > 2 ? this.Sort[ 3 ] : 0;
+    internal long Sort0 => Sort[ 0 ];
+    internal long Sort1 => Sort.Length > 0 ? Sort[ 1 ] : 0;
+    internal long Sort2 => Sort.Length > 1 ? Sort[ 2 ] : 0;
+    internal long Sort3 => Sort.Length > 2 ? Sort[ 3 ] : 0;
 
     private IPAddressType DetermineAddressType( )
     {
         string tmpAddress = string.Empty;
-        if ( string.IsNullOrEmpty( this.IPAddress ) && this.IPAddressRange is not null )
-            tmpAddress = this.IPAddressRange!.StartAddress.ToString( );
-        else if ( !string.IsNullOrEmpty( this.IPAddressBatch ) )
-            tmpAddress = this.IPAddressSet[ 0 ].ToString( );
+        if ( string.IsNullOrEmpty( IPAddress ) && IPAddressRange is not null )
+            tmpAddress = IPAddressRange!.StartAddress.ToString( );
+        else if ( !string.IsNullOrEmpty( IPAddressBatch ) )
+            tmpAddress = IPAddressSet[ 0 ].ToString( );
         else
-            tmpAddress = this.IPAddress!;
+            tmpAddress = IPAddress!;
 
 
         if ( tmpAddress.IndexOf( ':' ) > 0 )
@@ -114,8 +114,8 @@ public sealed record class CandidateEntry( string? nameArg, string? iPAddressArg
         get
         {
             string addressToUse = string.Empty;
-            if ( !string.IsNullOrEmpty( this.IPAddress ) )
-                return System.Net.IPAddress.Parse( this.IPAddress!.Split( ';' )[ 0 ] );
+            if ( !string.IsNullOrEmpty( IPAddress ) )
+                return System.Net.IPAddress.Parse( IPAddress!.Split( ';' )[ 0 ] );
             else if ( !string.IsNullOrEmpty( IPAddressBatch ) )
                 return System.Net.IPAddress.Parse( IPAddressBatch!.Split( ';' )[ 0 ] );
             else if ( IPAddressRange is not null && IPAddressRange.StartAddress is not null )
@@ -131,18 +131,18 @@ public sealed record class CandidateEntry( string? nameArg, string? iPAddressArg
         else
         {
             _sort = [ 0, 0, 0, 0 ];
-            IPAddress? address = this.RepresentativeIPAddress;
+            IPAddress? address = RepresentativeIPAddress;
             CultureInfo culture = CultureInfo.InvariantCulture;
 
             if ( address is not null )
             {
-                if ( this.AddressType == IPAddressType.IPv4 )
+                if ( AddressType == IPAddressType.IPv4 )
                 {
                     _sort = address.GetAddressBytes( )
                                    .Select( s => Convert.ToInt64( s ) )
                                    .ToArray( );
                 }
-                else if ( this.AddressType == IPAddressType.IPv6 )
+                else if ( AddressType == IPAddressType.IPv6 )
                 {
                     //byte[] bytes = address.GetAddressBytes( );
                     string[] addressParts = address!.ToString( )
@@ -180,9 +180,9 @@ public sealed record class CandidateEntry( string? nameArg, string? iPAddressArg
         {
             ret = -1;
             compare.Add( other );
-            if ( this.Equals( other ) )
+            if ( Equals( other ) )
                 ret = 0;
-            else if ( this.Equals( compare[ 1 ] ) )  // this follows other
+            else if ( Equals( compare[ 1 ] ) )  // this follows other
                 ret = 1;
         }
 

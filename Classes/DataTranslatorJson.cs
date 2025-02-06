@@ -15,7 +15,6 @@ namespace BlocklistManager.Classes;
 
 public sealed class DataTranslatorJson : IDataTranslator
 {
-    // TODO
     public List<CandidateEntry> TranslateFileData( RemoteSite site, string data )
     {
         return site.Name switch
@@ -25,7 +24,10 @@ public sealed class DataTranslatorJson : IDataTranslator
         };
     }
 
-    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream ) => throw new System.NotImplementedException( );
+    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream )
+    {
+        throw new System.NotImplementedException( );
+    }
 
     private static List<CandidateEntry> TranslateFeodo( RemoteSite site, JsonDocument doc )
     {
@@ -159,5 +161,10 @@ public sealed class DataTranslatorJson : IDataTranslator
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose( disposing: true );
         System.GC.SuppressFinalize( this );
+    }
+
+    List<CandidateEntry> IDataTranslator.TranslateDataStream( RemoteSite site, Stream dataStream )
+    {
+        throw new System.NotImplementedException( );
     }
 }

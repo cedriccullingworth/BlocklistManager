@@ -1,27 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
 	<PublishTrimmed>false</PublishTrimmed>
 	<PublishAot>false</PublishAot>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-	<ApplicationVersion>1.5 alpha</ApplicationVersion>
+	<ApplicationVersion>1.4</ApplicationVersion>
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <BaseOutputPath>bin\</BaseOutputPath>
     <StartupObject>BlocklistManager.Program</StartupObject>
-    <ApplicationIcon>BlocklistManager.ico</ApplicationIcon>
+    <ApplicationIcon>Images\BlocklistManager.ico</ApplicationIcon>
     <Copyright>Cedric Cullingworth</Copyright>
-    <PackageIcon>BlocklistManager.png</PackageIcon>
+    <PackageIcon>Images\BlocklistManager.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>blocklist blacklist blocklists blacklists firewall security information</PackageTags>
+    <PackageTags>blocklist blacklist blocklists blacklists windows firewall information security</PackageTags>
+	<Version>1.5.0</Version>
     <AssemblyVersion>1.5.0</AssemblyVersion>
     <FileVersion>1.5.0</FileVersion>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
-    <NeutralLanguage>en-GB</NeutralLanguage>
+    <NeutralLanguage>en-001</NeutralLanguage>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -38,27 +40,46 @@
 
   <ItemGroup>
     <Compile Remove="BlocklistAPI\**" />
+    <Compile Remove="Context\**" />
+    <Compile Remove="DataBackup\**" />
+    <Compile Remove="Migrations\**" />
     <EmbeddedResource Remove="BlocklistAPI\**" />
+    <EmbeddedResource Remove="Context\**" />
+    <EmbeddedResource Remove="DataBackup\**" />
+    <EmbeddedResource Remove="Migrations\**" />
     <None Remove="BlocklistAPI\**" />
+    <None Remove="Context\**" />
+    <None Remove="DataBackup\**" />
+    <None Remove="Migrations\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Classes\BlocklistDbContextFactory.cs" />
     <Compile Remove="Classes\HtmlDataCollector.cs" />
     <Compile Remove="Classes\HttpHelper.cs" />
     <Compile Remove="Classes\ZipDataCollector.cs" />
+    <Compile Remove="Forms\RemoteSiteForm.cs" />
+    <Compile Remove="Forms\RemoteSiteForm.Designer.cs" />
     <Compile Remove="Models\IPAddress.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="BlocklistManager.ico" />
+    <EmbeddedResource Remove="Forms\RemoteSiteForm.resx" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
-    <PackageReference Include="SharpCompress" Version="0.38.0" />
+    <Content Include="Images\BlocklistManager.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.1" />
+    <PackageReference Include="SharpCompress" Version="0.39.0" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.1" />
     <PackageReference Include="TaskScheduler" Version="2.11.0" />
     <PackageReference Include="WindowsFirewallHelper" Version="2.2.0.86" />
   </ItemGroup>
@@ -87,9 +108,10 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="BlocklistManager.png">
+    <None Update="Images\BlocklistManager.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -104,13 +126,13 @@
     <Reference Include="OSVersionExtension">
       <HintPath>..\detect-windows-version\src\OSVersionExt\bin\Release\net8.0\OSVersionExtension.dll</HintPath>
     </Reference>
+    <Reference Include="SBS.Encryption2022">
+      <HintPath>..\BlocklistAPI\bin\Release\net8.0\SBS.Encryption2022.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="SBS.Utilities">
       <HintPath>..\SBS.Utilities\bin\Release\net8.0\SBS.Utilities.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DataBackup\" />
   </ItemGroup>
 
 </Project>

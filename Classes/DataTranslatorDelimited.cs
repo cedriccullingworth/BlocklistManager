@@ -32,12 +32,15 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
         };
     }
 
-    private static List<CandidateEntry> TranslateCommaDelimited( RemoteSite site, List<string> lineData ) => lineData
-                                 .Select( s => s.Replace( "# ", "," ).Replace( "#", string.Empty ) )
-                                 .Select( s => s.Split( ',', StringSplitOptions.TrimEntries ) )
-                                 .Where( w => Maintain.InternetAddressType( w[ 0 ] ) != Maintain.IPAddressType.Invalid )
-                                 .Select( s => new CandidateEntry( site.Name, s[ 0 ], null, [], [], FirewallProtocol.Any ) )
-                                 .ToList( );
+    private static List<CandidateEntry> TranslateCommaDelimited( RemoteSite site, List<string> lineData )
+    {
+        return lineData
+                    .Select( s => s.Replace( "# ", "," ).Replace( "#", string.Empty ) )
+                    .Select( s => s.Split( ',', StringSplitOptions.TrimEntries ) )
+                    .Where( w => Maintain.InternetAddressType( w[ 0 ] ) != Maintain.IPAddressType.Invalid )
+                    .Select( s => new CandidateEntry( site.Name, s[ 0 ], null, [], [], FirewallProtocol.Any ) )
+                    .ToList( );
+    }
 
     //private static List<CandidateEntry> TranslateMyIP( RemoteSite site, List<string> lineData ) => lineData.Take( 10 )
     //                             .Select( s => s.Replace( "# ", "," ).Replace( "#", string.Empty ) )
@@ -46,7 +49,10 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
     //                             .Select( s => new CandidateEntry( site.Name, s[ 0 ], null, [], [], FirewallProtocol.Any ) )
     //                             .ToList( );
 
-    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream ) => throw new NotImplementedException( );
+    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream )
+    {
+        throw new NotImplementedException( );
+    }
 
     private static List<CandidateEntry> TranslateTabDelimited( RemoteSite site, List<string> dataLines )
     {
@@ -58,10 +64,12 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
         };
     }
 
-    private static List<CandidateEntry> ReadDelimitedDataScriptzTeam( char delimiter, List<string> allText, RemoteSite site ) =>
-        allText.Select( s => s.Split( delimiter ) )
+    private static List<CandidateEntry> ReadDelimitedDataScriptzTeam( char delimiter, List<string> allText, RemoteSite site )
+    {
+        return allText.Select( s => s.Split( delimiter ) )
                                     .Select( s => new CandidateEntry( site.Name, s[ 0 ], null, [], [], FirewallProtocol.Any ) )
                                     .ToList( );
+    }
 
     private static List<CandidateEntry> ReadDelimitedDataDShield( char delimiter, List<string> allText, RemoteSite site )
     {
@@ -128,4 +136,9 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
         Dispose( disposing: true );
         GC.SuppressFinalize( this );
     }
+
+    //static List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream )
+    //{
+    //    throw new NotImplementedException( );
+    //}
 }

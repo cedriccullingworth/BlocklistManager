@@ -3,7 +3,8 @@
     "BlocklistManager": {
       "commandName": "Project",
       "workingDirectory": "D:\\Projects\\BlocklistManager\\bin\\Debug\\net8.0-windows",
-      "nativeDebugging": false
+      "nativeDebugging": false,
+      "VersionPrefix": "1.5.0"
     }
   }
 }

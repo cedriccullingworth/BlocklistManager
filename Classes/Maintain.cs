@@ -4,14 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Windows.Forms;
 
-using BlocklistManager.Context;
 using BlocklistManager.Models;
-
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
 
 using SBS.Utilities;
 
@@ -27,10 +24,25 @@ internal static class Maintain
     private const char BATCH_DELIMITER = ';';
     private static readonly string _appName = Assembly.GetEntryAssembly( )!.GetName( )!.Name!;
     internal static string LogFileFullname = Assembly.GetEntryAssembly( )!.FullName!.Replace( ".exe", ".log" );
+    private static string? macAddress = GetMACAddress( ); // "00:00:00:00:00:00";
+    private static Device? device;
 
-    internal static List<FileType> FILETYPES => ( new BlocklistDbContext( ) ).ListFileTypes( );
+    internal static List<FileType> FILETYPES => ( new BlocklistData( ) ).ListFileTypes( );
 
     internal static FirewallProfiles _AllProfiles = FirewallProfiles.Public | FirewallProfiles.Domain | FirewallProfiles.Private;
+
+    internal static Device? ConnectedDevice
+    {
+        get
+        {
+            if ( device is null )
+            {
+                device = macAddress is null ? null : new BlocklistData( ).GetDevice( macAddress );
+            }
+
+            return device!;
+        }
+    }
 
     internal enum IPAddressType
     {
@@ -39,116 +51,162 @@ internal static class Maintain
         Invalid
     }
 
-    internal static List<RemoteSite> ListDownloadSites( RemoteSite? remoteSite, bool showAll = false ) =>
-         new BlocklistDbContext( )
-        .ListRemoteSites( remoteSite, showAll );
+    internal record Adapter( string NetworkType, string MACAddress );
 
-    internal static void EnsureStartupDataExists(/*BlocklistContext store*/)
+    /// <summary>
+    /// Get the client computer's MAC address for use in identifying the device
+    /// NOTE: This currently only considers Ethernet and 802.11 WiFi adapters with IP addresses and an active gateway, add other types as required
+    /// </summary>
+    /// <returns>The MAC address of the first active Ethernet or WiFi adapter found</returns>
+    public static string? GetMACAddress( )
     {
-        try
-        {
-            using BlocklistDbContext store = new( );
-            store.Database.EnsureCreated( );
-            if ( store.Database.GetService<IDatabaseCreator>( ) is RelationalDatabaseCreator databaseCreator )
-            {
-                try
-                {
-                    databaseCreator.CreateTables( );
-                }
-                catch
-                {
-                    //A SqlException will be thrown if tables already exist, so simply ignore it.
-                }
-            }
-            else
-            {
-                throw new InvalidCastException( "Database creation service is null" );
-            }
+        List<Adapter> macAddresses =
+            NetworkInterface.GetAllNetworkInterfaces( )
+                            .Where( w => w.OperationalStatus == OperationalStatus.Up )
+                            .Where( w => w.NetworkInterfaceType == NetworkInterfaceType.Ethernet || w.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 )
+                            .Where( w => w.GetIPProperties( ) != null && ( w.GetIPProperties( ).GetIPv4Properties( ) != null ) || w.GetIPProperties( ).GetIPv6Properties( ) != null )
+                            .Where( w => w.GetPhysicalAddress( ).ToString( ).Length >= 12 )
+                            .Where( w => w.GetIPProperties( ).GatewayAddresses.Count > 0 )
+                            .Select( s => new Adapter
+                                (
+                                    s.NetworkInterfaceType == NetworkInterfaceType.Ethernet ? "Ethernet" : "WiFi",
+                                    MACAddress( s.GetPhysicalAddress( ) )
+                                ) )
+                            .OrderBy( o => o.NetworkType )
+                            .ToList( );
 
-            store.EnsureDataExists( );
-        }
-        catch ( Exception ex )
-        {
-            MessageBox.Show( ex.Message ); // TODO: Improve message
-        }
+        return macAddresses.Count > 0 ? macAddresses.First( ).MACAddress : null;
     }
 
-    internal static RemoteSite? AddRemoteSite( RemoteSite remoteSite )
+    /// <summary>
+    /// Formats the MAC address as a string, "00:00:00:00:00:00" if no valid physical address is found
+    /// </summary>
+    /// <param name="physicalAddress"></param>
+    /// <returns></returns>
+    private static string MACAddress( PhysicalAddress physicalAddress )
     {
-        using BlocklistDbContext ctx = new( );
-        RemoteSite? newSite = null;
-
-        if ( remoteSite.ID > 0 || ctx.RemoteSites.Any( c => c.Name == remoteSite.Name ) )
-        {
-            return UpdateRemoteSite( remoteSite );
-        }
+        /* MAC Address for tests: 2C:3B:70:0C:DA:F5 */
+        string s = physicalAddress.ToString( );
+        if ( s.Length >= 12 )
+            return string.Format( new CultureInfo( "en-US" ), "{0}:{1}:{2}:{3}:{4}:{5}", s[ ..2 ], s[ 2..4 ], s[ 4..6 ], s[ 6..8 ], s[ 8..10 ], s[ 10..12 ] );
         else
-        {
-            ctx.RemoteSites.Add( remoteSite );
-            ctx.SaveChanges( );
-            newSite = ctx.RemoteSites.FirstOrDefault( f => f.Name == remoteSite.Name );
-        }
-
-        return newSite;
+            return "00:00:00:00:00:00";
     }
 
-    internal static bool DeleteRemoteSite( RemoteSite remoteSite )
+    internal static List<RemoteSite> ListDownloadSites( RemoteSite? remoteSite, bool showAll = false )
     {
-        using BlocklistDbContext ctx = new( );
-        bool deleted = false;
-
-        try
-        {
-            ctx.RemoteSites.Remove( remoteSite );
-            ctx.SaveChanges( );
-            if ( !ctx.RemoteSites.Any( c => c.Name == remoteSite.Name ) )
-            {
-                deleted = true;
-            }
-        }
-        catch ( Exception ex )
-        {
-            MessageBox.Show( ex.Message ); // TODO: Improve the message
-        }
-
-        return deleted;
+        return new BlocklistData( ).ListDownloadSites( ConnectedDevice!.ID, remoteSite, showAll );
     }
 
-    internal static RemoteSite? UpdateRemoteSite( RemoteSite remoteSite )
-    {
-        using BlocklistDbContext ctx = new( );
-        RemoteSite? existing = ctx.RemoteSites.FirstOrDefault( f => f.Name == remoteSite.Name );
+    //internal static void EnsureStartupDataExists(/*BlocklistContext store*/)
+    //{
+    //    try
+    //    {
+    //        using BlocklistDbContext store = new( );
+    //        store.Database.EnsureCreated( );
+    //        if ( store.Database.GetService<IDatabaseCreator>( ) is RelationalDatabaseCreator databaseCreator )
+    //        {
+    //            try
+    //            {
+    //                databaseCreator.CreateTables( );
+    //            }
+    //            catch
+    //            {
+    //                //A SqlException will be thrown if tables already exist, so simply ignore it.
+    //            }
+    //        }
+    //        else
+    //        {
+    //            throw new InvalidCastException( "Database creation service is null" );
+    //        }
 
-        if ( existing != null )
-        {
-            existing.SiteUrl = remoteSite.SiteUrl;
-            existing.FileUrls = remoteSite.FileUrls;
-            existing.FileType = remoteSite.FileType;
-            existing.Active = remoteSite.Active;
-            ctx.SaveChanges( );
-            existing = ctx.RemoteSites.FirstOrDefault( f => f.Name == remoteSite.Name );
-        }
-        else
-        {
-            MessageBox.Show( $"No site matching '{remoteSite.Name}' was found." );
-        }
+    //        store.EnsureDataExists( );
+    //    }
+    //    catch ( Exception ex )
+    //    {
+    //        MessageBox.Show( ex.Message ); // TODO: Improve message
+    //    }
+    //}
 
-        return existing;
-    }
+    //internal static RemoteSite? AddRemoteSite( RemoteSite remoteSite )
+    //{
+    //    using BlocklistDbContext ctx = new( );
+    //    RemoteSite? newSite = null;
+
+    //    if ( remoteSite.ID > 0 || ctx.RemoteSites.Any( c => c.Name == remoteSite.Name ) )
+    //    {
+    //        return UpdateRemoteSite( remoteSite );
+    //    }
+    //    else
+    //    {
+    //        ctx.RemoteSites.Add( remoteSite );
+    //        ctx.SaveChanges( );
+    //        newSite = ctx.RemoteSites.FirstOrDefault( f => f.Name == remoteSite.Name );
+    //    }
+
+    //    return newSite;
+    //}
+
+    //internal static bool DeleteRemoteSite( RemoteSite remoteSite )
+    //{
+    //    using BlocklistDbContext ctx = new( );
+    //    bool deleted = false;
+
+    //    try
+    //    {
+    //        ctx.RemoteSites.Remove( remoteSite );
+    //        ctx.SaveChanges( );
+    //        if ( !ctx.RemoteSites.Any( c => c.Name == remoteSite.Name ) )
+    //        {
+    //            deleted = true;
+    //        }
+    //    }
+    //    catch ( Exception ex )
+    //    {
+    //        MessageBox.Show( ex.Message ); // TODO: Improve the message
+    //    }
+
+    //    return deleted;
+    //}
+
+    //internal static RemoteSite? UpdateRemoteSite( RemoteSite remoteSite )
+    //{
+    //    using BlocklistDbContext ctx = new( );
+    //    RemoteSite? existing = ctx.RemoteSites.FirstOrDefault( f => f.Name == remoteSite.Name );
+
+    //    if ( existing != null )
+    //    {
+    //        existing.SiteUrl = remoteSite.SiteUrl;
+    //        existing.FileUrls = remoteSite.FileUrls;
+    //        existing.FileType = remoteSite.FileType;
+    //        existing.Active = remoteSite.Active;
+    //        ctx.SaveChanges( );
+    //        existing = ctx.RemoteSites.FirstOrDefault( f => f.Name == remoteSite.Name );
+    //    }
+    //    else
+    //    {
+    //        MessageBox.Show( $"No site matching '{remoteSite.Name}' was found." );
+    //    }
+
+    //    return existing;
+    //}
 
     internal static bool UpdateLastDownloaded( RemoteSite site )
     {
-        try
-        {
-            using BlocklistDbContext ctx = new( );
-            ctx.SetDownloadedDateTime( site );
-            return true;
-        }
+        int deviceID = ConnectedDevice!.ID;
+        var result = new BlocklistData( ).SetLastDownloaded( ConnectedDevice!.ID, site.ID );
 
-        catch
-        {
-            return false;
-        }
+        //    try
+        //    {
+        //        using BlocklistDbContext ctx = new( );
+        //        ctx.SetDownloadedDateTime( site );
+        //        return true;
+        //    }
+
+        //    catch
+        //    {
+        return true;
+        //    }
     }
 
     /// <summary>
@@ -213,13 +271,12 @@ internal static class Maintain
                                                           .Where( w => w.Name.EndsWith( "_Blocklist", comparison ) )
                                                           .Where( w => name is null || w.Name == name );
 
-        return rules.Select( s => new FirewallRule( s.Name, s.Action, s.Direction, s.Profiles, s.RemoteAddresses, s.Protocol, s.RemotePorts ) )
+        return [ .. rules.Select( s => new FirewallRule( s.Name, s.Action, s.Direction, s.Profiles, s.RemoteAddresses, s.Protocol, s.RemotePorts ) )
                     .OrderBy( o => o.Name )
                     .ThenBy( o => o.SortValue[ 0 ] )
                     .ThenBy( t => t.SortValue.Length > 0 ? t.SortValue[ 1 ] : 0 )
                     .ThenBy( t => t.SortValue.Length > 0 ? t.SortValue[ 2 ] : 0 )
-                    .ThenBy( t => t.SortValue.Length > 0 ? t.SortValue[ 3 ] : 0 )
-                    .ToList( );
+                    .ThenBy( t => t.SortValue.Length > 0 ? t.SortValue[ 3 ] : 0 ) ];
     }
 
     /// <summary>
@@ -270,11 +327,11 @@ internal static class Maintain
             string ruleName,
             IAddress[]? ipAddressSet = null,
             IPRange? ipAddressRange = null,
-            FirewallProtocol? protocol = null,
+            //FirewallProtocol? protocol = null,
             ushort[]? ports = null
         )
     {
-        protocol ??= FirewallProtocol.Any;
+        //protocol ??= FirewallProtocol.Any;
         ports ??= [];
         List<IFirewallRule> rules = [];
         IAddress[] remoteIPRange = ipAddressRange is not null
@@ -361,7 +418,10 @@ internal static class Maintain
         return newRule;
     }
 
-    private static SingleIP StringToIAddress( string address ) => new SingleIP( IPAddress.Parse( address ) );
+    private static SingleIP StringToIAddress( string address )
+    {
+        return new( IPAddress.Parse( address ) );
+    }
 
     /// <summary>
     /// Convert an array of IAddress to a delimited string
@@ -376,7 +436,7 @@ internal static class Maintain
             return string.Empty;
     }
 
-    private static bool RuleExists( IPRange remoteIPAddressRange, FirewallDirection direction, string ruleName )
+    private static bool RuleExists( IPRange remoteIPAddressRange, FirewallDirection direction )
     {
         IAddress[] remoteIPRange = [ new SingleIP( remoteIPAddressRange.StartAddress ), new SingleIP( remoteIPAddressRange.EndAddress ) ];
         // IFirewallRule newRule = CreateRule( ruleName, null, [], description, remoteIPRange, [], direction );
@@ -394,7 +454,6 @@ internal static class Maintain
             // newRules is an accumulating list
             CreateRulesForAddressSets( ruleName, siteName, ref newEntries, ref newRules );
             CreateRulesForAddressRanges( ruleName, siteName, ref newEntries, ref newRules );
-            StatusMessage( _appName, $"Firewall rules for {siteName} were created successfully", maintainUI );
         }
         catch ( Exception e )
         {
@@ -417,11 +476,11 @@ internal static class Maintain
                                                      .ThenBy( o => o.Sort[ 2 ] )
                                                      .ThenBy( o => o.Sort[ 3 ] ) )
         {
-            if ( !RuleExists( entry.IPAddressRange!, FirewallDirection.Outbound, ruleName )
-                && !RuleExists( entry.IPAddressRange!, FirewallDirection.Inbound, ruleName ) )
+            if ( !RuleExists( entry.IPAddressRange!, FirewallDirection.Outbound )//, ruleName )
+                && !RuleExists( entry.IPAddressRange!, FirewallDirection.Inbound ) ) //, ruleName ) )
             {
                 IPRange? addressRange = entry.IPAddressRange;
-                newRules.AddRange( AddInboundAndOutboundRules( ruleName, null, entry.IPAddressRange, entry.Protocol, entry.Ports ) );
+                newRules.AddRange( AddInboundAndOutboundRules( ruleName, null, entry.IPAddressRange, /*entry.Protocol, */entry.Ports ) );
             }
         }
     }
@@ -433,7 +492,7 @@ internal static class Maintain
         // NOTE: IP V6 addresses are currently in the IPAddress property
         foreach ( var entry in newEntries.Where( w => w.Name == siteName && w.IPAddressSet is not null && w.IPAddressSet.Length > 0 ) )
         {
-            newRules.AddRange( AddInboundAndOutboundRules( ruleName, entry.IPAddressSet, entry.IPAddressRange, entry.Protocol, entry.Ports ) );
+            newRules.AddRange( AddInboundAndOutboundRules( ruleName, entry.IPAddressSet, entry.IPAddressRange, /*entry.Protocol, */entry.Ports ) );
             savedCount++;
         }
 
@@ -485,7 +544,6 @@ internal static class Maintain
         foreach ( RemoteSite site in sitesToProcess )
         {
             counter++;
-            StatusMessage( _appName, $"Downloading {site.Name} blocklist(s)", maintainUIForm );
             string eol = counter == sitesToProcess.Count ? "\r\n" : string.Empty;
             List<CandidateEntry> newData = DownloadSiteData( site );
             if ( newData.Count > 0 )
@@ -497,16 +555,18 @@ internal static class Maintain
                 if ( maintainUIForm is not null )
                     maintainUIForm.StatusMessage.Text = $"Updating {site!.Name} downloaded date and time ...";
 
+                // TODO: Add DeviceID so that date last downloaded can be set
+                // TODO: Find out where the log is being written to if not set
+
                 UpdateLastDownloaded( site );
             }
         }
 
-        return data.Select( s => new CandidateEntry( s.Name, s.IPAddress ?? "", s.IPAddressRange, s.IPAddressSet, s.Ports, s.Protocol ) )
+        return [ .. data.Select( s => new CandidateEntry( s.Name, s.IPAddress ?? "", s.IPAddressRange, s.IPAddressSet, s.Ports, s.Protocol ) )
                    .OrderBy( o => o.Sort0 )
                    .ThenBy( o => o.Sort1 )
                    .ThenBy( o => o.Sort2 )
-                   .ThenBy( o => o.Sort3 )
-                   .ToList( );
+                   .ThenBy( o => o.Sort3 ) ];
     }
 
     /// <summary>
@@ -689,7 +749,7 @@ internal static class Maintain
 
                         if ( downloaded is not null )
                         {
-                            using DataTranslatorXml translator = new DataTranslatorXml( );
+                            using DataTranslatorXml translator = new( );
                             data = translator.TranslateDataStream( site, downloaded );
                         }
 
@@ -702,7 +762,7 @@ internal static class Maintain
 
                         if ( !string.IsNullOrEmpty( downloaded ) )
                         {
-                            using DataTranslatorDelimited translator = new DataTranslatorDelimited( );
+                            using DataTranslatorDelimited translator = new( );
                             data = translator.TranslateFileData( site, downloaded );
                         }
 
@@ -735,7 +795,7 @@ internal static class Maintain
                         string textData = Downloader.ReadData( site, out fileExtension!, url );
                         if ( textData.Length > 0 )
                         {
-                            using DataTranslatorText translator = new DataTranslatorText( );
+                            using DataTranslatorText translator = new( );
                             data = translator.TranslateFileData( site, textData );
                         }
                         break;
@@ -753,7 +813,6 @@ internal static class Maintain
     /// <returns></returns>
     internal static List<string> TextToStringList( string text )
     {
-        string[] asArray = [];
         List<string> asList = [];
         string temp = text.Replace( Environment.NewLine, "\n" );
         if ( temp.Contains( '\n' ) )
@@ -830,18 +889,19 @@ internal static class Maintain
     /// <param name="sites">The sites to download for</param>
     /// <param name="maintainUI">User interface form when applicable</param>
     /// <returns>A list containing standardised and cleaned up downloaded blocklist data</returns>
-    internal static List<CandidateEntry> ProcessDownloads( List<RemoteSite> sites, MaintainUI? maintainUI, bool createFirewallRules )
+    internal static List<CandidateEntry> ProcessDownloads( List<RemoteSite> sites, MaintainUI? maintainUI, bool createFirewallRules, out int numberOfRules, out int ipAddressCount )
     {
         // createFirewallRules should only be true when the program is running from command line or scheduler
         StatusMessage( _appName!, "Blocklist downloads started... ", maintainUI );
-        List<CandidateEntry> candidateRules = [];
-        candidateRules = DownloadBlocklists( maintainUI, sites )!;
-        candidateRules = CleanupDownloadedIPAddressData( sites, maintainUI, createFirewallRules, candidateRules );
+        List<CandidateEntry> candidateRules = DownloadBlocklists( maintainUI, sites )!;
+        candidateRules = CleanupDownloadedIPAddressData( sites, maintainUI, createFirewallRules, candidateRules, out ipAddressCount );
+        numberOfRules = candidateRules.Count;
         return candidateRules!;
     }
 
-    private static List<CandidateEntry> CleanupDownloadedIPAddressData( List<RemoteSite> sites, MaintainUI? maintainUI, bool createFirewallRules, List<CandidateEntry> candidateRules )
+    private static List<CandidateEntry> CleanupDownloadedIPAddressData( List<RemoteSite> sites, MaintainUI? maintainUI, bool createFirewallRules, List<CandidateEntry> candidateRules, out int ipAddressCount )
     {
+        ipAddressCount = candidateRules.Count;
         if ( candidateRules.Count > 0 )
         {
             StatusMessage( _appName, "Removing private address ranges ...", maintainUI );
@@ -903,10 +963,10 @@ internal static class Maintain
         // Add all of the rules that we've just imported
         StatusMessage( _appName, $"Creating new rules for the {site!.Name} blocklist(s) ...", maintainUI );
         AddFirewallRulesFor( ruleName, site.Name, ref candidateRules, ref newRules, ref maintainUI );
-        StatusMessage( _appName, $"Firewall rules for the {site.Name} blocklist(s) were created\r\n", maintainUI );
+        StatusMessage( _appName, $"Firewall rules for the {site.Name} blocklist(s) were added successfully\r\n", maintainUI );
     }
 
-    internal static void StatusMessage( string caller, string message, MaintainUI? maintainUI )
+    internal static void StatusMessage( string caller, string message, MaintainUI? maintainUI = null )
     {
         if ( string.IsNullOrEmpty( Logger.LogPath ) )
             Logger.LogPath = LogFileFullname;

@@ -42,16 +42,16 @@ public partial class MaintainUI : Form
 
     private void FixBounds( )
     {
-        if ( this.Height > Screen.PrimaryScreen!.Bounds.Height )
+        if ( Height > Screen.PrimaryScreen!.Bounds.Height )
         {
-            this.Height = Screen.PrimaryScreen.Bounds.Height;
-            this.Top = 0;
+            Height = Screen.PrimaryScreen.Bounds.Height;
+            Top = 0;
         }
 
-        if ( this.Width > Screen.PrimaryScreen.Bounds.Width )
+        if ( Width > Screen.PrimaryScreen.Bounds.Width )
         {
-            this.Width = Screen.PrimaryScreen.Bounds.Width;
-            this.Left = 0;
+            Width = Screen.PrimaryScreen.Bounds.Width;
+            Left = 0;
         }
     }
 
@@ -61,67 +61,67 @@ public partial class MaintainUI : Form
         //translator.TranslateDataStream( site, testText );
 
         // string test = HttpHelper.ReadZipFileContents( "https://urlhaus.abuse.ch/downloads/json/" );
-        Maintain.EnsureStartupDataExists( ); // WHY?
+        // Maintain.EnsureStartupDataExists( ); // WHY?
 
-        this.RemoteSites.DataSource = Maintain.ListDownloadSites( null, false ).Where( w => w.Active ).ToList( ); // Maintain.ListDownloadSites( remoteSite, ShowAllCheckBox.Checked );
-        this.RemoteSites.AutoResizeColumns( DataGridViewAutoSizeColumnsMode.AllCells );
-        this.RemoteSites.Columns[ 0 ].Visible = false; // ID
+        RemoteSites.DataSource = Maintain.ListDownloadSites( null, false ).Where( w => w.Active ).ToList( ); // Maintain.ListDownloadSites( remoteSite, ShowAllCheckBox.Checked );
+        RemoteSites.AutoResizeColumns( DataGridViewAutoSizeColumnsMode.AllCells );
+        RemoteSites.Columns[ 0 ].Visible = false; // ID
         //if ( this.RemoteSites.SelectedRows.Count > 0 )
         //    remoteSite = (RemoteSite)this.RemoteSites.SelectedRows[ 0 ].DataBoundItem;
 
-        if ( this.RemoteSites.RowCount < 1 )
+        if ( RemoteSites.RowCount < 1 )
             MessageBox.Show( "Blocklist data was downloaded too recently to update now.\r\nTry again after 30 minutes." );
         else
         {
             _ruleName = $"{RemoteSites.Rows[ 0 ].Cells[ 1 ].Value}_Blocklist";
-            SiteMenuStrip.Items[ 0 ].Click += this.RemoteSite_Edit_Click!;
-            SiteMenuStrip.Items[ 1 ].Click += this.RemoteSite_Add_Click!;
-            this.RemoteSites.ContextMenuStrip = SiteMenuStrip;
+            //SiteMenuStrip.Items[ 0 ].Click += RemoteSite_Edit_Click!;
+            //SiteMenuStrip.Items[ 1 ].Click += RemoteSite_Add_Click!;
+            //RemoteSites.ContextMenuStrip = SiteMenuStrip;
         }
 
-        this.FirewallEntryName.Text = _ruleName;
+        FirewallEntryName.Text = _ruleName;
         _startUp = false;
 
-        this.StatusBar.Left = this.FirewallRulesData.Left;
-        this.StatusMessage.Width = this.FirewallRulesData.Width / 2;
-        this.StatusProgress.Width = this.FirewallRulesData.Width / 2;
+        StatusBar.Left = FirewallRulesData.Left;
+        StatusMessage.Width = FirewallRulesData.Width / 2;
+        StatusProgress.Width = FirewallRulesData.Width / 2;
         // this.RemoteSites.ClearSelection( );
-        this.StatusMessage.Text = "Idle";
+        StatusMessage.Text = "Idle";
     }
 
-    private void RemoteSiteOptions_ItemClicked( object sender, ToolStripItemClickedEventArgs e )
-    {
-        switch ( e.ClickedItem!.Name )
-        {
-            case "RemoteSite_Add":
-                {
-                    using ( RemoteSiteForm add = new( ) )
-                    {
-                        add.ShowDialog( );
-                    }
+    //private void RemoteSiteOptions_ItemClicked( object sender, ToolStripItemClickedEventArgs e )
+    //{
+    //    switch ( e.ClickedItem!.Name )
+    //    {
+    //        case "RemoteSite_Add":
+    //            {
+    //                using ( RemoteSiteForm add = new( ) )
+    //                {
+    //                    add.ShowDialog( );
+    //                }
 
-                    this.RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); //  Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
-                    break;
-                }
-            case "RemoteSite_Edit": //// TODO
-                {
-                    using ( RemoteSiteForm edit = new( ) )
-                    {
-                        edit.DownloadSite = (RemoteSite)this.RemoteSites.SelectedRows[ 0 ].DataBoundItem;
-                        edit.ShowDialog( );
-                    }
+    //                RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); //  Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
+    //                break;
+    //            }
+    //        case "RemoteSite_Edit": //// TODO
+    //            {
+    //                using ( RemoteSiteForm edit = new( ) )
+    //                {
+    //                    edit.DownloadSite = (RemoteSite)RemoteSites.SelectedRows[ 0 ].DataBoundItem;
+    //                    edit.ShowDialog( );
+    //                }
 
-                    this.RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); //  Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
-                    break;
-                }
-            case "RemoteSite_Remove": //// TODO
-                {
-                    Maintain.DeleteRemoteSite( (RemoteSite)this.RemoteSites.SelectedRows[ 0 ].DataBoundItem );
-                    this.RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); //  Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
-                    break;
-                }
-        }
-    }
+    //                RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); //  Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
+    //                break;
+    //            }
+    //        case "RemoteSite_Remove": //// TODO
+    //            {
+    //                Maintain.DeleteRemoteSite( (RemoteSite)RemoteSites.SelectedRows[ 0 ].DataBoundItem );
+    //                RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); //  Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
+    //                break;
+    //            }
+    //    }
+    //}
 
     /// <summary>
     /// Changed 3 Nov 2024 to only delete entries which are being replaced; leave all others alone
@@ -131,11 +131,11 @@ public partial class MaintainUI : Form
     private void ReplaceButton_Click( object sender, EventArgs e )
     {
         List<IFirewallRule> newRules = [];
-        this.Cursor = Cursors.WaitCursor;
+        Cursor = Cursors.WaitCursor;
 
         if ( _processAll )
         {
-            this.RemoteSites.SelectAll( );
+            RemoteSites.SelectAll( );
         }
 
         List<RemoteSite> sitesList = SitesListFromGridView( );
@@ -145,7 +145,7 @@ public partial class MaintainUI : Form
             try
             {
                 //ReplaceRulesForSite( site );
-                this.FirewallEntryName.Text = site.Name + "_Blocklist";
+                FirewallEntryName.Text = site.Name + "_Blocklist";
                 Maintain.ReplaceSiteRules( site, _candidateRules, ref newRules, this );
             }
             catch ( Exception ex )
@@ -154,29 +154,31 @@ public partial class MaintainUI : Form
             }
         }
 
-        this.StatusMessage.Text = $"Reading updated firewall rules ...";
+        StatusMessage.Text = $"Reading updated firewall rules ...";
 
         if ( _processAll )
-            this.FirewallRulesData.DataSource = Maintain.FetchFirewallRulesFor( );
+            FirewallRulesData.DataSource = Maintain.FetchFirewallRulesFor( );
         else if ( RemoteSites.SelectedRows.Count > 0 )
-            this.FirewallRulesData.DataSource = Maintain.FetchFirewallRulesFor( ( (RemoteSite)RemoteSites.SelectedRows[ 0 ].DataBoundItem ).Name );
-        this.FirewallRulesData.Refresh( );
-        this.SetFirewallRuleColumnWidths( );
+            FirewallRulesData.DataSource = Maintain.FetchFirewallRulesFor( ( (RemoteSite)RemoteSites.SelectedRows[ 0 ].DataBoundItem ).Name );
+        FirewallRulesData.Refresh( );
+        SetFirewallRuleColumnWidths( );
 
         //        this.RemoteSites.DataSource = Maintain.ListDownloadSites( null, false ); // ShowAllCheckBox.Checked );
         //        SetFirewallRuleColumnWidths( );
         StatusMessage.Text = $"Idle";
-        this.Cursor = Cursors.Default;
+        Cursor = Cursors.Default;
     }
 
-    private List<RemoteSite> SitesListFromGridView( ) => this.RemoteSites
-                                            .SelectedRows
-                                            .Cast<DataGridViewRow>( )
-                                            .Select( s => s.DataBoundItem as RemoteSite )
-                                            .Where( w => w is not null )
-                                            .OrderBy( o => o!.Name ?? string.Empty )
-                                            .Select( s => s! )
-                                            .ToList( );
+    private List<RemoteSite> SitesListFromGridView( )
+    {
+        return RemoteSites.SelectedRows
+                          .Cast<DataGridViewRow>( )
+                          .Select( s => s.DataBoundItem as RemoteSite )
+                          .Where( w => w is not null )
+                          .OrderBy( o => o!.Name ?? string.Empty )
+                          .Select( s => s! )
+                          .ToList( );
+    }
 
     //private void ReplaceRulesForSite( RemoteSite site )
     //{
@@ -187,24 +189,27 @@ public partial class MaintainUI : Form
 
     private void RemoteSites_SelectionChanged( object sender, EventArgs e )
     {
-        RemoteSite_Edit.Enabled = ( RemoteSites.SelectedRows.Count == 1 );
-        this.Cursor = Cursors.WaitCursor;
+        //    RemoteSite_Edit.Enabled = ( RemoteSites.SelectedRows.Count == 1 );
+        Cursor = Cursors.WaitCursor;
 
         if ( !_startUp )
         {
+            this.RemoteData.DataSource = null;
+            this.RemoteData.Refresh( );
             StatusMessage.Text = $"Downloading firewall rules ...";
             if ( !_processAll && RemoteSites.SelectedRows.Count == 1 )  // Multiselect is disabled
             {
                 RemoteSite? selectedSite = RemoteSites.SelectedRows[ 0 ].DataBoundItem as RemoteSite;
+                _ruleName = $"{selectedSite.Name}_Blocklist";
                 StatusMessage.Text = $"Downloading firewall rules for {selectedSite!.Name}";
                 //LoadRules( false ); // _processAll );
-                _candidateRules = Maintain.ProcessDownloads( [ selectedSite ], this, false );
+                _candidateRules = Maintain.ProcessDownloads( [ selectedSite ], this, false, out int numberOfRules, out int ipAddressCount );
             }
         }
 
         _processAll = false;
         StatusMessage.Text = $"Idle";
-        this.Cursor = Cursors.Default;
+        Cursor = Cursors.Default;
     }
 
     //private void SetRemoteDataColumnWidths( )
@@ -309,16 +314,16 @@ public partial class MaintainUI : Form
     //    StatusMessage.Text = $"Idle";
     //}
 
-    private void SetDownloadedRuleColumnWidths( )
-    {
-        if ( this.RemoteData.Columns[ "IPAddressBatch" ].Width > MAX_BATCH_COLUMN_SIZE )
-        {
-            this.RemoteData.Columns[ "IPAddressBatch" ].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            this.RemoteData.Columns[ "IPAddressBatch" ].Width = MAX_BATCH_COLUMN_SIZE;
-        }
-        else
-            this.RemoteData.Columns[ "IPAddressBatch" ].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-    }
+    //private void SetDownloadedRuleColumnWidths( )
+    //{
+    //    if ( RemoteData.Columns[ "IPAddressBatch" ].Width > MAX_BATCH_COLUMN_SIZE )
+    //    {
+    //        RemoteData.Columns[ "IPAddressBatch" ].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+    //        RemoteData.Columns[ "IPAddressBatch" ].Width = MAX_BATCH_COLUMN_SIZE;
+    //    }
+    //    else
+    //        RemoteData.Columns[ "IPAddressBatch" ].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+    //}
 
     internal void SetFirewallRuleColumnWidths( )
     {
@@ -350,33 +355,38 @@ public partial class MaintainUI : Form
 
     private void DeleteButton_Click( object sender, EventArgs e )
     {
-        //        _ruleName = FirewallEntryName.Text;
-        if ( _processAll )
+        string sitesForDeletion = _processAll ? "all download sites" : _ruleName;
+        if ( MessageBox.Show( $"Delete all Windows Firewall rules matching {sitesForDeletion}?", "Confirm Deletion of Windows Firewall entries", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1 ) == DialogResult.OK )
         {
-            _ruleName = "(All))";
-            StatusMessage.Text = $"Removing firewall rules for all blocklists ...";
-        }
-        else
-        {
-            StatusMessage.Text = $"Removing firewall rules for {_ruleName} ...";
+            //        _ruleName = FirewallEntryName.Text;
+            if ( _processAll )
+            {
+                _ruleName = "(All))";
+                StatusMessage.Text = $"Removing firewall rules for all blocklists ...";
+            }
+            else
+            {
+                StatusMessage.Text = $"Removing firewall rules for {_ruleName} ...";
+            }
+
+            Cursor = Cursors.WaitCursor;
+            // Delete the existing set
+            Maintain.DeleteExistingFirewallRulesFor( _ruleName );
+            if ( _processAll )
+                StatusMessage.Text = $"Reading firewall rules for all blocklists ...";
+            else
+                StatusMessage.Text = $"Reading firewall rules for {FirewallEntryName.Text} ...";
+            FirewallRulesData.DataSource = Maintain.FetchFirewallRulesFor( _ruleName );
+            SetFirewallRuleColumnWidths( );
         }
 
-        this.Cursor = Cursors.WaitCursor;
-        // Delete the existing set
-        Maintain.DeleteExistingFirewallRulesFor( _ruleName );
-        if ( _processAll )
-            StatusMessage.Text = $"Reading firewall rules for all blocklists ...";
-        else
-            StatusMessage.Text = $"Reading firewall rules for {FirewallEntryName.Text} ...";
-        FirewallRulesData.DataSource = Maintain.FetchFirewallRulesFor( _ruleName );
-        SetFirewallRuleColumnWidths( );
-        this.Cursor = Cursors.Default;
+        Cursor = Cursors.Default;
         StatusMessage.Text = "Idle";
     }
 
     private void ShowAllCheckBox_CheckedChanged( object sender, EventArgs e )
     {
-        this.RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); // Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
+        RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); // Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
         _startUp = false;
     }
 
@@ -386,40 +396,40 @@ public partial class MaintainUI : Form
         scheduler.ShowDialog( this );
     }
 
-    private void RemoteSites_Click( object sender, EventArgs e )
-    {
-        RemoteSites_SelectionChanged( sender, e );
-    }
+    //private void RemoteSites_Click( object sender, EventArgs e )
+    //{
+    //    RemoteSites_SelectionChanged( sender, e );
+    //}
 
-    private void RemoteSite_Add_Click( object sender, EventArgs e )
-    {
-        RemoteSiteForm form = new( );
-        form.Show( this );
-        this.RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); // Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
-    }
+    //private void RemoteSite_Add_Click( object sender, EventArgs e )
+    //{
+    //    // RemoteSiteForm form = new( );
+    //    form.Show( this );
+    //    RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); // Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
+    //}
 
-    private void RemoteSite_Edit_Click( object sender, EventArgs e )
-    {
-        if ( RemoteSites.SelectedRows.Count == 1 )
-        {
-            RemoteSiteForm form = new( )
-            {
-                DownloadSite = (RemoteSite)RemoteSites.SelectedRows[ 0 ].DataBoundItem
-            };
+    //private void RemoteSite_Edit_Click( object sender, EventArgs e )
+    //{
+    //    if ( RemoteSites.SelectedRows.Count == 1 )
+    //    {
+    //        // RemoteSiteForm form = new( )
+    //        {
+    //            DownloadSite = (RemoteSite)RemoteSites.SelectedRows[ 0 ].DataBoundItem
+    //        };
 
-            form.ShowDialog( );
-        }
-    }
+    //        form.ShowDialog( );
+    //    }
+    //}
 
     private void ProcessAllButton_Click( object sender, EventArgs e )
     {
         // ProcessAll also creates firewall entries
         _processAll = true;
-        this.Cursor = Cursors.WaitCursor;
+        Cursor = Cursors.WaitCursor;
         //LoadRules( true );
-        List<RemoteSite> allActiveSites = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); // Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
-        Maintain.ProcessDownloads( allActiveSites, this, true );
-        this.Cursor = Cursors.Default;
+        List<RemoteSite> allActiveSites = [ .. Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ) ]; // Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
+        Maintain.ProcessDownloads( allActiveSites, this, true, out int numberOfRules, out int ipAddressCount );
+        Cursor = Cursors.Default;
         _processAll = false;
     }
 
@@ -427,17 +437,17 @@ public partial class MaintainUI : Form
     {
         if ( e.Button == MouseButtons.Right )
         {
-            if ( this.RemoteSites.SelectedRows.Count > 0 )
+            if ( RemoteSites.SelectedRows.Count > 0 )
             {
                 SelectGridViewRowOnRightClick( sender, e );
 
                 // DataGridViewRow selected = this.RemoteSites.SelectedRows[ 0 ];
                 ////this.RemoteSites.Rows.Cast<DataGridViewRow>().FirstOrDefault( f => f.)
                 System.Drawing.Point position = new( ) { X = e.X, Y = e.Y };
-                SiteMenuStrip.Location = position;
-                SiteMenuStrip.Top = position.Y;
-                SiteMenuStrip.Left = position.X;
-                SiteMenuStrip.Show( );
+                //SiteMenuStrip.Location = position;
+                //SiteMenuStrip.Top = position.Y;
+                //SiteMenuStrip.Left = position.X;
+                //SiteMenuStrip.Show( );
             }
         }
     }
