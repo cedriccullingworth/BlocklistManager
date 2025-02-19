@@ -131,12 +131,7 @@ public partial class UpdateScheduler : Form
             return;
         }
 
-        List<RemoteSite> sites = ( new BlocklistData( ) ).ListDownloadSites( Maintain.ConnectedDevice!.ID, null ); /* context.ListRemoteSites( null )
-                                         .OrderBy( o => o.Name )
-                                         .ToList( );*/
-
-        //IList<ListViewItem> items = sites.Select( s => new ListViewItem( ) { Text = s.Name, Checked = true, Tag = s.ID } )
-        //                                 .ToList( );
+        List<RemoteSite> sites = ( new BlocklistData( ) ).ListDownloadSites( Maintain.ConnectedDevice!.ID, null );
         SitesList.View = View.List;
         foreach ( var site in sites )
             SitesList.Items.Add( new ListViewItem( site.Name ) { Checked = true, Tag = site.ID } );

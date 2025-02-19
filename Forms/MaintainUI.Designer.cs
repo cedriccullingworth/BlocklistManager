@@ -80,8 +80,7 @@ namespace BlocklistManager
             this.RemoteSites.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             this.RemoteSites.Size = new Size( 1268, 140 );
             this.RemoteSites.TabIndex = 1;
-            // this.RemoteSites.Click +=  this.RemoteSites_Click ;
-            this.RemoteSites.SelectionChanged += this.RemoteSites_SelectionChanged;
+            this.RemoteSites.SelectionChanged +=  this.RemoteSites_SelectionChanged ;
             this.RemoteSites.MouseDown +=  this.RemoteSites_MouseDown ;
             // 
             // label2
@@ -110,9 +109,9 @@ namespace BlocklistManager
             this.label3.AutoSize = true;
             this.label3.Location = new Point( 13, 427 );
             this.label3.Name = "label3";
-            this.label3.Size = new Size( 137, 15 );
+            this.label3.Size = new Size( 231, 15 );
             this.label3.TabIndex = 6;
-            this.label3.Text = "Matching firewall entries";
+            this.label3.Text = "Current firewall entries for the selected site";
             // 
             // UpdateButton
             // 
@@ -121,7 +120,7 @@ namespace BlocklistManager
             this.UpdateButton.Name = "UpdateButton";
             this.UpdateButton.Size = new Size( 127, 42 );
             this.UpdateButton.TabIndex = 8;
-            this.UpdateButton.Text = "&Replace Site Firewall Entries";
+            this.UpdateButton.Text = "&Replace this Site's Firewall Entries";
             this.UpdateButton.UseVisualStyleBackColor = true;
             this.UpdateButton.Click +=  this.ReplaceButton_Click ;
             // 
@@ -141,9 +140,9 @@ namespace BlocklistManager
             this.label4.AutoSize = true;
             this.label4.Location = new Point( 13, 223 );
             this.label4.Name = "label4";
-            this.label4.Size = new Size( 775, 15 );
+            this.label4.Size = new Size( 244, 15 );
             this.label4.TabIndex = 10;
-            this.label4.Text = "Details in downloaded blocklist file(s) - Port numbers are only set when port number(s) AND protocol information have been provided in the data:";
+            this.label4.Text = "Rule details from downloaded blocklist file(s)";
             // 
             // DeleteButton
             // 
@@ -152,7 +151,7 @@ namespace BlocklistManager
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new Size( 127, 42 );
             this.DeleteButton.TabIndex = 12;
-            this.DeleteButton.Text = "&Delete Site Firewall Entries";
+            this.DeleteButton.Text = "&Delete this Site's Firewall Entries";
             this.DeleteButton.UseVisualStyleBackColor = true;
             this.DeleteButton.Click +=  this.DeleteButton_Click ;
             // 
@@ -163,7 +162,7 @@ namespace BlocklistManager
             this.ScheduleButton.Name = "ScheduleButton";
             this.ScheduleButton.Size = new Size( 127, 42 );
             this.ScheduleButton.TabIndex = 13;
-            this.ScheduleButton.Text = "&Schedule Automatic Updates";
+            this.ScheduleButton.Text = "&Schedule Automatic Processing";
             this.ScheduleButton.UseVisualStyleBackColor = true;
             this.ScheduleButton.Click +=  this.ScheduleButton_Click ;
             // 
@@ -284,7 +283,7 @@ namespace BlocklistManager
         internal Label FirewallEntryName;
         internal CheckBox ShowAllCheckBox;
         private MenuStrip OptionsMenu;
-        private ToolStripProgressBar StatusProgress;
+        internal ToolStripProgressBar StatusProgress;
         internal Button ProcessAllButton;
     }
 }

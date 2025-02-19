@@ -11,12 +11,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace BlocklistManager.Classes;
 
-internal class BlocklistData : IDisposable
+internal sealed class BlocklistData : IDisposable
 {
-    private bool disposedValue;
+    private bool _disposedValue;
     private BlocklistDataConfig _config;
-    private HttpClientHandler _handler;
-    private Device? connectedDevice;
+    private Device? _connectedDevice;
 
     internal BlocklistData( )
     {
@@ -26,7 +25,7 @@ internal class BlocklistData : IDisposable
         else
             configFilePath = "appsettings.json";
 
-        ConfigurationManager configurationManager = new ConfigurationManager( );
+        using ConfigurationManager configurationManager = new ConfigurationManager( );
         configurationManager.AddJsonFile( configFilePath );
         IConfigurationSection settings = configurationManager.GetSection( "BlocklistDataConfig" );
         _config = new BlocklistDataConfig( )
@@ -58,6 +57,7 @@ internal class BlocklistData : IDisposable
         {
             using HttpClient client = new HttpClient( )
             {
+
                 BaseAddress = new Uri( $"https://{_config.HostAddress}:{_config.HostPort}" ),
                 Timeout = TimeSpan.FromSeconds( 10 )
             };
@@ -94,11 +94,6 @@ internal class BlocklistData : IDisposable
                 Timeout = TimeSpan.FromSeconds( 10 )
             };
 
-            // With remoteSite:
-            // /RemoteSites/ListRemoteSites?deviceID=1&remoteSiteID=15&showAll=false
-            // Without remoteSite:
-            // /RemoteSites/ListRemoteSites?deviceID=1&showAll=false
-
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "localhost" );
             string endpointUrl = $"/RemoteSites/ListRemoteSites?deviceID={deviceID}&showAll={showAll}";
             if ( remoteSite is not null )
@@ -119,7 +114,7 @@ internal class BlocklistData : IDisposable
 
     internal Device? GetDevice( string macAddress )
     {
-        if ( connectedDevice is null )
+        if ( _connectedDevice is null )
         {
             try
             {
@@ -134,7 +129,7 @@ internal class BlocklistData : IDisposable
                                                     .Result;
 
                 string json = new StreamReader( results.Content.ReadAsStream( ) ).ReadToEnd( );
-                connectedDevice = System.Text.Json.JsonSerializer.Deserialize<Device>( json );
+                _connectedDevice = System.Text.Json.JsonSerializer.Deserialize<Device>( json );
             }
             catch ( Exception ex )
             {
@@ -142,7 +137,7 @@ internal class BlocklistData : IDisposable
             }
         }
 
-        return connectedDevice;
+        return _connectedDevice;
     }
 
     internal DateTime SetLastDownloaded( int deviceID, int remoteSiteID )
@@ -170,9 +165,9 @@ internal class BlocklistData : IDisposable
         return now;
     }
 
-    protected virtual void Dispose( bool disposing )
+    internal void Dispose( bool disposing )
     {
-        if ( !disposedValue )
+        if ( !_disposedValue )
         {
             if ( disposing )
             {
@@ -181,7 +176,7 @@ internal class BlocklistData : IDisposable
 
             // TODO: free unmanaged resources (unmanaged objects) and override finalizer
             // TODO: set large fields to null
-            disposedValue = true;
+            _disposedValue = true;
         }
     }
 

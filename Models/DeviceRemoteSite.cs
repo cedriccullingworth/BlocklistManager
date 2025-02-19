@@ -20,12 +20,12 @@ public partial class DeviceRemoteSite
     [Column( TypeName = "int" )]
     [ForeignKey( "DeviceID" )]
     [DeleteBehavior( DeleteBehavior.Restrict )]
-    public Device Device { get; set; }
+    public required Device Device { get; set; } = new Device( );
 
     [Column( TypeName = "int" )]
     [ForeignKey( "RemoteSiteID" )]
     [DeleteBehavior( DeleteBehavior.Restrict )]
-    public RemoteSite RemoteSite { get; set; }
+    public required RemoteSite RemoteSite { get; set; }
 
     [Column( "LastDownloaded" )]
     public DateTime? LastDownloaded { get; set; }

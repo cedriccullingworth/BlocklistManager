@@ -1,6 +1,6 @@
 ﻿namespace BlocklistManager.Classes;
 
-internal class BlocklistDataConfig
+internal sealed class BlocklistDataConfig
 {
     internal string HostAddress { get; set; } = "localhost";
 

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Security;
-using System.Windows.Forms;
 
 using BlocklistManager.Models;
 
@@ -48,13 +47,7 @@ internal sealed class Downloader : IDisposable
         }
         catch ( Exception e )
         {
-            if ( Maintain.LogFileFullname == string.Empty )
-                MessageBox.Show( e.Message );
-            else
-            {
-                Logger.Log( "ReadHtmlStreamFromUrl", StringUtilities.ExceptionMessage( $"Stream download attempt from {site.Name} failed", e ) );
-            }
-
+            Maintain.StatusMessage( url, StringUtilities.ExceptionMessage( "ReadHtmlStreamFromUrl", e ) );
             return null;
         }
     }
@@ -118,7 +111,8 @@ internal sealed class Downloader : IDisposable
             }
             catch ( Exception ex )
             {
-                Logger.Log( "DownloadText", StringUtilities.ExceptionMessage( $"Text download attempt from {site.Name} failed", ex ) );
+                //Logger.Log( "BlocklistManager", StringUtilities.ExceptionMessage( $"Text download attempt from {site.Name} failed", ex ) );
+                Maintain.StatusMessage( url, StringUtilities.ExceptionMessage( "DownloadText", ex ) );
             }
         }
 
@@ -153,11 +147,9 @@ internal sealed class Downloader : IDisposable
             ZipReader reader = ZipReader.Open( stream );
             reader.WriteAllToDirectory( outputFolder );
 
-            // TODO: lIMIT TO .JSON, .TXT, .CSV ETC
             string[] extensions = [ ".txt", ".csv", ".json", ".xml" ];
             IEnumerable<FileInfo> files = new DirectoryInfo( outputFolder ).GetFiles( )
                                                                            .Where( w => extensions.Contains( w.Extension ) );
-            //.Where( w => DateTime.UtcNow - w.CreationTimeUtc < TimeSpan.FromMinutes( 1 ) );
             if ( files.Count( ) == 1 )
             {
                 fileExtension = files.First( )

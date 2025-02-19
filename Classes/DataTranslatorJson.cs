@@ -9,27 +9,25 @@ using System.Windows.Forms;
 using BlocklistManager.Interfaces;
 using BlocklistManager.Models;
 
-using WindowsFirewallHelper;
-
 namespace BlocklistManager.Classes;
 
 public sealed class DataTranslatorJson : IDataTranslator
 {
-    public List<CandidateEntry> TranslateFileData( RemoteSite site, string data )
+    public List<CandidateEntry> TranslateFileData( RemoteSite site, string data, string fileName )
     {
         return site.Name switch
         {
-            "Feodo" => TranslateFeodo( site, JsonDocument.Parse( data ) ),
+            "Feodo" => TranslateFeodo( site, JsonDocument.Parse( data ), fileName ),
             _ => []
         };
     }
 
-    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream )
+    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
     {
         throw new System.NotImplementedException( );
     }
 
-    private static List<CandidateEntry> TranslateFeodo( RemoteSite site, JsonDocument doc )
+    private static List<CandidateEntry> TranslateFeodo( RemoteSite site, JsonDocument doc, string fileName )
     {
         CultureInfo culture = CultureInfo.CurrentCulture;
         List<FeodoEntry> processed = [];
@@ -128,7 +126,7 @@ public sealed class DataTranslatorJson : IDataTranslator
         }
 
         // Removed: // Number = Convert.ToString(s.as_number),
-        return processed.Select( s => new CandidateEntry( site.Name, s.ip_address, null, [], s.ports, FirewallProtocol.Any ) )
+        return processed.Select( s => new CandidateEntry( site.Name, fileName, s.ip_address, null, null, []/*, s.ports, FirewallProtocol.Any*/ ) )
                         .ToList( );
     }
 
@@ -163,7 +161,7 @@ public sealed class DataTranslatorJson : IDataTranslator
         System.GC.SuppressFinalize( this );
     }
 
-    List<CandidateEntry> IDataTranslator.TranslateDataStream( RemoteSite site, Stream dataStream )
+    List<CandidateEntry> IDataTranslator.TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
     {
         throw new System.NotImplementedException( );
     }

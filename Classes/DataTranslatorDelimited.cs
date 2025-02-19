@@ -7,14 +7,13 @@ using System.Linq;
 using BlocklistManager.Interfaces;
 using BlocklistManager.Models;
 
-using WindowsFirewallHelper;
 using WindowsFirewallHelper.Addresses;
 
 namespace BlocklistManager.Classes;
 
 internal sealed class DataTranslatorDelimited : IDataTranslator
 {
-    public List<CandidateEntry> TranslateFileData( RemoteSite site, string data )
+    public List<CandidateEntry> TranslateFileData( RemoteSite site, string data, string fileName )
     {
         List<string> lineData = Maintain.TextToStringList( data );
         lineData = lineData.Where( w => !w.StartsWith( '#' ) )
@@ -24,21 +23,20 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
 
         return site.FileType!.Name switch
         {
-            // TODO: Separate James Brine and MyIP, test both 
-            // Only James Brine at this stage, will need splitting out when another CSV format arrives
-            "CSV" => /*site.ID == 24 ? */TranslateCommaDelimited( site, lineData ), // : TranslateMyIP( site, lineData ),
-            "TAB" => TranslateTabDelimited( site, lineData ),
+            // Only James Brine at this stage, will probably need some separation when another CSV format arrives
+            "CSV" => /*site.ID == 24 ? */TranslateCommaDelimited( site, lineData, fileName ), // : TranslateMyIP( site, lineData ),
+            "TAB" => TranslateTabDelimited( site, lineData, fileName ),
             _ => throw new InvalidOperationException( )
         };
     }
 
-    private static List<CandidateEntry> TranslateCommaDelimited( RemoteSite site, List<string> lineData )
+    private static List<CandidateEntry> TranslateCommaDelimited( RemoteSite site, List<string> lineData, string fileName )
     {
         return lineData
                     .Select( s => s.Replace( "# ", "," ).Replace( "#", string.Empty ) )
                     .Select( s => s.Split( ',', StringSplitOptions.TrimEntries ) )
                     .Where( w => Maintain.InternetAddressType( w[ 0 ] ) != Maintain.IPAddressType.Invalid )
-                    .Select( s => new CandidateEntry( site.Name, s[ 0 ], null, [], [], FirewallProtocol.Any ) )
+                    .Select( s => new CandidateEntry( site.Name, fileName, s[ 0 ], null, null, []/*, [], FirewallProtocol.Any*/ ) )
                     .ToList( );
     }
 
@@ -49,29 +47,29 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
     //                             .Select( s => new CandidateEntry( site.Name, s[ 0 ], null, [], [], FirewallProtocol.Any ) )
     //                             .ToList( );
 
-    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream )
+    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
     {
         throw new NotImplementedException( );
     }
 
-    private static List<CandidateEntry> TranslateTabDelimited( RemoteSite site, List<string> dataLines )
+    private static List<CandidateEntry> TranslateTabDelimited( RemoteSite site, List<string> dataLines, string fileName )
     {
         return site.Name switch
         {
-            "ScriptzTeam" => ReadDelimitedDataScriptzTeam( '\t', dataLines, site ),
-            "Internet Storm Center DShield" => ReadDelimitedDataDShield( '\t', dataLines, site ),
+            "ScriptzTeam" => ReadDelimitedDataScriptzTeam( '\t', dataLines, site, fileName ),
+            "Internet Storm Center DShield" => ReadDelimitedDataDShield( '\t', dataLines, site, fileName ),
             _ => []
         };
     }
 
-    private static List<CandidateEntry> ReadDelimitedDataScriptzTeam( char delimiter, List<string> allText, RemoteSite site )
+    private static List<CandidateEntry> ReadDelimitedDataScriptzTeam( char delimiter, List<string> allText, RemoteSite site, string fileName )
     {
         return allText.Select( s => s.Split( delimiter ) )
-                                    .Select( s => new CandidateEntry( site.Name, s[ 0 ], null, [], [], FirewallProtocol.Any ) )
+                                    .Select( s => new CandidateEntry( site.Name, fileName, s[ 0 ], null, null, []/*, [], FirewallProtocol.Any*/ ) )
                                     .ToList( );
     }
 
-    private static List<CandidateEntry> ReadDelimitedDataDShield( char delimiter, List<string> allText, RemoteSite site )
+    private static List<CandidateEntry> ReadDelimitedDataDShield( char delimiter, List<string> allText, RemoteSite site, string fileName )
     {
         CultureInfo culture = CultureInfo.InvariantCulture;
         char period = '.';
@@ -100,7 +98,7 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
             SingleIP rangeStart = new( startBytes ), rangeEnd = new( endBytes );
             IPRange addressRange = new( rangeStart, rangeEnd );
 
-            candidates.Add( new CandidateEntry( site.Name, null, addressRange, [], [], FirewallProtocol.Any ) );
+            candidates.Add( new CandidateEntry( site.Name, fileName, null, null, addressRange, []/*, [], FirewallProtocol.Any*/ ) );
         }
 
         return candidates;

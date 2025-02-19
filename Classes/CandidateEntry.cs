@@ -13,7 +13,7 @@ using static BlocklistManager.Classes.Maintain;
 
 namespace BlocklistManager.Classes;
 
-public sealed record class CandidateEntry( string? nameArg, string? iPAddressArg, IPRange? iPAddressRangeArg, IAddress[] iPAddressSetArg, ushort[] portsArg, FirewallProtocol protocolArg ) : IComparable<CandidateEntry>, IDisposable
+public sealed record class CandidateEntry( string? siteName, string blocklistFileName, string? address, int? subnetSuffix, IPRange? addressRange, IAddress[] addressSet/*, ushort[] portsArg, FirewallProtocol protocolArg*/ ) : IComparable<CandidateEntry>, IDisposable
 {
 
     private long[] _sort = [ 0, 0, 0, 0 ];
@@ -27,12 +27,12 @@ public sealed record class CandidateEntry( string? nameArg, string? iPAddressArg
     /// <param name="iPAddressSet"></param>
     /// <param name="ports"></param>
     /// <param name="protocol"></param>
-    //public CandidateEntry( string? nameArg, string? iPAddressArg, IPRange? iPAddressRangeArg, IAddress[] iPAddressSetArg, ushort[] portsArg, FirewallProtocol protocolArg )
+    //public CandidateEntry( string? siteName, string? address, IPRange? addressRange, IAddress[] addressSet, ushort[] portsArg, FirewallProtocol protocolArg )
     //{
-    //    this.Name = nameArg;
-    //    this.IPAddress = iPAddressArg;
-    //    this.IPAddressRange = iPAddressRangeArg;
-    //    this.IPAddressSet = iPAddressSetArg;
+    //    this.Name = siteName;
+    //    this.IPAddress = address;
+    //    this.IPAddressRange = addressRange;
+    //    this.IPAddressSet = addressSet;
     //    this.Ports = portsArg;
     //    this.Protocol = protocolArg;
     //}
@@ -40,17 +40,20 @@ public sealed record class CandidateEntry( string? nameArg, string? iPAddressArg
     [Display( Description = "Name" )]
     [Length( 2, 50 )]
     [UnconditionalSuppressMessage( "Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>" )]
-    public string? Name { get; set; } = nameArg;
+    public string? Name { get; set; } = siteName;
 
     //    [Required]
     [Display( Description = "IP Address" )]
-    public string? IPAddress { get; set; } = iPAddressArg;
+    public string? IPAddress { get; set; } = address;
+
+    [Display( Description = "Subnet if applicable" )]
+    public int? Subnet { get; set; } = subnetSuffix;
 
     [Display( Description = "IP Address Range" )]
-    public IPRange? IPAddressRange { get; set; } = iPAddressRangeArg;
+    public IPRange? IPAddressRange { get; set; } = addressRange;
 
     [Display( AutoGenerateField = true, Description = "IP Address Batch", Name = "IPAddressSet" )]
-    public IAddress[] IPAddressSet { get; set; } = iPAddressSetArg;
+    public IAddress[] IPAddressSet { get; set; } = addressSet;
 
     public string? IPAddressBatch => Maintain.IAddressesToString( IPAddressSet );
     //{
@@ -62,11 +65,23 @@ public sealed record class CandidateEntry( string? nameArg, string? iPAddressArg
 
     internal IPAddressType AddressType => DetermineAddressType( ); // string.IsNullOrEmpty( this.IPAddress ) ? IPAddressType.Invalid : this.IPAddress.IndexOf( ':' ) > 0 ? IPAddressType.IPv6 : IPAddressType.IPv4; // { get; set; } = Maintain.IPAddressType.IPv4;
 
-    [Display( Description = "Ports (default 'Any')" )]
-    public ushort[] Ports { get; set; } = portsArg;
+    /// <summary>
+    /// The name of the blocklist file that this entry came from
+    /// </summary>
+    public string FileName { get; set; } = blocklistFileName;
 
-    [Display( Description = "Protocol (default 'Any')" )]
-    public FirewallProtocol Protocol { get; set; } = protocolArg;
+
+    /// <summary>
+    /// No longer needed as we need both port numbers and protocols before we can set these in the Windows Firewall and I'd rather fully block the IP address
+    /// </summary>
+    //[Display( Description = "Ports (default 'Any')" )]
+    //public ushort[] Ports { get; set; } = portsArg;
+
+    /// <summary>
+    /// No longer needed as we need both port numbers and protocols before we can set these in the Windows Firewall and I'd rather fully block the IP address
+    /// </summary>
+    //[Display( Description = "Protocol (default 'Any')" )]
+    //public FirewallProtocol Protocol { get; set; } = protocolArg;
 
     /* Removed because none of these are used for the firewall rules */
     //[Display( Description = "Status" )]
@@ -225,13 +240,6 @@ public sealed record class CandidateEntry( string? nameArg, string? iPAddressArg
             disposedValue = true;
         }
     }
-
-    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-    // ~CandidateEntry()
-    // {
-    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-    //     Dispose(disposing: false);
-    // }
 
     public void Dispose( )
     {

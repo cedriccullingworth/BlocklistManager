@@ -45,7 +45,13 @@ public record class FirewallRule( string Name, FirewallAction Action, FirewallDi
             if ( RemoteAddresses is null )
                 return null;
             else
-                return IAddressesToString( RemoteAddresses );
+            {
+                string addresses = IAddressesToString( RemoteAddresses );
+                if ( addresses.Length > 32767 )
+                    addresses = addresses[ ..32767 ];
+                return addresses;
+            }
+
         }
     }
 
@@ -92,7 +98,7 @@ public record class FirewallRule( string Name, FirewallAction Action, FirewallDi
     //
     // Summary:
     //     Gets or sets the scope that the rule applies to
-    public FirewallScope Scope { get; set; } = FirewallScope.All;
+    public FirewallScope Scope { get; set; } = FirewallScope.Specific;
 
     //
     // Summary:
@@ -118,7 +124,6 @@ public record class FirewallRule( string Name, FirewallAction Action, FirewallDi
             {
                 int endOfStartAddress = RemoteAddresses[ 0 ].ToString( ).IndexOf( '-' );
                 string firstAddress = RemoteAddresses[ 0 ].ToString( )[ ..endOfStartAddress ];
-
                 string[] partsAsStrings = ( addressType == IPAddressType.IPv4
                                                 ? firstAddress.Split( '.' )
                                                 : firstAddress.Split( ':' ) )
@@ -127,15 +132,11 @@ public record class FirewallRule( string Name, FirewallAction Action, FirewallDi
                 try
                 {
                     if ( addressType == IPAddressType.IPv6 )
-                    {
                         parts = partsAsStrings.Select( s => long.Parse( s, System.Globalization.NumberStyles.HexNumber, culture ) )
                                         .ToArray( );
-                    }
                     else
-                    {
                         parts = partsAsStrings.Select( s => long.Parse( s, System.Globalization.NumberStyles.Number, culture ) )
                                         .ToArray( );
-                    }
                 }
                 catch
                 {
@@ -153,19 +154,16 @@ public record class FirewallRule( string Name, FirewallAction Action, FirewallDi
                 try
                 {
                     if ( addressType == IPAddressType.IPv6 )
-                    {
                         parts = partsAsStrings.Select( s => long.Parse( s, NumberStyles.HexNumber, culture ) )
                                     .ToArray( );
-                    }
                     else
-                    {
                         parts = partsAsStrings.Select( s => long.Parse( s, NumberStyles.Number, culture ) )
                                         .ToArray( );
-                    }
                 }
-                catch
+                catch ( Exception ex )
                 {
                     Debug.Print( firstAddress );
+                    StatusMessage( $"FirewallRule SortValue {firstAddress}", ex, null );
                 }
             }
 

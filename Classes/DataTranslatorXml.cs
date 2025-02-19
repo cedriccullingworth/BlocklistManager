@@ -11,25 +11,23 @@ using BlocklistManager.Models;
 
 using SBS.Utilities;
 
-using WindowsFirewallHelper;
-
 namespace BlocklistManager.Classes;
 
 internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
 {
-    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream )
+    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
     {
         return site.ID switch
         {
-            11 => TranslateShodan( site, dataStream ),
-            17 => TranslateCyberCrimeTracker( site, dataStream ),
+            11 => TranslateShodan( site, dataStream, fileName ),
+            17 => TranslateCyberCrimeTracker( site, dataStream, fileName ),
             _ => []
         };
 
     }
 
 #pragma warning disable CA1822 // Mark members as static
-    private List<CandidateEntry> TranslateCyberCrimeTracker( RemoteSite site, Stream dataStream, string logFilePath = "" )
+    private List<CandidateEntry> TranslateCyberCrimeTracker( RemoteSite site, Stream dataStream, string fileName, string logFilePath = "" )
 #pragma warning restore CA1822 // Mark members as static
     {
         try
@@ -48,7 +46,7 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
                                                         .Distinct( );
 
                 // Remove duplicate IP addresses (as found in https://cybercrime-tracker.net/rss.xml
-                return addressesOnly.Select( s => new CandidateEntry( site.Name, s.Trim( ), null, [], [], FirewallProtocol.Any ) )
+                return addressesOnly.Select( s => new CandidateEntry( site.Name, fileName, s.Trim( ), null, null, []/*, [], FirewallProtocol.Any*/ ) )
                                     .ToList( );
             }
         }
@@ -64,7 +62,7 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
     }
 
 #pragma warning disable CA1822 // Mark members as static
-    private List<CandidateEntry> TranslateShodan( RemoteSite site, Stream dataStream, string logFilePath = "" )
+    private List<CandidateEntry> TranslateShodan( RemoteSite site, Stream dataStream, string fileName, string logFilePath = "" )
 #pragma warning restore CA1822 // Mark members as static
     {
         try
@@ -74,7 +72,7 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
             threatlist threats = (threatlist)serializer.Deserialize( reader )!;
             //IEnumerable<threatlistShodan> typed = threats.shodan!; //.Select( s => s );
 
-            return threats.shodan!.Select( s => new CandidateEntry( site.Name, s.ipv4, null, [], [], FirewallProtocol.Any ) )
+            return threats.shodan!.Select( s => new CandidateEntry( site.Name, fileName, s.ipv4, null, null, []/*, [], FirewallProtocol.Any*/ ) )
                           .ToList( );
         }
         catch ( Exception ex )
@@ -119,12 +117,12 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
         GC.SuppressFinalize( this );
     }
 
-    public List<CandidateEntry> TranslateFileData( RemoteSite site, string data )
+    public List<CandidateEntry> TranslateFileData( RemoteSite site, string data, string fileName )
     {
         throw new NotImplementedException( );
     }
 
-    List<CandidateEntry> IDataTranslator.TranslateDataStream( RemoteSite site, Stream dataStream )
+    List<CandidateEntry> IDataTranslator.TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
     {
         throw new System.NotImplementedException( );
     }

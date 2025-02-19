@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -11,11 +12,6 @@ using SBS.Utilities;
 using WindowsFirewallHelper;
 
 namespace BlocklistManager;
-
-/* NOTES
- * Allow the user to:
- *  Edit the list (Add/remove IPs) // TODO
- */
 
 /// <summary>
 /// User interface to observe and manage automatic blacklist maintenance tasks
@@ -36,6 +32,8 @@ public partial class MaintainUI : Form
     public MaintainUI( )
     {
         InitializeComponent( );
+        this.DeleteButton.Enabled = false;
+        this.UpdateButton.Enabled = false;
         _processAll = false;
         FixBounds( );
     }
@@ -57,26 +55,15 @@ public partial class MaintainUI : Form
 
     private void MaintainUI_Load( object sender, EventArgs e )
     {
-        //RemoteSite site = Maintain.ListDownloadSites( null, false ).First( f => f.ID == 16 );
-        //translator.TranslateDataStream( site, testText );
-
-        // string test = HttpHelper.ReadZipFileContents( "https://urlhaus.abuse.ch/downloads/json/" );
-        // Maintain.EnsureStartupDataExists( ); // WHY?
-
         RemoteSites.DataSource = Maintain.ListDownloadSites( null, false ).Where( w => w.Active ).ToList( ); // Maintain.ListDownloadSites( remoteSite, ShowAllCheckBox.Checked );
         RemoteSites.AutoResizeColumns( DataGridViewAutoSizeColumnsMode.AllCells );
         RemoteSites.Columns[ 0 ].Visible = false; // ID
-        //if ( this.RemoteSites.SelectedRows.Count > 0 )
-        //    remoteSite = (RemoteSite)this.RemoteSites.SelectedRows[ 0 ].DataBoundItem;
 
         if ( RemoteSites.RowCount < 1 )
             MessageBox.Show( "Blocklist data was downloaded too recently to update now.\r\nTry again after 30 minutes." );
         else
         {
             _ruleName = $"{RemoteSites.Rows[ 0 ].Cells[ 1 ].Value}_Blocklist";
-            //SiteMenuStrip.Items[ 0 ].Click += RemoteSite_Edit_Click!;
-            //SiteMenuStrip.Items[ 1 ].Click += RemoteSite_Add_Click!;
-            //RemoteSites.ContextMenuStrip = SiteMenuStrip;
         }
 
         FirewallEntryName.Text = _ruleName;
@@ -85,43 +72,8 @@ public partial class MaintainUI : Form
         StatusBar.Left = FirewallRulesData.Left;
         StatusMessage.Width = FirewallRulesData.Width / 2;
         StatusProgress.Width = FirewallRulesData.Width / 2;
-        // this.RemoteSites.ClearSelection( );
         StatusMessage.Text = "Idle";
     }
-
-    //private void RemoteSiteOptions_ItemClicked( object sender, ToolStripItemClickedEventArgs e )
-    //{
-    //    switch ( e.ClickedItem!.Name )
-    //    {
-    //        case "RemoteSite_Add":
-    //            {
-    //                using ( RemoteSiteForm add = new( ) )
-    //                {
-    //                    add.ShowDialog( );
-    //                }
-
-    //                RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); //  Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
-    //                break;
-    //            }
-    //        case "RemoteSite_Edit": //// TODO
-    //            {
-    //                using ( RemoteSiteForm edit = new( ) )
-    //                {
-    //                    edit.DownloadSite = (RemoteSite)RemoteSites.SelectedRows[ 0 ].DataBoundItem;
-    //                    edit.ShowDialog( );
-    //                }
-
-    //                RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); //  Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
-    //                break;
-    //            }
-    //        case "RemoteSite_Remove": //// TODO
-    //            {
-    //                Maintain.DeleteRemoteSite( (RemoteSite)RemoteSites.SelectedRows[ 0 ].DataBoundItem );
-    //                RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); //  Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
-    //                break;
-    //            }
-    //    }
-    //}
 
     /// <summary>
     /// Changed 3 Nov 2024 to only delete entries which are being replaced; leave all others alone
@@ -139,9 +91,11 @@ public partial class MaintainUI : Form
         }
 
         List<RemoteSite> sitesList = SitesListFromGridView( );
+        int counter = 0;
 
         foreach ( RemoteSite site in sitesList )
         {
+            counter++;
             try
             {
                 //ReplaceRulesForSite( site );
@@ -152,21 +106,32 @@ public partial class MaintainUI : Form
             {
                 MessageBox.Show( StringUtilities.ExceptionMessage( "ReplaceButton", ex ) );
             }
+
+            this.UpdateProgress( counter, sitesList.Count );
         }
 
+        LoadFirewallRules( );
+        this.FirewallRulesData.ForeColor = Color.Green;
+        this.FirewallRulesData.Refresh( );
+
+        //        this.RemoteSites.DataSource = Maintain.ListDownloadSites( null, false ); // ShowAllCheckBox.Checked );
+        //        SetFirewallRuleColumnWidths( );
+        StatusMessage.Text = $"Idle";
+        this.UpdateButton.Enabled = false;
+        Cursor = Cursors.Default;
+    }
+
+    private void LoadFirewallRules( )
+    {
         StatusMessage.Text = $"Reading updated firewall rules ...";
 
         if ( _processAll )
             FirewallRulesData.DataSource = Maintain.FetchFirewallRulesFor( );
         else if ( RemoteSites.SelectedRows.Count > 0 )
-            FirewallRulesData.DataSource = Maintain.FetchFirewallRulesFor( ( (RemoteSite)RemoteSites.SelectedRows[ 0 ].DataBoundItem ).Name );
+            FirewallRulesData.DataSource = Maintain.FetchFirewallRulesFor( ( (RemoteSite)( RemoteSites.SelectedRows[ 0 ].DataBoundItem )! ).Name );
+        this.FirewallRulesData.ForeColor = Color.Green;
         FirewallRulesData.Refresh( );
         SetFirewallRuleColumnWidths( );
-
-        //        this.RemoteSites.DataSource = Maintain.ListDownloadSites( null, false ); // ShowAllCheckBox.Checked );
-        //        SetFirewallRuleColumnWidths( );
-        StatusMessage.Text = $"Idle";
-        Cursor = Cursors.Default;
     }
 
     private List<RemoteSite> SitesListFromGridView( )
@@ -200,15 +165,29 @@ public partial class MaintainUI : Form
             if ( !_processAll && RemoteSites.SelectedRows.Count == 1 )  // Multiselect is disabled
             {
                 RemoteSite? selectedSite = RemoteSites.SelectedRows[ 0 ].DataBoundItem as RemoteSite;
-                _ruleName = $"{selectedSite.Name}_Blocklist";
+                this.DeleteButton.Enabled = true;
+                _ruleName = $"{selectedSite!.Name}_Blocklist";
                 StatusMessage.Text = $"Downloading firewall rules for {selectedSite!.Name}";
                 //LoadRules( false ); // _processAll );
                 _candidateRules = Maintain.ProcessDownloads( [ selectedSite ], this, false, out int numberOfRules, out int ipAddressCount );
+                this.UpdateButton.Enabled = true;
+
+                // Show existing firewall rules
+                //                this.FirewallRulesData.DataSource = Maintain.FetchFirewallRulesFor( selectedSite.Name );
+                LoadFirewallRules( );
+                this.FirewallRulesData.ForeColor = Color.Gray;
+                this.FirewallRulesData.Refresh( );
+            }
+            else
+            {
+                this.DeleteButton.Enabled = false;
+                this.UpdateButton.Enabled = false;
             }
         }
 
         _processAll = false;
-        StatusMessage.Text = $"Idle";
+        if ( !StatusMessage.Text!.Contains( "failed" ) && !StatusMessage.Text.Contains( "error" ) )
+            StatusMessage.Text = $"Idle";
         Cursor = Cursors.Default;
     }
 
@@ -327,6 +306,7 @@ public partial class MaintainUI : Form
 
     internal void SetFirewallRuleColumnWidths( )
     {
+        string[] hideColumns = [ "ApplicationName", "FriendlyName", "ServiceName" ];
         foreach ( DataGridViewColumn col in FirewallRulesData.Columns )
         {
             if ( col.Name == "RemoteAddressList" )
@@ -343,6 +323,10 @@ public partial class MaintainUI : Form
                 col.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
                 col.Width = MAX_NAME_SIZE;
             }
+            else if ( hideColumns.Contains( col.Name ) )
+            {
+                col.Visible = false;
+            }
             else
             {
                 col.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -358,7 +342,8 @@ public partial class MaintainUI : Form
         string sitesForDeletion = _processAll ? "all download sites" : _ruleName;
         if ( MessageBox.Show( $"Delete all Windows Firewall rules matching {sitesForDeletion}?", "Confirm Deletion of Windows Firewall entries", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1 ) == DialogResult.OK )
         {
-            //        _ruleName = FirewallEntryName.Text;
+            this.DeleteButton.Enabled = false;
+
             if ( _processAll )
             {
                 _ruleName = "(All))";
@@ -382,6 +367,13 @@ public partial class MaintainUI : Form
 
         Cursor = Cursors.Default;
         StatusMessage.Text = "Idle";
+    }
+
+    internal void UpdateProgress( int completed, int toComplete )
+    {
+        decimal portionCompleted = (decimal)completed / (decimal)toComplete;
+        StatusProgress.Value = Convert.ToInt32( portionCompleted * (decimal)( StatusProgress.Maximum - StatusProgress.Minimum ) );
+        StatusBar.Refresh( );
     }
 
     private void ShowAllCheckBox_CheckedChanged( object sender, EventArgs e )
@@ -431,6 +423,7 @@ public partial class MaintainUI : Form
         Maintain.ProcessDownloads( allActiveSites, this, true, out int numberOfRules, out int ipAddressCount );
         Cursor = Cursors.Default;
         _processAll = false;
+        this.StatusMessage.Text = "Idle";
     }
 
     private void RemoteSites_MouseDown( object sender, MouseEventArgs e )

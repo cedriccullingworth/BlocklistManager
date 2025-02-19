@@ -7,8 +7,6 @@ using System.Linq;
 using BlocklistManager.Interfaces;
 using BlocklistManager.Models;
 
-using WindowsFirewallHelper;
-
 namespace BlocklistManager.Classes;
 
 internal sealed class DataTranslatorText : IDataTranslator
@@ -19,21 +17,21 @@ internal sealed class DataTranslatorText : IDataTranslator
     /// <param name="site">The download site's RemoteSite model</param>
     /// <param name="data">Simply the raw text content that was downloaded</param>
     /// <returns>The standardised structured list built fro the file contents</returns>
-    public List<CandidateEntry> TranslateFileData( RemoteSite site, string data )
+    public List<CandidateEntry> TranslateFileData( RemoteSite site, string data, string fileName )
     {
         return site.FileTypeID switch
         {
-            8 => TranslateAlien( site, data ),
-            _ => TranslateSingleColumn( site, data )
+            8 => TranslateAlien( site, data, fileName ),
+            _ => TranslateSingleColumn( site, data, fileName )
         };
     }
 
-    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream )
+    public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
     {
         throw new NotImplementedException( );
     }
 
-    private static List<CandidateEntry> TranslateAlien( RemoteSite site, string textData )
+    private static List<CandidateEntry> TranslateAlien( RemoteSite site, string textData, string fileName )
     {
         string[] textLines = [];
         if ( textData.Contains( Environment.NewLine ) )
@@ -57,11 +55,11 @@ internal sealed class DataTranslatorText : IDataTranslator
         //var allText = textLines.Select( s => s.Split( ',' ) )
         //                                    .ToList( );
 
-        return allText.Select( s => new CandidateEntry( site.Name, s[ 0 ].Trim( ), null, [], [], FirewallProtocol.Any ) )
+        return allText.Select( s => new CandidateEntry( site.Name, fileName, s[ 0 ].Trim( ), null, null, []/*, [], FirewallProtocol.Any*/ ) )
                       .ToList( );
     }
 
-    private static List<CandidateEntry> TranslateSingleColumn( RemoteSite site, string textData )
+    private static List<CandidateEntry> TranslateSingleColumn( RemoteSite site, string textData, string fileName )
     {
         List<CandidateEntry> remoteData = [];
         string[] textLines = [];
@@ -82,14 +80,14 @@ internal sealed class DataTranslatorText : IDataTranslator
 
         if ( textLines is not null && textLines.Length > 0 )
         {
-            AddSingleColumnEntries( site, ref remoteData, textLines.ToList( ), Maintain.IPAddressType.IPv4 );
-            AddSingleColumnEntries( site, ref remoteData, textLines.ToList( ), Maintain.IPAddressType.IPv6 );
+            AddSingleColumnEntries( site, fileName, ref remoteData, textLines.ToList( ), Maintain.IPAddressType.IPv4 );
+            AddSingleColumnEntries( site, fileName, ref remoteData, textLines.ToList( ), Maintain.IPAddressType.IPv6 );
         }
 
         return remoteData;
     }
 
-    private static void AddSingleColumnEntries( RemoteSite site, ref List<CandidateEntry> remoteData, List<string> allText, Maintain.IPAddressType addressType )
+    private static void AddSingleColumnEntries( RemoteSite site, string fileName, ref List<CandidateEntry> remoteData, List<string> allText, Maintain.IPAddressType addressType )
     {
         CultureInfo culture = CultureInfo.CurrentCulture;
         //char ipDelimiter = '.';
@@ -99,11 +97,15 @@ internal sealed class DataTranslatorText : IDataTranslator
         var unsorted = allText.Select( s => new CandidateEntry
                                                                             (
                                                                                 site.Name,
+                                                                                fileName,
                                                                                 ( s.Contains( '/' ) ? s[ ..s.IndexOf( '/' ) ] : s ).Trim( ),
+                                                                                ( s.Contains( '/' )
+                                                                                    ? Convert.ToInt32( s[ ( s.IndexOf( '/' ) + 1 ).. ], CultureInfo.InvariantCulture )
+                                                                                    : null ),
                                                                                 null,
-                                                                                [],
-                                                                                s.Contains( '/' ) ? [ Convert.ToUInt16( s[ ( s.IndexOf( '/' ) + 1 ).. ], culture ) ] : [],
-                                                                                FirewallProtocol.Any
+                                                                                []// ,
+                                                                                /* We can stop carrying ports */ // [], // s.Contains( '/' ) ? [ Convert.ToUInt16( s[ ( s.IndexOf( '/' ) + 1 ).. ], culture ) ] : [],
+                                                                                /* We can stop carrying protocol */ // FirewallProtocol.Any
                                                                             ) )
                                                      .Where( w => w.AddressType == addressType );
 
@@ -148,7 +150,7 @@ internal sealed class DataTranslatorText : IDataTranslator
         GC.SuppressFinalize( this );
     }
 
-    List<CandidateEntry> IDataTranslator.TranslateDataStream( RemoteSite site, Stream dataStream )
+    List<CandidateEntry> IDataTranslator.TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
     {
         throw new NotImplementedException( );
     }

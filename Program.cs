@@ -46,10 +46,6 @@ internal static class Program
         ApplicationConfiguration.Initialize( );
         _appName = Assembly.GetEntryAssembly( )!.GetName( )!.Name!;
 
-        // Create the database if it doesn't exist yet
-        // BlocklistDbContextFactory factory = new( );
-        // using BlocklistDbContext context = factory.CreateDbContext( args );
-
         if ( args.Length == 0 )
         {
             Application.Run( new MaintainUI( ) );
@@ -129,38 +125,4 @@ internal static class Program
                     ).ToList( );
         }
     }
-
-    //private static void ProcessAllActiveSites( List<RemoteSite> sites )
-    //{
-    //    List<CandidateEntry> candidateRules = Maintain.DownloadBlocklists( null, null, Logger.LogPath );
-
-    //    Logger.Log( _appName, "Removing private address ranges ..." );
-    //    Maintain.RemovePrivateAddressesRanges( ref candidateRules, out int numberRemoved );
-    //    Logger.Log( _appName, $"Removed {numberRemoved} private address ranges" );
-
-
-    //    Logger.Log( _appName, "Removing duplicates ..." );
-    //    Maintain.RemoveDuplicates( ref candidateRules, out numberRemoved );
-    //    Logger.Log( _appName, $"Removed {numberRemoved} duplicates" ); 111
-
-    //    Logger.Log( _appName, "Removing any invalid addresses ..." );
-    //    Maintain.RemoveInvalidAddresses( ref candidateRules, out numberRemoved );
-    //    Logger.Log( _appName, $"Removed {numberRemoved} invalid addresses" );
-
-    //    Logger.Log( _appName, $"Consolidating addresses into sets of {Maintain.MAX_FIREWALL_BATCH_SIZE} ..." );
-    //    Maintain.ConvertIPAddressesToIPAddressSets( ref candidateRules, sites );
-    //    Logger.Log( _appName, $"Consolidation completed succesfully\r\n" );
-
-    //    foreach ( RemoteSite site in sites )
-    //    {
-    //        try
-    //        {
-    //            ReplaceSiteRules( site, candidateRules, Logger.LogPath );
-    //        }
-    //        catch ( Exception ex )
-    //        {
-    //            Logger.Log( _appName, ex );
-    //        }
-    //    }
-    //}
 }
