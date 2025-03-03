@@ -9,7 +9,7 @@ using System.Net;
 using WindowsFirewallHelper;
 using WindowsFirewallHelper.Addresses;
 
-using static BlocklistManager.Classes.Maintain;
+using static BlocklistManager.Classes.IAddressExtensions;
 
 namespace BlocklistManager.Classes;
 
@@ -63,13 +63,17 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
     //    }
     //}
 
-    internal IPAddressType AddressType => DetermineAddressType( ); // string.IsNullOrEmpty( this.IPAddress ) ? IPAddressType.Invalid : this.IPAddress.IndexOf( ':' ) > 0 ? IPAddressType.IPv6 : IPAddressType.IPv4; // { get; set; } = Maintain.IPAddressType.IPv4;
+    internal IPAddressType AddressType { get; set; } // => DetermineAddressType( ); // string.IsNullOrEmpty( this.IPAddress ) ? IPAddressType.Invalid : this.IPAddress.IndexOf( ':' ) > 0 ? IPAddressType.IPv6 : IPAddressType.IPv4; // { get; set; } = Maintain.IPAddressType.IPv4;
 
     /// <summary>
     /// The name of the blocklist file that this entry came from
     /// </summary>
     public string FileName { get; set; } = blocklistFileName;
 
+    /// <summary>
+    /// New: Simply record whether the IP address(es) or ranger has been validated
+    /// </summary>
+    public bool Validated { get; set; } = false;
 
     /// <summary>
     /// No longer needed as we need both port numbers and protocols before we can set these in the Windows Firewall and I'd rather fully block the IP address
@@ -107,22 +111,22 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
     internal long Sort2 => Sort.Length > 1 ? Sort[ 2 ] : 0;
     internal long Sort3 => Sort.Length > 2 ? Sort[ 3 ] : 0;
 
-    private IPAddressType DetermineAddressType( )
-    {
-        string tmpAddress = string.Empty;
-        if ( string.IsNullOrEmpty( IPAddress ) && IPAddressRange is not null )
-            tmpAddress = IPAddressRange!.StartAddress.ToString( );
-        else if ( !string.IsNullOrEmpty( IPAddressBatch ) )
-            tmpAddress = IPAddressSet[ 0 ].ToString( );
-        else
-            tmpAddress = IPAddress!;
+    //private IPAddressType DetermineAddressType( )
+    //{
+    //    string tmpAddress = string.Empty;
+    //    if ( string.IsNullOrEmpty( IPAddress ) && IPAddressRange is not null )
+    //        tmpAddress = IPAddressRange!.StartAddress.ToString( );
+    //    else if ( !string.IsNullOrEmpty( IPAddressBatch ) )
+    //        tmpAddress = IPAddressSet[ 0 ].ToString( );
+    //    else
+    //        tmpAddress = IPAddress!;
 
 
-        if ( tmpAddress.IndexOf( ':' ) > 0 )
-            return IPAddressType.IPv6;
-        else
-            return IPAddressType.IPv4;
-    }
+    //    if ( tmpAddress.IndexOf( ':' ) > 0 )
+    //        return IPAddressType.IPv6;
+    //    else
+    //        return IPAddressType.IPv4;
+    //}
 
     private IPAddress? RepresentativeIPAddress
     {
@@ -130,7 +134,15 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
         {
             string addressToUse = string.Empty;
             if ( !string.IsNullOrEmpty( IPAddress ) )
-                return System.Net.IPAddress.Parse( IPAddress!.Split( ';' )[ 0 ] );
+            {
+                System.Net.IPAddress? address = null;
+                if ( System.Net.IPAddress.TryParse( IPAddress!.Split( ';' )[ 0 ], out address ) )
+                {
+                    return address;
+                }
+
+                return address;
+            }
             else if ( !string.IsNullOrEmpty( IPAddressBatch ) )
                 return System.Net.IPAddress.Parse( IPAddressBatch!.Split( ';' )[ 0 ] );
             else if ( IPAddressRange is not null && IPAddressRange.StartAddress is not null )

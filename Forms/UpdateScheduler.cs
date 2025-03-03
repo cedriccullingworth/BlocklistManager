@@ -181,6 +181,7 @@ public partial class UpdateScheduler : Form
         }
         catch ( Exception ex )
         {
+            Maintain.StatusMessage( "UpdateScheduler", ex.Message );
             MessageBox.Show( $"Unable to create the scheduled task.\r\n{ex.Message}" );
         }
 
@@ -206,6 +207,7 @@ public partial class UpdateScheduler : Form
         }
         catch ( Exception ex )
         {
+            Maintain.StatusMessage( "CreateTaskDefinition", ex.Message );
             MessageBox.Show( StringUtilities.ExceptionMessage( "CreateTaskDefinition", ex ) );
             return null;
         }

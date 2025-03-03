@@ -80,8 +80,6 @@ namespace BlocklistManager
             this.RemoteSites.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             this.RemoteSites.Size = new Size( 1268, 140 );
             this.RemoteSites.TabIndex = 1;
-            this.RemoteSites.SelectionChanged +=  this.RemoteSites_SelectionChanged ;
-            this.RemoteSites.MouseDown +=  this.RemoteSites_MouseDown ;
             // 
             // label2
             // 

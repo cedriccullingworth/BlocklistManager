@@ -14,19 +14,6 @@ namespace BlocklistManager;
 
 internal static class Program
 {
-    /*
-        PM> dotnet tool install --global dotnet-ef
-        Tool 'dotnet-ef' was successfully updated from version '8.0.2' to version '9.0.0'.
-        PM> dotnet ef migrations bundle
-        Build started...
-        Build succeeded.
-        Building bundle...
-        Done. Migrations Bundle: D:\Projects\BlocklistManager\efbundle.exe
-        Don't forget to copy appsettings.json alongside your bundle if you need it to apply migrations.
-
-        dotnet ef migrations bundle --project BlocklistManager/BlocklistManager.csproj --output efbundle
-    */
-
     private static string _appName = string.Empty;
 
     /// <summary>
@@ -39,16 +26,32 @@ internal static class Program
         // see https://aka.ms/applicationconfiguration.
         /* 
          * args examples:
-         * /Sites:AllCurrent /LogPath:D:\Projects\BlocklistManager\bin\Debug\net8.0-windows\Log
-         * /Sites:1;2;3;4 /LogPath:D:\Projects\BlocklistManager\bin\Debug\net8.0-windows\Log
+         * /Sites:AllCurrent /LogPath:D:\Projects\BlocklistManager\Log
+         * /Sites:1;2;3;4 /LogPath:D:\Projects\BlocklistManager\Log
         */
 
         ApplicationConfiguration.Initialize( );
+
         _appName = Assembly.GetEntryAssembly( )!.GetName( )!.Name!;
+        var settings = AppSettings.Sections;
+        string? logSetting = settings.FirstOrDefault( settings => settings.Key == "LogFolder" )?.Value;
+        if ( logSetting is not null )
+        {
+            if ( !logSetting.EndsWith( "\\", StringComparison.InvariantCultureIgnoreCase ) )
+                logSetting += "\\";
+            Maintain.LogFileFullname = $"{logSetting}{_appName}.log";
+        }
+        else
+            Maintain.LogFileFullname = Assembly.GetEntryAssembly( )!.FullName!.Replace( ".exe", ".log" );
+
+        //string testIP = "2a03:6f00:6:1::bce1:28a1";
+        //if ( Tests.TestIPValidation( [ testIP ] ) )
+        //    Console.WriteLine( $"{testIP} passed" );
 
         if ( args.Length == 0 )
         {
-            Application.Run( new MaintainUI( ) );
+            string appNameAndVersion = $"{_appName} v{Maintain.ApplicationVersion}";
+            Application.Run( new MaintainUI( ) { Text = appNameAndVersion } );
             return;
         }
         else
@@ -77,6 +80,9 @@ internal static class Program
                 }
             }
 
+            //Tests.Execute( sites );
+            //return;
+
             DateTime now = new( DateTime.UtcNow.Ticks, DateTimeKind.Utc );
             CultureInfo culture = CultureInfo.CurrentCulture;
             string startedAt = now.ToLocalTime( ).ToString( "F", culture.DateTimeFormat );
@@ -84,13 +90,13 @@ internal static class Program
             Logger.Log( _appName!, $"................. BLOCKLIST UPDATES STARTED AT {startedAt} .................\r\n" );
 
             int processedCount = 0;
-            Maintain.ProcessDownloads( sites, null, true, out processedCount, out int ipAddressCount );
+            Maintain.ProcessDownloads( sites, null, true, out processedCount, out int ipAddressCount, out int allAddressCount );
 
             now = new DateTime( DateTime.UtcNow.Ticks, DateTimeKind.Utc );
             string endedAt = now.ToLocalTime( ).ToString( "T", culture.DateTimeFormat );
             Logger.Log( _appName!, $"................. END OF BLOCKLIST UPDATES (STARTED AT {startedAt}, ENDED AT {endedAt}) .................\r\n" );
 
-            Logger.Log( _appName!, $"Processed {ipAddressCount} IP addresses/ranges and created {processedCount * 2} ({processedCount} inbound, {processedCount} outbound) firewall rules" );
+            Logger.Log( _appName!, $"Processed {ipAddressCount} IP addresses/ranges from {allAddressCount} downloaded and created {processedCount * 2} ({processedCount} inbound, {processedCount} outbound) firewall rules" );
         }
     }
 

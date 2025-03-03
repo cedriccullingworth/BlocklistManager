@@ -7,6 +7,8 @@ using System.Linq;
 using BlocklistManager.Interfaces;
 using BlocklistManager.Models;
 
+using static BlocklistManager.Classes.IAddressExtensions;
+
 namespace BlocklistManager.Classes;
 
 internal sealed class DataTranslatorText : IDataTranslator
@@ -80,14 +82,14 @@ internal sealed class DataTranslatorText : IDataTranslator
 
         if ( textLines is not null && textLines.Length > 0 )
         {
-            AddSingleColumnEntries( site, fileName, ref remoteData, textLines.ToList( ), Maintain.IPAddressType.IPv4 );
-            AddSingleColumnEntries( site, fileName, ref remoteData, textLines.ToList( ), Maintain.IPAddressType.IPv6 );
+            AddSingleColumnEntries( site, fileName, ref remoteData, textLines.ToList( ), IPAddressType.IPv4 );
+            AddSingleColumnEntries( site, fileName, ref remoteData, textLines.ToList( ), IPAddressType.IPv6 );
         }
 
         return remoteData;
     }
 
-    private static void AddSingleColumnEntries( RemoteSite site, string fileName, ref List<CandidateEntry> remoteData, List<string> allText, Maintain.IPAddressType addressType )
+    private static void AddSingleColumnEntries( RemoteSite site, string fileName, ref List<CandidateEntry> remoteData, List<string> allText, IPAddressType addressType )
     {
         CultureInfo culture = CultureInfo.CurrentCulture;
         //char ipDelimiter = '.';
@@ -109,7 +111,7 @@ internal sealed class DataTranslatorText : IDataTranslator
                                                                             ) )
                                                      .Where( w => w.AddressType == addressType );
 
-        if ( addressType == Maintain.IPAddressType.IPv4 )
+        if ( addressType == IPAddressType.IPv4 )
         {
             remoteData.AddRange( unsorted );
         }

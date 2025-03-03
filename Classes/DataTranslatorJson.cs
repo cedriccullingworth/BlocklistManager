@@ -122,6 +122,7 @@ public sealed class DataTranslatorJson : IDataTranslator
             catch ( Exception ex )
             {
                 MessageBox.Show( ex.Message );
+                Maintain.StatusMessage( "TranslateFeodo", ex.Message );
             }
         }
 

@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-	<ApplicationVersion>1.7</ApplicationVersion>
+	<ApplicationVersion>1.8.1</ApplicationVersion>
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
     <BaseOutputPath>bin\</BaseOutputPath>
     <StartupObject>BlocklistManager.Program</StartupObject>
@@ -16,9 +16,9 @@
     <PackageIcon>Images\BlocklistManager.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blocklist blacklist blocklists blacklists windows firewall information security</PackageTags>
-	<Version>1.7.0</Version>
-    <AssemblyVersion>1.7.0</AssemblyVersion>
-    <FileVersion>1.7.0</FileVersion>
+	<Version>1.8.1</Version>
+    <AssemblyVersion>1.8.1</AssemblyVersion>
+    <FileVersion>1.8.1</FileVersion>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <NeutralLanguage>en-001</NeutralLanguage>
@@ -131,5 +131,7 @@
       <HintPath>..\SBS.Utilities\bin\Release\net9.0\SBS.Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

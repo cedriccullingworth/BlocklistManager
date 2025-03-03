@@ -9,6 +9,8 @@ This Microsoft Windows application manages Windows Firewall rules for IP address
 
 **NOTE: The application needs to be run with administrator privileges to be able to change Windows Firewall rules.**
 
+I have also included a general usage guide in the file BlocklistManager.docx in the same folder as this README.
+
 ## Application objective
 To enhance computer security using IP address blocklists to generate Windows Firewall rules. This application fully blocks inbound and outbound traffic to or from IP addresses/address ranges/address ses found in IP blocklists
 This application can never guarantee protection against all external threats. It blocks inbound traffic to, and outbound traffic from, your computer by creating firewall rules for all IP (V4 and V6) addresses 
@@ -73,6 +75,7 @@ I recommend that this be scheduled to run at less busy times of the day as it st
 I've tried different ways (netsh, powershell etc.) of working with the Windows 11 firewall. All take time to add or remove rules. Remember that even after de-duplicating addresses and consolidating them into batches of 1000, over 1000 firewall rules (inbound plus outbound) are created.
 **NEW with version 1.6.0: Added conversion of IP address ranges to batches and increased the maximum batch size to 10,000 on Windows 11 and Windows Server 2022 machines. This has resulted in a big performance improvement **
 **NEW with version 1.7.0: Improved the performance of combining addresses and ranges into sets**
+This app currently removes existing firewall rules per blocklist download site and then creates fresh rules based on the latest blocklist. Please let me know if you become aware of any valid reason to chnage this approach.
 
 ## User manual
 A short document providing guidance on general usage can be found in BlocklistManager.docx in the same folder as this README.

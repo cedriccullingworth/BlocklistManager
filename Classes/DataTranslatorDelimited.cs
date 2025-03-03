@@ -19,11 +19,12 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
         lineData = lineData.Where( w => !w.StartsWith( '#' ) )
                            .Where( w => !w.StartsWith( ';' ) )
                            .Where( w => !string.IsNullOrEmpty( w ) )
+                           //                       .Where( x => x.Contains( "207.63.218" ) )
                            .ToList( );
 
         return site.FileType!.Name switch
         {
-            // Only James Brine at this stage, will probably need some separation when another CSV format arrives
+            // Only James Brine at this stage, will probably need some separation when another CSV format comes along
             "CSV" => /*site.ID == 24 ? */TranslateCommaDelimited( site, lineData, fileName ), // : TranslateMyIP( site, lineData ),
             "TAB" => TranslateTabDelimited( site, lineData, fileName ),
             _ => throw new InvalidOperationException( )
@@ -32,10 +33,11 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
 
     private static List<CandidateEntry> TranslateCommaDelimited( RemoteSite site, List<string> lineData, string fileName )
     {
+        // CHANGE IN TESTING: Don't do any IP address validation yet
         return lineData
                     .Select( s => s.Replace( "# ", "," ).Replace( "#", string.Empty ) )
                     .Select( s => s.Split( ',', StringSplitOptions.TrimEntries ) )
-                    .Where( w => Maintain.InternetAddressType( w[ 0 ] ) != Maintain.IPAddressType.Invalid )
+                    //                    .Where( w => Maintain.InternetAddressType( w[ 0 ] ) != IPAddressType.Invalid )
                     .Select( s => new CandidateEntry( site.Name, fileName, s[ 0 ], null, null, []/*, [], FirewallProtocol.Any*/ ) )
                     .ToList( );
     }

@@ -52,10 +52,11 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
         }
         catch ( Exception ex )
         {
-            if ( logFilePath != "" )
-                Logger.Log( "TranslateShodan", ex );
-            else
-                MessageBox.Show( StringUtilities.ExceptionMessage( "TranslateShodan", ex ) );
+            Maintain.StatusMessage( "TranslateCyberCrimeTracker", ex.Message );
+            //if ( logFilePath != "" )
+            //    Logger.Log( "TranslateShodan", ex );
+            //else
+            MessageBox.Show( StringUtilities.ExceptionMessage( "TranslateShodan", ex ) );
         }
 
         return [];
@@ -77,10 +78,11 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
         }
         catch ( Exception ex )
         {
-            if ( logFilePath != "" )
-                Logger.Log( "TranslateShodan", ex );
-            else
-                MessageBox.Show( StringUtilities.ExceptionMessage( "TranslateShodan", ex ) );
+            //if ( logFilePath != "" )
+            //    Logger.Log( "TranslateShodan", ex );
+            //else
+            Maintain.StatusMessage( "TranslateShodan", ex.Message );
+            MessageBox.Show( StringUtilities.ExceptionMessage( "TranslateShodan", ex ) );
         }
 
         return [];

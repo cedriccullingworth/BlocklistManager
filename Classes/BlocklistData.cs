@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
+using System.Windows.Forms;
 
 using BlocklistManager.Models;
 
@@ -19,35 +20,42 @@ internal sealed class BlocklistData : IDisposable
 
     internal BlocklistData( )
     {
-        string configFilePath = Assembly.GetExecutingAssembly( ).Location;
-        if ( !string.IsNullOrEmpty( configFilePath ) )
-            configFilePath = $"{configFilePath[ 0..configFilePath.LastIndexOf( '\\' ) ]}\\appsettings.json";
-        else
-            configFilePath = "appsettings.json";
-
-        using ConfigurationManager configurationManager = new ConfigurationManager( );
-        configurationManager.AddJsonFile( configFilePath );
-        IConfigurationSection settings = configurationManager.GetSection( "BlocklistDataConfig" );
         _config = new BlocklistDataConfig( )
         {
-            HostAddress = settings[ "HostAddress" ] ?? "",
-            HostPort = settings[ "HostPort" ] ?? ""
+            HostAddress = "localhost",
+            HostPort = "44318"
         };
 
-        //using SBS.Encryption2022.Encrypter encrypter = new( );
-        //X509Certificate2? certificate = GetCertificate( out string error );
-        //if ( certificate is not null )
-        //{
-        //    HttpRequestMessage requestMessage = new HttpRequestMessage( HttpMethod.Get, $"https://{_config.HostAddress}:{_config.HostPort}" );
-        //    HttpRequestHeaders headers = requestMessage.Headers;
+        try
+        {
+            ConfigurationSection settings = AppSettings.Sections.First( f => f.Key == "BlocklistDataConfig" );
+            _config = new BlocklistDataConfig( )
+            {
+                HostAddress = settings[ "HostAddress" ] ?? "",
+                HostPort = settings[ "HostPort" ] ?? ""
+            };
+            #region Commented out for Versions 1.x
+            //using SBS.Encryption2022.Encrypter encrypter = new( );
+            //X509Certificate2? certificate = GetCertificate( out string error );
+            //if ( certificate is not null )
+            //{
+            //    HttpRequestMessage requestMessage = new HttpRequestMessage( HttpMethod.Get, $"https://{_config.HostAddress}:{_config.HostPort}" );
+            //    HttpRequestHeaders headers = requestMessage.Headers;
 
-        //    _handler = new HttpClientHandler( )
-        //    {
-        //        ClientCertificateOptions = ClientCertificateOption.Manual,
-        //        ClientCertificates = { certificate },
-        //        ServerCertificateCustomValidationCallback = ( msg, certificate, chain, errors ) => true
-        //    };
-        //}
+            //    _handler = new HttpClientHandler( )
+            //    {
+            //        ClientCertificateOptions = ClientCertificateOption.Manual,
+            //        ClientCertificates = { certificate },
+            //        ServerCertificateCustomValidationCallback = ( msg, certificate, chain, errors ) => true
+            //    };
+            //}
+            #endregion
+        }
+        catch ( Exception ex )
+        {
+            Maintain.StatusMessage( "BlocklistManager", SBS.Utilities.StringUtilities.ExceptionMessage( "BlocklistData", ex ) );
+            MessageBox.Show( $"BlocklistManager: Settings not found." );
+        }
     }
 
     internal List<FileType> ListFileTypes( )
@@ -71,7 +79,7 @@ internal sealed class BlocklistData : IDisposable
         }
         catch ( Exception ex )
         {
-            Console.WriteLine( SBS.Utilities.StringUtilities.ExceptionMessage( "ListFileTypes", ex ) );
+            Maintain.StatusMessage( "ListFileTypes", SBS.Utilities.StringUtilities.ExceptionMessage( "", ex ) );
         }
 
         return sites;
@@ -91,7 +99,7 @@ internal sealed class BlocklistData : IDisposable
             using HttpClient client = new HttpClient( )
             {
                 BaseAddress = new Uri( $"https://{_config.HostAddress}:{_config.HostPort}" ),
-                Timeout = TimeSpan.FromSeconds( 10 )
+                Timeout = TimeSpan.FromSeconds( 100 )
             };
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "localhost" );
@@ -107,7 +115,7 @@ internal sealed class BlocklistData : IDisposable
         }
         catch ( Exception ex )
         {
-            Console.WriteLine( SBS.Utilities.StringUtilities.ExceptionMessage( "ListDownloadSites", ex ) );
+            Maintain.StatusMessage( "ListDownloadSites", SBS.Utilities.StringUtilities.ExceptionMessage( "", ex ) );
             return [];
         }
     }
@@ -121,7 +129,7 @@ internal sealed class BlocklistData : IDisposable
                 using HttpClient client = new HttpClient( )
                 {
                     BaseAddress = new Uri( $"https://{_config.HostAddress}:{_config.HostPort}" ),
-                    Timeout = TimeSpan.FromSeconds( 10 )
+                    Timeout = TimeSpan.FromSeconds( 30 )
                 };
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "localhost" );
@@ -133,7 +141,7 @@ internal sealed class BlocklistData : IDisposable
             }
             catch ( Exception ex )
             {
-                Console.WriteLine( SBS.Utilities.StringUtilities.ExceptionMessage( "GetDevice", ex ) );
+                Maintain.StatusMessage( "GetDevice", SBS.Utilities.StringUtilities.ExceptionMessage( "", ex ) );
             }
         }
 
@@ -160,7 +168,7 @@ internal sealed class BlocklistData : IDisposable
         }
         catch ( Exception ex )
         {
-            Console.WriteLine( SBS.Utilities.StringUtilities.ExceptionMessage( "SetLastDownloaded", ex ) );
+            Maintain.StatusMessage( "SetLastDownloaded", SBS.Utilities.StringUtilities.ExceptionMessage( "SetLastDownloaded", ex ) );
         }
         return now;
     }
