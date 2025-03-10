@@ -7,10 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlocklistManager", "Blockli
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		All|Any CPU = All|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{32A9A0CE-8835-4B04-A49B-B3C69ED780CE}.All|Any CPU.ActiveCfg = Debug|Any CPU
+		{32A9A0CE-8835-4B04-A49B-B3C69ED780CE}.All|Any CPU.Build.0 = Debug|Any CPU
 		{32A9A0CE-8835-4B04-A49B-B3C69ED780CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{32A9A0CE-8835-4B04-A49B-B3C69ED780CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32A9A0CE-8835-4B04-A49B-B3C69ED780CE}.Release|Any CPU.ActiveCfg = Release|Any CPU

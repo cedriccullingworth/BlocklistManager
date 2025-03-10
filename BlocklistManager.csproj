@@ -7,34 +7,37 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-	<ApplicationVersion>1.8.1</ApplicationVersion>
-    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
-    <BaseOutputPath>bin\</BaseOutputPath>
+	<ApplicationVersion>1.8.3</ApplicationVersion>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <BaseOutputPath>C:\Program Files\BlocklistManager\bin</BaseOutputPath>
     <StartupObject>BlocklistManager.Program</StartupObject>
     <ApplicationIcon>Images\BlocklistManager.ico</ApplicationIcon>
     <Copyright>Cedric Cullingworth</Copyright>
     <PackageIcon>Images\BlocklistManager.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blocklist blacklist blocklists blacklists windows firewall information security</PackageTags>
-	<Version>1.8.1</Version>
-    <AssemblyVersion>1.8.1</AssemblyVersion>
-    <FileVersion>1.8.1</FileVersion>
+	<Version>1.8.3</Version>
+    <AssemblyVersion>1.8.3</AssemblyVersion>
+    <FileVersion>1.8.3</FileVersion>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <NeutralLanguage>en-001</NeutralLanguage>
-    <TargetFramework>net9.0-windows10.0.17763.0</TargetFramework>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <SignAssembly>True</SignAssembly>
+    <TargetFramework>net9.0-windows10.0.17763.0</TargetFramework>
+    <AssemblyOriginatorKeyFile>BlocklistManager.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>False</DelaySign>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>full</DebugType>
-    <IsPublishable>False</IsPublishable>
+    <IsPublishable>True</IsPublishable>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>full</DebugType>
-    <IsPublishable>False</IsPublishable>
+    <IsPublishable>True</IsPublishable>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
   </PropertyGroup>
 
@@ -42,22 +45,32 @@
     <Compile Remove="BlocklistAPI\**" />
     <Compile Remove="Context\**" />
     <Compile Remove="DataBackup\**" />
+    <Compile Remove="Log\**" />
     <Compile Remove="Migrations\**" />
+    <Compile Remove="Other\**" />
     <EmbeddedResource Remove="BlocklistAPI\**" />
     <EmbeddedResource Remove="Context\**" />
     <EmbeddedResource Remove="DataBackup\**" />
+    <EmbeddedResource Remove="Log\**" />
     <EmbeddedResource Remove="Migrations\**" />
+    <EmbeddedResource Remove="Other\**" />
     <None Remove="BlocklistAPI\**" />
     <None Remove="Context\**" />
     <None Remove="DataBackup\**" />
+    <None Remove="Log\**" />
     <None Remove="Migrations\**" />
+    <None Remove="Other\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Classes\BlocklistDbContextFactory.cs" />
+    <Compile Remove="Classes\DeviceNetworkInterface.cs" />
     <Compile Remove="Classes\HtmlDataCollector.cs" />
     <Compile Remove="Classes\HttpHelper.cs" />
     <Compile Remove="Classes\IPAddressExtensions.cs" />
+    <Compile Remove="Classes\JsonSerializerExtensions.cs" />
+    <Compile Remove="Classes\PathInfo.cs" />
+    <Compile Remove="Classes\Tests.cs" />
     <Compile Remove="Classes\ZipDataCollector.cs" />
     <Compile Remove="Forms\RemoteSiteForm.cs" />
     <Compile Remove="Forms\RemoteSiteForm.Designer.cs" />
@@ -76,11 +89,11 @@
 
   <ItemGroup>
     <PackageReference Include="IPAddressRange" Version="6.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.2" />
     <PackageReference Include="SharpCompress" Version="0.39.0" />
-    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.1" />
-    <PackageReference Include="TaskScheduler" Version="2.11.0" />
+    <PackageReference Include="System.DirectoryServices" Version="9.0.2" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.2" />
+    <PackageReference Include="TaskScheduler" Version="2.12.1" />
     <PackageReference Include="WindowsFirewallHelper" Version="2.2.0.86" />
   </ItemGroup>
 
@@ -108,6 +121,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="BlocklistManager.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Images\BlocklistManager.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -116,6 +132,9 @@
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SampleFiles\threatlist.xsd">
       <SubType>Designer</SubType>
@@ -128,7 +147,13 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="SBS.Utilities">
-      <HintPath>..\SBS.Utilities\bin\Release\net9.0\SBS.Utilities.dll</HintPath>
+      <HintPath>..\SBS.Utilities\bin\Release\net9.0-windows7.0\SBS.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="System.DirectoryServices.AccountManagement">
+      <HintPath>C:\Program Files\PowerShell\7\System.DirectoryServices.AccountManagement.dll</HintPath>
+    </Reference>
+    <Reference Include="System.DirectoryServices.Protocols">
+      <HintPath>C:\Program Files\PowerShell\7\System.DirectoryServices.Protocols.dll</HintPath>
     </Reference>
   </ItemGroup>
 

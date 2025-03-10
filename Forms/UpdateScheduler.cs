@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.DirectoryServices.AccountManagement;
+
+//using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,43 +16,57 @@ using Microsoft.Win32.TaskScheduler;
 
 using OSVersionExtension;
 
-using SBS.Utilities;
-
-using static SBS.Utilities.General;
-
-
 namespace BlocklistManager;
 
+/// <summary>
+/// User interface to aid with creating a scheduled task to run this application
+/// </summary>
 public partial class UpdateScheduler : Form
 {
     private List</*OSVersionExtension.OperatingSystem*/OSSchedulerVersion> _compatibleOperatingSystems = [];
     private string _remoteSiteIDs = "AllCurrent";
-    private readonly string _applicationDirectory = Assembly.GetExecutingAssembly( ).Location[ 0..Assembly.GetExecutingAssembly( ).Location.LastIndexOf( '\\' ) ];
-    private readonly string _applicationShortName = $"{Assembly.GetExecutingAssembly( ).GetName( ).Name}";
+    [UnconditionalSuppressMessage( "SingleFile", "IL3000:Avoid accessing Assembly file path when publishing as a single file", Justification = "<Pending>" )]
+    private static readonly Assembly assembly = Assembly.GetExecutingAssembly( );
+    private readonly string _applicationDirectory = assembly.Location[ 0..Assembly.GetExecutingAssembly( ).Location.LastIndexOf( '\\' ) ];
+    private readonly string _applicationShortName = assembly/* $"{Assembly.GetExecutingAssembly( )*/.GetName( )!.Name!;
     private readonly string _assemblyFullName;
     private readonly string _activeUser;
     private readonly string _taskName = "Update Blocklist Firewall Entries";
-    private Version _version = new( 1, 0 );
+    private Version _version = new Version( "1.0" );
+    private readonly List<UserAccount> _adminUsers = [];
 
     //public Microsoft.Win32.TaskScheduler.Task ScheduledTask { get; set; }
 
     public UpdateScheduler( )
     {
         InitializeComponent( );
-        _assemblyFullName = $"{_applicationDirectory}\\{_applicationShortName}.exe";
-        //ScheduledTask = Microsoft.Win32.TaskScheduler.Task;
-        List<string> accounts = AdminUsers/*  UserAccounts */.Select( s => $"{s.DomainOrComputerName}\\{s.UserName}" ).ToList( );
+
+        _assemblyFullName = $"{_applicationDirectory}\\{_applicationShortName}.exe"; // or Assembly.GetExecutingAssembly().Location.Replace( ".dll", ".exe" )
+        List<string> accounts = [];
+        try
+        {
+            accounts = AdminUsers.Select( s => $"{s.DomainOrComputerName}\\{s.UserName}" ).ToList( );
+            if ( accounts.Count < 1 )
+                accounts.Add( $"{Environment.UserDomainName}\\{Environment.UserName}" );
+        }
+        catch ( Exception ex )
+        {
+            string message = StringUtilities.ExceptionMessage( "UpdateScheduler", ex );
+            Logger.Log( "UpdateScheduler", message );
+        }
+
         AccountsComboBox.DataSource = accounts;
         ApplicationName.Text = _applicationShortName;
         AuthorLabel.Text = $"Author:  {Environment.UserName}";
-        LogFolder.Text = $"{_applicationDirectory}\\Log";
+        LogFolder.Text = Maintain.LogFileFullname[ 0..Maintain.LogFileFullname.LastIndexOf( '\\' ) ]; // $"{_applicationDirectory}\\Log";
         Notes.Text = CurrentNotes;
-        TaskNameLabel.Text = $"Scheduled Task Name:     {_taskName} (Version {_version})";
         ArgumentsText.Text = @$"/Sites:AllCurrent /LogPath:{LogFolder.Text}";
 
         _activeUser = accounts.FirstOrDefault( c => c == $"{Environment.UserDomainName}\\{Environment.UserName}" ) ?? $"{Environment.UserDomainName}\\{Environment.UserName}";
     }
 
+    [RequiresUnreferencedCode( "Calls BlocklistManager.UpdateScheduler.LoadSitesComboBox()" )]
+    [RequiresDynamicCode( "Calls BlocklistManager.UpdateScheduler.LoadSitesComboBox()" )]
     private void UpdateScheduler_Load( object sender, EventArgs e )
     {
         FrequencyComboBox.SelectedIndex = 1; // Daily
@@ -94,7 +112,7 @@ public partial class UpdateScheduler : Form
             CalculateTaskVersionNumber( existing! );
         }
 
-        TaskNameLabel.Text = $"Scheduled Task Name:     {_taskName} (Version {_version})";
+        TaskNameLabel.Text = $"Scheduled Task Name:     {_taskName} (Task Version {_version})";
         Refresh( );
     }
 
@@ -123,6 +141,8 @@ public partial class UpdateScheduler : Form
         }
     }
 
+    [RequiresUnreferencedCode( "Calls BlocklistManager.Classes.BlocklistData.ListDownloadSites(Int32, RemoteSite, Boolean)" )]
+    [RequiresDynamicCode( "Calls BlocklistManager.Classes.BlocklistData.ListDownloadSites(Int32, RemoteSite, Boolean)" )]
     private void LoadSitesComboBox( )
     {
         if ( Maintain.ConnectedDevice is null )
@@ -131,7 +151,7 @@ public partial class UpdateScheduler : Form
             return;
         }
 
-        List<RemoteSite> sites = ( new BlocklistData( ) ).ListDownloadSites( Maintain.ConnectedDevice!.ID, null );
+        List<RemoteSite> sites = new BlocklistData( ).ListDownloadSites( Maintain.ConnectedDevice!.ID, null );
         SitesList.View = View.List;
         foreach ( var site in sites )
             SitesList.Items.Add( new ListViewItem( site.Name ) { Checked = true, Tag = site.ID } );
@@ -161,18 +181,8 @@ public partial class UpdateScheduler : Form
         if ( !Directory.Exists( LogFolder.Text ) )
             Directory.CreateDirectory( LogFolder.Text );
 
-        // This works
-        // TaskService.Instance.AddTask( "Test", DefineTrigger( ), new ExecAction( $"{_applicationDirectory}\\{_applicationShortName}.exe", ArgumentsText.Text, LogFolder.Text ));
-
-        //        Task existingTask = TaskService.Instance.FindTask( _applicationShortName );
-        //TaskPrincipal principal = new System.Security.Principal.WindowsIdentity( _activeUser );
-
-        //if ( existingTask is not null )
-        //    TaskService.Instance.RootFolder.DeleteTask( _taskName, false );
-
+        // Register the task in the BlocklistManager folder of the local machine
         TaskDefinition? taskDefinition = CreateTaskDefinition( );
-
-        // Register the task in the scheduler root folder of the local machine
         try
         {
             var folder = TaskService.Instance.GetFolder( _applicationShortName );
@@ -201,7 +211,7 @@ public partial class UpdateScheduler : Form
             DefineRegistrationInfo( definition );
             definition.Triggers.Add( DefineTrigger( ) );
             DefineSettings( ref definition );
-            definition.Actions.Add( $"{_assemblyFullName}", ArgumentsText.Text, LogFolder.Text );
+            definition.Actions.Add( $"{_assemblyFullName}", ArgumentsText.Text, $"{LogFolder.Text}" );
             definition.CanUseUnifiedSchedulingEngine( );
             return definition;
         }
@@ -359,6 +369,7 @@ public partial class UpdateScheduler : Form
         ArgumentsText.Refresh( );
     }
 
+    [RequiresAssemblyFiles( "Calls System.Reflection.Assembly.Location" )]
     private void BrowseFoldersButton_Click( object sender, EventArgs e )
     {
         string appLogPath = $"{Assembly.GetExecutingAssembly( ).Location}\\Log";
@@ -380,6 +391,24 @@ public partial class UpdateScheduler : Form
     private void LogFolder_Leave( object sender, EventArgs e )
     {
         ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{LogFolder.Text}";
+    }
+
+    private void FrequencyComboBox_SelectedIndexChanged( object sender, EventArgs e )
+    {
+        RecurrenceLabel.Text = FrequencyComboBox.SelectedItem!.ToString( ) switch
+        {
+            "Hourly" => "hour(s)",
+            "Weekly" => "week(s)",
+            _ => "day(s)",
+        };
+
+        RecurrenceComboBox.Items.Clear( );
+        RecurrenceComboBox.Items.AddRange( FrequencyComboBox.SelectedItem!.ToString( ) switch
+        {
+            "Hourly" => [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 ],
+            "Weekly" => [ 1, 2, 3, 4, 5 ],
+            _ => [ 1, 2, 3, 4, 5, 6 ],
+        } );
     }
 
     private string CurrentNotes
@@ -425,6 +454,69 @@ public partial class UpdateScheduler : Form
             return _compatibleOperatingSystems.Any( c => c.OperatingSystem == OSVersion.GetOperatingSystem( ) );
         }
     }
+
+    /// <summary>
+    /// Fetch a list of active local administrators using PowerShell
+    /// </summary>
+    public static List<UserAccount> AdminUsers
+    {
+        get
+        {
+            try
+            {
+                List<UserAccount> users = [];
+                using ( PrincipalContext ctx = new PrincipalContext( ContextType.Machine ) )
+                {
+                    if ( ctx is null )
+                    {
+                        Logger.Log( "GetAdminUsers", "Principal FAILED." );
+                        return users;
+                    }
+
+                    using ( GroupPrincipal grpHost = new GroupPrincipal( ctx ) )
+                    {
+                        if ( grpHost is null )
+                        {
+                            Logger.Log( "GetAdminUsers", "Group Principal FAILED." );
+                            return users;
+                        }
+
+                        var grp = GroupPrincipal.FindByIdentity( ctx, IdentityType.Name, "Administrators" );
+                        if ( grp is not null )
+                        {
+                            List<AuthenticablePrincipal> allAdmins = grp.GetMembers( recursive: true )
+                                                                        .Cast<AuthenticablePrincipal>( )
+                                                                        .Where( w => w.Enabled != false )
+                                                                        .Where( static w => w.AccountExpirationDate is null || w.AccountExpirationDate > DateTime.Today )
+                                                                        .ToList( );
+
+                            foreach ( AuthenticablePrincipal p in allAdmins )
+                            {
+                                users.Add( new( ctx.ConnectedServer, p.Name ) );
+                            }
+                        }
+
+                        return users;
+                    }
+                }
+            }
+            catch ( Exception ex ) // It's not getting here
+            {
+                Logger.Log( "GetAdminUsers", ex.Message );
+                if ( ex.InnerException is not null )
+                {
+                    Logger.Log( "GetAdminUsers", ex.InnerException.Message );
+                    if ( ex.InnerException.InnerException is not null )
+                    {
+                        Logger.Log( "GetAdminUsers", ex.InnerException.InnerException.Message );
+                    }
+                }
+                Logger.Log( "AdminUsers", ex.StackTrace! );
+                return [];
+            }
+        }
+    }
+
 }
 
 internal sealed class OSSchedulerVersion
@@ -433,3 +525,5 @@ internal sealed class OSSchedulerVersion
 
     internal TaskCompatibility CompatibleSchedulerVersion { get; set; } = TaskCompatibility.V2;
 }
+
+public record UserAccount( string DomainOrComputerName, string UserName );

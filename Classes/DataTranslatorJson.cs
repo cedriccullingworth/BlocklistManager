@@ -11,8 +11,18 @@ using BlocklistManager.Models;
 
 namespace BlocklistManager.Classes;
 
+/// <summary>
+/// Tranlator for Json downloads
+/// </summary>
 public sealed class DataTranslatorJson : IDataTranslator
 {
+    /// <summary>
+    /// The public method for translating Json formatted downloaded data
+    /// </summary>
+    /// <param name="site">The downlod site's details</param>
+    /// <param name="data">A list of the lines in the file</param>
+    /// <param name="fileName">The file name</param>
+    /// <returns>The data translated from the download</returns>
     public List<CandidateEntry> TranslateFileData( RemoteSite site, string data, string fileName )
     {
         return site.Name switch
@@ -22,11 +32,22 @@ public sealed class DataTranslatorJson : IDataTranslator
         };
     }
 
+    /// <summary>
+    /// Not in use
+    /// </summary>
+    /// <exception cref="NotImplementedException"></exception>
     public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
     {
         throw new System.NotImplementedException( );
     }
 
+    /// <summary>
+    /// Translate a Feodo file
+    /// </summary>
+    /// <param name="site">The downlod site's details</param>
+    /// <param name="doc">The Json to tranlate</param>
+    /// <param name="fileName">The file name</param>
+    /// <returns>The data translated from the download</returns>
     private static List<CandidateEntry> TranslateFeodo( RemoteSite site, JsonDocument doc, string fileName )
     {
         CultureInfo culture = CultureInfo.CurrentCulture;
@@ -131,8 +152,14 @@ public sealed class DataTranslatorJson : IDataTranslator
                         .ToList( );
     }
 
+    /// <summary>
+    /// Default disposing property
+    /// </summary>
     private bool disposedValue;
 
+    /// <summary>
+    /// Default disposing method
+    /// </summary>
     private void Dispose( bool disposing )
     {
         if ( !disposedValue )
@@ -155,15 +182,13 @@ public sealed class DataTranslatorJson : IDataTranslator
     //     Dispose(disposing: false);
     // }
 
+    /// <summary>
+    /// Default disposing method
+    /// </summary>
     public void Dispose( )
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose( disposing: true );
         System.GC.SuppressFinalize( this );
-    }
-
-    List<CandidateEntry> IDataTranslator.TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
-    {
-        throw new System.NotImplementedException( );
     }
 }

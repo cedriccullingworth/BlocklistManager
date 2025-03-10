@@ -5,6 +5,9 @@ using WindowsFirewallHelper.Addresses;
 
 namespace BlocklistManager.Classes;
 
+/// <summary>
+///  Any extension methods or properties that are used to extend the functionality of the FirewallHelper library.
+/// </summary>
 public static class IPRangeExtensions
 {
     public static IPRange FromSubnet( this IPRange owner, IPAddress subnet )
@@ -18,6 +21,9 @@ public static class IPRangeExtensions
     }
 }
 
+/// <summary>
+///  Any extension methods or properties that are used to extend the functionality of the FirewallHelper library.
+/// </summary>
 public static class IAddressExtensions
 {
     public enum IPAddressType

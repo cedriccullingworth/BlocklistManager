@@ -11,8 +11,18 @@ using WindowsFirewallHelper.Addresses;
 
 namespace BlocklistManager.Classes;
 
+/// <summary>
+/// Tranlator for delimited data downloads
+/// </summary>
 internal sealed class DataTranslatorDelimited : IDataTranslator
 {
+    /// <summary>
+    /// The public method for translating delimited downloaded data
+    /// </summary>
+    /// <param name="site">The downlod site's details</param>
+    /// <param name="data">A list of the lines in the file</param>
+    /// <param name="fileName">The file name</param>
+    /// <returns>The data translated from the download</returns>
     public List<CandidateEntry> TranslateFileData( RemoteSite site, string data, string fileName )
     {
         List<string> lineData = Maintain.TextToStringList( data );
@@ -31,9 +41,15 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
         };
     }
 
+    /// <summary>
+    /// Translate a comma-delimited file
+    /// </summary>
+    /// <param name="site">The downlod site's details</param>
+    /// <param name="lineData">A list of the lines in the file</param>
+    /// <param name="fileName">The file name</param>
+    /// <returns>The data translated from the download</returns>
     private static List<CandidateEntry> TranslateCommaDelimited( RemoteSite site, List<string> lineData, string fileName )
     {
-        // CHANGE IN TESTING: Don't do any IP address validation yet
         return lineData
                     .Select( s => s.Replace( "# ", "," ).Replace( "#", string.Empty ) )
                     .Select( s => s.Split( ',', StringSplitOptions.TrimEntries ) )
@@ -49,11 +65,22 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
     //                             .Select( s => new CandidateEntry( site.Name, s[ 0 ], null, [], [], FirewallProtocol.Any ) )
     //                             .ToList( );
 
+    /// <summary>
+    /// Not in use
+    /// </summary>
+    /// <exception cref="NotImplementedException"></exception>
     public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
     {
         throw new NotImplementedException( );
     }
 
+    /// <summary>
+    /// Translate a tab-delimited file
+    /// </summary>
+    /// <param name="site">The download site's details</param>
+    /// <param name="dataLines">An array of the lines in the file</param>
+    /// <param name="fileName">The file name</param>
+    /// <returns>The data translated from the download</returns>
     private static List<CandidateEntry> TranslateTabDelimited( RemoteSite site, List<string> dataLines, string fileName )
     {
         return site.Name switch
@@ -64,6 +91,13 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
         };
     }
 
+    /// <summary>
+    /// Translate a Scriptzteam file
+    /// </summary>
+    /// <param name="site">The download site's details</param>
+    /// <param name="allText">A list of the lines in the file</param>
+    /// <param name="fileName">The file name</param>
+    /// <returns>The data translated from the download</returns>
     private static List<CandidateEntry> ReadDelimitedDataScriptzTeam( char delimiter, List<string> allText, RemoteSite site, string fileName )
     {
         return allText.Select( s => s.Split( delimiter ) )
@@ -71,6 +105,13 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
                                     .ToList( );
     }
 
+    /// <summary>
+    /// Translate an Internet Storm Center DShield file
+    /// </summary>
+    /// <param name="site">The download site's details</param>
+    /// <param name="allText">A list of the lines in the file</param>
+    /// <param name="fileName">The file name</param>
+    /// <returns>The data translated from the download</returns>
     private static List<CandidateEntry> ReadDelimitedDataDShield( char delimiter, List<string> allText, RemoteSite site, string fileName )
     {
         CultureInfo culture = CultureInfo.InvariantCulture;
@@ -106,8 +147,14 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
         return candidates;
     }
 
+    /// <summary>
+    /// Default disposing property
+    /// </summary>
     private bool disposedValue;
 
+    /// <summary>
+    /// Default disposing method
+    /// </summary>
     private void Dispose( bool disposing )
     {
         if ( !disposedValue )
@@ -130,6 +177,9 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
     //     Dispose(disposing: false);
     // }
 
+    /// <summary>
+    /// Default disposing method
+    /// </summary>
     public void Dispose( )
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

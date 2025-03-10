@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -8,18 +10,21 @@ using System.Windows.Forms;
 using BlocklistManager.Classes;
 using BlocklistManager.Models;
 
-using SBS.Utilities;
+// .snk file produced using "sn -k BlocklistManager.snk" in Developer Command Prompt for VS 2022
 
 namespace BlocklistManager;
 
 internal static class Program
 {
     private static string _appName = string.Empty;
+    // [ProgramFiles64Folder][ProductName]
+
 
     /// <summary>
     ///  The main entry point for the application.
     /// </summary>
     [STAThread]
+    [RequiresUnreferencedCode( "Calls BlocklistManager.Classes.Maintain.ListDownloadSites(RemoteSite, Boolean)" )]
     static void Main( string[] args )
     {
         // To customize application configuration such as set high DPI settings or default font,
@@ -32,11 +37,15 @@ internal static class Program
 
         ApplicationConfiguration.Initialize( );
 
+
         _appName = Assembly.GetEntryAssembly( )!.GetName( )!.Name!;
         var settings = AppSettings.Sections;
-        string? logSetting = settings.FirstOrDefault( settings => settings.Key == "LogFolder" )?.Value;
+        string? logSetting = settings.FirstOrDefault( settings => settings.Key.Equals( "LogFolder", StringComparison.Ordinal ) )?.Value;
         if ( logSetting is not null )
         {
+            if ( !Directory.Exists( logSetting ) )
+                Directory.CreateDirectory( logSetting );
+
             if ( !logSetting.EndsWith( "\\", StringComparison.InvariantCultureIgnoreCase ) )
                 logSetting += "\\";
             Maintain.LogFileFullname = $"{logSetting}{_appName}.log";
@@ -44,14 +53,29 @@ internal static class Program
         else
             Maintain.LogFileFullname = Assembly.GetEntryAssembly( )!.FullName!.Replace( ".exe", ".log" );
 
-        //string testIP = "2a03:6f00:6:1::bce1:28a1";
-        //if ( Tests.TestIPValidation( [ testIP ] ) )
-        //    Console.WriteLine( $"{testIP} passed" );
+        if ( args.Length > 0 )
+        {
+            if ( args.Length > 1 )
+            {
+                string arg = args[ 1 ];
+                ReadLogPathArgument( arg );
+            }
+        }
+
+        string logPath = Maintain.LogFileFullname[ 0..Maintain.LogFileFullname.LastIndexOf( '\\' ) ];
+        if ( !Directory.Exists( logPath ) )
+            Directory.CreateDirectory( logPath );
+
+        Logger.LogPath = Maintain.LogFileFullname;
+        Logger.Log( _appName, string.Empty );
+        Logger.Log( _appName, "BlocklistManager starting..." );
 
         if ( args.Length == 0 )
         {
             string appNameAndVersion = $"{_appName} v{Maintain.ApplicationVersion}";
-            Application.Run( new MaintainUI( ) { Text = appNameAndVersion } );
+            MaintainUI ui = new MaintainUI( ) { Text = appNameAndVersion };
+            ui.StatusMessage.Text = $"The log folder location is {Maintain.LogFileFullname}";
+            Application.Run( ui );
             return;
         }
         else
@@ -96,7 +120,7 @@ internal static class Program
             string endedAt = now.ToLocalTime( ).ToString( "T", culture.DateTimeFormat );
             Logger.Log( _appName!, $"................. END OF BLOCKLIST UPDATES (STARTED AT {startedAt}, ENDED AT {endedAt}) .................\r\n" );
 
-            Logger.Log( _appName!, $"Processed {ipAddressCount} IP addresses/ranges from {allAddressCount} downloaded and created {processedCount * 2} ({processedCount} inbound, {processedCount} outbound) firewall rules" );
+            Logger.Log( _appName!, $"Processed {ipAddressCount} IP addresses/ranges from {allAddressCount} downloaded and created {processedCount * 2} ({processedCount} inbound, {processedCount} outbound) firewall rules{Environment.NewLine}{Environment.NewLine}" );
         }
     }
 

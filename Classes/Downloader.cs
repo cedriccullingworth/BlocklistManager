@@ -8,24 +8,39 @@ using System.Net.Security;
 
 using BlocklistManager.Models;
 
-using SBS.Utilities;
-
 using SharpCompress.Readers;
 using SharpCompress.Readers.Zip;
 
 namespace BlocklistManager.Classes;
 
+/// <summary>
+/// The Downloader class is used to download data from the different blocklist data sources
+/// </summary>
 internal sealed class Downloader : IDisposable
 {
+    /// <summary>
+    /// Download timeout in seconds
+    /// </summary>
     private const int TIMEOUT_SECONDS = 30;
 
-    // private static readonly string _appName = Assembly.GetEntryAssembly( )!.GetName( )!.Name!;
-
+    /// <summary>
+    /// Not in use
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public string ReadData( string filePath )
     {
         throw new NotImplementedException( );
     }
 
+    /// <summary>
+    /// Read text data from a remote site
+    /// </summary>
+    /// <param name="site">The site name</param>
+    /// <param name="fileExtension">The file extension</param>
+    /// <param name="url">The Url of the file</param>
+    /// <returns>The downloaded data as a string</returns>
     public static string ReadData( RemoteSite site, out string? fileExtension, string url )
     {
         string textData = "";
@@ -33,6 +48,12 @@ internal sealed class Downloader : IDisposable
         return DownloadText( site, url, ref textData );
     }
 
+    /// <summary>
+    /// Read a data stream from a remote site
+    /// </summary>
+    /// <param name="site">The site name</param>
+    /// <param name="url">The Url of the data stream</param>
+    /// <returns>The downloaded stream</returns>
     public static Stream? ReadHtmlStreamFromUrl( RemoteSite site, string url )
     {
         HttpClient client = new( )
@@ -58,7 +79,6 @@ internal sealed class Downloader : IDisposable
     /// <param name="site">The download site's RemoteSite model</param>
     /// <param name="url">The download Url</param>
     /// <param name="textData">The downloaded text</param>
-    /// <param name="logFilePath">Optional path of the application's log file</param>
     /// <returns>The unchanged downloaded text</returns>
     private static string DownloadText( RemoteSite site, string url, ref string textData )
     {
@@ -119,6 +139,13 @@ internal sealed class Downloader : IDisposable
         return textData;
     }
 
+    /// <summary>
+    /// Read zipped data from a remote site
+    /// </summary>
+    /// <param name="site">The site name</param>
+    /// <param name="fileExtension">The file extension</param>
+    /// <param name="url">The Url of the file</param>
+    /// <returns>The string of data extracted from the stream stream</returns>
     public static string ReadZipData( RemoteSite site, out string fileExtension, string url )
     {
         fileExtension = string.Empty;
@@ -140,6 +167,13 @@ internal sealed class Downloader : IDisposable
         return string.Empty;
     }
 
+    /// <summary>
+    /// Extracts data from the zipped data in 'stream'
+    /// </summary>
+    /// <param name="fileExtension">The file extension</param>
+    /// <param name="outputFolder">A location to temporarily store the extracted data</param>
+    /// <param name="stream">The zipped data stream to be extracted from</param>
+    /// <returns>The string of data extracted from the stream stream</returns>
     private static string ReadFromStream( ref string fileExtension, string outputFolder, Stream? stream )
     {
         if ( stream is not null )
@@ -161,8 +195,14 @@ internal sealed class Downloader : IDisposable
         return string.Empty;
     }
 
+    /// <summary>
+    /// Default disposal property
+    /// </summary>
     private bool disposedValue;
 
+    /// <summary>
+    /// Default disposal method
+    /// </summary>
     private void Dispose( bool disposing )
     {
         if ( !disposedValue )
@@ -185,6 +225,9 @@ internal sealed class Downloader : IDisposable
     //     Dispose(disposing: false);
     // }
 
+    /// <summary>
+    /// Default disposal method
+    /// </summary>
     public void Dispose( )
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

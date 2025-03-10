@@ -116,7 +116,7 @@ internal static class Tests
         FWIPRange
     }
 
-    private record FirewallRuleRemoteAddress( IAddress AddressOrRange, FirewallAddressType AddressType );
+    private sealed record FirewallRuleRemoteAddress( IAddress AddressOrRange, FirewallAddressType AddressType );
 
-    private record Download( string IPAddressOrRange, string siteName );
+    private sealed record Download( string IPAddressOrRange, string siteName );
 }

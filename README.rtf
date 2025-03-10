@@ -1,0 +1,67 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\colortbl ;\red43\green145\blue175;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue255;\red163\green21\blue21;}
+{\*\generator Riched20 10.0.26100}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\cf1\highlight2\f0\fs20\lang9 # BlocklistManager\cf3\par
+This Microsoft Windows application manages Windows Firewall rules for IP addresses found in IP address blocklists. It can be run interactively or be scheduled to run at regular intervals. \par
+- Interactive mode: Run the program without any command line parameters to open the Windows Forms interface.\par
+- Command line mode: Run the program with the following command line parameters:\par
+  - \cf4 `/sites:`\cf3  followed by a semicolon-separated list of site IDs to specify the blocklists to be processed, e.g. '/sites:1;2;3'. Enter the value 'allCurrent' to process all active blocklists (e.g. '/sites:allCurrent').\par
+  - \cf4 `/logpath:`\cf3  followed by the path to the log file (e.g. '/logpath:C:\\Logs').\par
+\b **NOTE: The application needs to be run with administrator privileges to be able to change Windows Firewall rules.**\b0\par
+I have also included a general usage guide in the file BlocklistManager.docx in the same folder as this README.\par
+\cf1 ## Application objective\cf3\par
+To enhance computer security using popular IP address blocklists to create Windows Firewall rules. This application blocks all traffic to or from IP addresses/address ranges/addresses found in blocklists\par
+This application can never guarantee protection against all external threats. It blocks inbound traffic to, and outbound traffic from, your computer by creating firewall rules for all IP (V4 and V6) addresses found in more than 20 popular public IP address blocklists.\par
+It no longer attempts to set rules with specific ports as \par
+\tab a) these are rarely provided; and \par
+\tab b) Windows Firewall requires the protocol to be specified when the port(s) is/are specified. This has not been practical as none of the blocklists thus far have included both details.\par
+Protocols are no longer specified as none of the current blocklists provide this information.\par
+\cf1 ## Current status (Version 1.8.3)\cf3\par
+I have put a lot of effort into improving performance, reducing "Process All" performance from about an hour to under 10 minutes to process more than 600,000 blocklist entries, then a current runtime of under 5 minutes using a 10 year old entry-level i5 with 4GB RAM and a 500GB SSD.\par
+\cf1 ## If it works for you...\cf3\par
+Buy me a coffee ({{\field{\*\fldinst{HYPERLINK https://buymeacoffee.com/cedriccullingworth }}{\fldrslt{https://buymeacoffee.com/cedriccullingworth\ul0\cf0}}}}\f0\fs20 ) if you feel that this app makes your life safer and easier!\par
+\cf1 ## Main features\cf3\par
+Directly reads IP address blocklists from the internet, decompresses and processes them to create Windows Firewall rules.\par
+The application can be run in two modes:\par
+- \b **Interactive mode**\b0 : The user can select the blocklists to be processed and the action to be taken (add or remove rules).\par
+- \b **Scheduled mode**\b0 : The application can be scheduled to run at regular intervals to update the blocklist rules. The user can select the blocklists to be processed by changing the command line parameters.\par
+\cf1 ## .NET versions\cf3\par
+This project was developed using .NET 8.0 and C# 12.0 and the current version uses .NET 9.0. Older .NET versions are not supported, especially .NET Framework versions.\par
+\cf1 ## Operating systems and user interface\cf3\par
+This version has a Windows Forms interface to help you to get started. It's neither the slickest nor most modern interface but then, it's not intended for frequent use.\par
+It currently only manages rules in the Windows Defender Firewall and is therefore \b **not portable to other operating systems**\b0 . \par
+The interactive mode of this application requires Windows 10 or 11. Theoretically, it \b **might**\b0  run on Windows 7, 8 or 8.1 but this has not been tested.\par
+I would love to change it to manage blocklist rules at network firewall level but that would be a far more complex exercise so is not imminent.\par
+\cf1 ## Dependencies and credits\cf3\par
+The project has the following direct dependencies:\par
+\cf1 ### Microsoft frameworks\cf3\par
+- Microsoft.NETCore.App\par
+- Microsoft.Windows.SDK.NET.Ref.Windows\par
+- Microsoft.WindowsDesktop.App.WindowsForms\par
+\cf1 ### Nuget packages\cf3\par
+- IPAddressRange version 6.1.0 [{\cf5{\field{\*\fldinst{HYPERLINK https://github.com/jsakamoto/ipaddressrange](https://github.com/jsakamoto/ipaddressrange) }}{\fldrslt{https://github.com/jsakamoto/ipaddressrange\cf3 ](https://github.com/jsakamoto/ipaddressrange)\ul0\cf0}}}}\f0\fs20\par
+- Microsoft.Extensions.Configuration.Json version 9.0.2\par
+- SharpCompress version 0.39.0 [{\cf5{\field{\*\fldinst{HYPERLINK https://github.com/adamhathcock/sharpcompress](https://github.com/adamhathcock/sharpcompress) }}{\fldrslt{https://github.com/adamhathcock/sharpcompress\cf3 ](https://github.com/adamhathcock/sharpcompress)\ul0\cf0}}}}\f0\fs20\par
+- System.DirectoryServices version 9.0.2\par
+- System.DirectoryServices.AccountManagement version 9.0.2\par
+- TaskScheduler version 2.12.1 [{\cf5{\field{\*\fldinst{HYPERLINK https://github.com/dahall/TaskScheduler](https://github.com/dahall/TaskScheduler) }}{\fldrslt{https://github.com/dahall/TaskScheduler\cf3 ](https://github.com/dahall/TaskScheduler)\ul0\cf0}}}}\f0\fs20\par
+- WindowsFirewallHelper version 2.2.0.86 [{\cf5{\field{\*\fldinst{HYPERLINK https://github.com/falahati/WindowsFirewallHelper](https://github.com/falahati/WindowsFirewallHelper) }}{\fldrslt{https://github.com/falahati/WindowsFirewallHelper\cf3 ](https://github.com/falahati/WindowsFirewallHelper)\ul0\cf0}}}}\f0\fs20\par
+\cf1 ### External API\cf3\par
+- BlocklistAPI, hosted at at a developer host site. This is a RESTful API that accesses the few data tables used by this application. (Device, DeviceRemoteAddress, FileType and RemoteSite). \par
+  This API is not intended for public use and is not documented. \par
+- Note that the only stored identifying information is your device's MAC address which is only used to track last time downloaded per site as certain sites disallow too-frequent downloads (e.g. dan.me.uk)\par
+\cf1 ### Other\cf3\par
+- OSVersionExtension version 3.0.1, recompiled with .NET 8.0 and then upgraded to 9.0 [{\cf5{\field{\*\fldinst{HYPERLINK https://github.com/pruggitorg/detect-windows-version](https://github.com/pruggitorg/detect-windows-version) }}{\fldrslt{https://github.com/pruggitorg/detect-windows-version\cf3 ](https://github.com/pruggitorg/detect-windows-version)\ul0\cf0}}}}\f0\fs20 , so is \par
+not the same as the available Nuget version.\par
+\cf1 ## General\cf3\par
+Whilst I have tested extensively and been running this application daily in the Windows Task Scheduler for some time, I cannot guarantee that it is bug free! \par
+Applications will always have bugs and this one does some fairly complex processing, so is no exception.\par
+Please feel free to notify me at unrealaddress@duck.com of any bugs found with as much supporting information as possible.\par
+I recommend that this be scheduled to run at less busy times of the day as it still uses what I regard as excessive resources... but then, it's working to remove and add firewall rules blocking hundreds of thousands of IP addresses and IP address ranges.\par
+I've tried different ways (netsh, powershell etc.) of working with the Windows 11 firewall. All of them take time to add or remove rules. Remember that even after de-duplicating addresses and consolidating them into batches of 1,000 (now 10,000 in Windows 11/Windows Server 2022), over 1,000 (in older operating system versions) firewall rules (inbound plus outbound) are created.\par
+This app currently removes existing firewall rules per blocklist download site and then creates fresh rules based on the latest blocklist. Please let me know if you become aware of any valid reason to change this approach.\par
+\cf1 ## User manual\cf3\par
+A short document providing guidance on general usage can be found in BlocklistManager.docx in the same folder as this README.\par
+\cf0\highlight0\par
+}
+ 

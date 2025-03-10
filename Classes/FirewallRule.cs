@@ -10,7 +10,17 @@ using static BlocklistManager.Classes.Maintain;
 
 namespace BlocklistManager.Classes;
 
-public record class FirewallRule( string Name, FirewallAction Action, FirewallDirection Direction, FirewallProfiles Profiles, IAddress[] RemoteAddresses, FirewallProtocol Protocol, ushort[] RemotePorts ) : IFirewallRule, IDisposable
+/// <summary>
+/// Represents a firewall rule prepared for addtion to the Windows Firewall.
+/// </summary>
+/// <param name="Name"></param>
+/// <param name="Action"></param>
+/// <param name="Direction"></param>
+/// <param name="Profiles"></param>
+/// <param name="RemoteAddresses"></param>
+/// <param name="Protocol"></param>
+/// <param name="RemotePorts"></param>
+public sealed record class FirewallRule( string Name, FirewallAction Action, FirewallDirection Direction, FirewallProfiles Profiles, IAddress[] RemoteAddresses, FirewallProtocol Protocol, ushort[] RemotePorts ) : IFirewallRule, IDisposable
 {
     private long[] _sortValue = [];
 
@@ -104,11 +114,11 @@ public record class FirewallRule( string Name, FirewallAction Action, FirewallDi
             //    var startAddress = SingleIP.Parse( startAddressStrig );
             //};
 
-            if ( this._sortValue.Length >= 4 && this._sortValue[ 0 ] > 0 )
-                return this._sortValue;
+            if ( _sortValue.Length >= 4 && _sortValue[ 0 ] > 0 )
+                return _sortValue;
 
-            if ( this.RemoteAddresses.Length < 1 )
-                return this._sortValue;
+            if ( RemoteAddresses.Length < 1 )
+                return _sortValue;
 
             CultureInfo culture = CultureInfo.InvariantCulture;
             IPAddressType addressType = RemoteAddresses[ 0 ].ToString( )
@@ -189,7 +199,7 @@ public record class FirewallRule( string Name, FirewallAction Action, FirewallDi
 
     private bool disposedValue;
 
-    protected virtual void Dispose( bool disposing )
+    private void Dispose( bool disposing )
     {
         if ( !disposedValue )
         {

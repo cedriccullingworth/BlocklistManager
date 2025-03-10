@@ -2,7 +2,7 @@
   "profiles": {
     "BlocklistManager": {
       "commandName": "Project",
-      "workingDirectory": "D:\\Projects\\BlocklistManager\\bin\\Debug\\net8.0-windows",
+      "workingDirectory": "C:\\Program Files\\BlocklistManager\\Release\\net9.0-windows10.0.17763.0",
       "nativeDebugging": false,
       "VersionPrefix": "1.5.0"
     }

@@ -2,6 +2,9 @@
 
 namespace BlocklistManager;
 
+/// <summary>
+/// Class to help with deserialization of Feodo data.
+/// </summary>
 internal sealed class FeodoEntry : IDisposable
 {
     //internal FeodoEntry()

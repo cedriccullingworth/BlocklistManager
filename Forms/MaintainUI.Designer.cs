@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -30,6 +31,7 @@ namespace BlocklistManager
         ///  Required method for Designer support - do not modify
         ///  the contents of this method with the code editor.
         /// </summary>
+        [RequiresUnreferencedCode( "Calls BlocklistManager.MaintainUI.ShowAllCheckBox_CheckedChanged(Object, EventArgs)" )]
         private void InitializeComponent( )
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager( typeof( MaintainUI ) );
@@ -37,7 +39,7 @@ namespace BlocklistManager
             this.RemoteSites = new DataGridView( );
             this.label2 = new Label( );
             this.FirewallRulesData = new DataGridView( );
-            this.label3 = new Label( );
+            this.FirewallRulesLabel = new Label( );
             this.UpdateButton = new Button( );
             this.RemoteData = new DataGridView( );
             this.label4 = new Label( );
@@ -78,7 +80,7 @@ namespace BlocklistManager
             this.RemoteSites.Name = "RemoteSites";
             this.RemoteSites.ReadOnly = true;
             this.RemoteSites.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            this.RemoteSites.Size = new Size( 1268, 140 );
+            this.RemoteSites.Size = new Size( 1324, 140 );
             this.RemoteSites.TabIndex = 1;
             // 
             // label2
@@ -96,25 +98,24 @@ namespace BlocklistManager
             this.FirewallRulesData.Anchor =   AnchorStyles.Bottom  |  AnchorStyles.Left   |  AnchorStyles.Right ;
             this.FirewallRulesData.BackgroundColor = SystemColors.Control;
             this.FirewallRulesData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.FirewallRulesData.Location = new Point( 13, 444 );
+            this.FirewallRulesData.Location = new Point( 13, 504 );
             this.FirewallRulesData.Name = "FirewallRulesData";
-            this.FirewallRulesData.Size = new Size( 1268, 200 );
+            this.FirewallRulesData.Size = new Size( 1324, 200 );
             this.FirewallRulesData.TabIndex = 5;
             // 
-            // label3
+            // FirewallRulesLabel
             // 
-            this.label3.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Left ;
-            this.label3.AutoSize = true;
-            this.label3.Location = new Point( 13, 427 );
-            this.label3.Name = "label3";
-            this.label3.Size = new Size( 231, 15 );
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Current firewall entries for the selected site";
+            this.FirewallRulesLabel.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Left ;
+            this.FirewallRulesLabel.AutoSize = true;
+            this.FirewallRulesLabel.Location = new Point( 13, 487 );
+            this.FirewallRulesLabel.Name = "FirewallRulesLabel";
+            this.FirewallRulesLabel.Size = new Size( 0, 15 );
+            this.FirewallRulesLabel.TabIndex = 6;
             // 
             // UpdateButton
             // 
             this.UpdateButton.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Right ;
-            this.UpdateButton.Location = new Point( 1154, 397 );
+            this.UpdateButton.Location = new Point( 1210, 457 );
             this.UpdateButton.Name = "UpdateButton";
             this.UpdateButton.Size = new Size( 127, 42 );
             this.UpdateButton.TabIndex = 8;
@@ -130,7 +131,7 @@ namespace BlocklistManager
             this.RemoteData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.RemoteData.Location = new Point( 13, 240 );
             this.RemoteData.Name = "RemoteData";
-            this.RemoteData.Size = new Size( 1268, 151 );
+            this.RemoteData.Size = new Size( 1324, 211 );
             this.RemoteData.TabIndex = 9;
             // 
             // label4
@@ -138,14 +139,14 @@ namespace BlocklistManager
             this.label4.AutoSize = true;
             this.label4.Location = new Point( 13, 223 );
             this.label4.Name = "label4";
-            this.label4.Size = new Size( 244, 15 );
+            this.label4.Size = new Size( 245, 15 );
             this.label4.TabIndex = 10;
-            this.label4.Text = "Rule details from downloaded blocklist file(s)";
+            this.label4.Text = "Rule details from the downloaded blocklist(s)";
             // 
             // DeleteButton
             // 
             this.DeleteButton.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Right ;
-            this.DeleteButton.Location = new Point( 1010, 397 );
+            this.DeleteButton.Location = new Point( 1066, 457 );
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new Size( 127, 42 );
             this.DeleteButton.TabIndex = 12;
@@ -156,11 +157,11 @@ namespace BlocklistManager
             // ScheduleButton
             // 
             this.ScheduleButton.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Right ;
-            this.ScheduleButton.Location = new Point( 866, 397 );
+            this.ScheduleButton.Location = new Point( 922, 457 );
             this.ScheduleButton.Name = "ScheduleButton";
             this.ScheduleButton.Size = new Size( 127, 42 );
             this.ScheduleButton.TabIndex = 13;
-            this.ScheduleButton.Text = "&Schedule Automatic Processing";
+            this.ScheduleButton.Text = "&Schedule Automatic Processing...";
             this.ScheduleButton.UseVisualStyleBackColor = true;
             this.ScheduleButton.Click +=  this.ScheduleButton_Click ;
             // 
@@ -169,7 +170,7 @@ namespace BlocklistManager
             this.StatusBar.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Left ;
             this.StatusBar.Dock = DockStyle.None;
             this.StatusBar.Items.AddRange( new ToolStripItem[] { this.StatusMessage, this.StatusProgress } );
-            this.StatusBar.Location = new Point( 13, 647 );
+            this.StatusBar.Location = new Point( 13, 707 );
             this.StatusBar.Name = "StatusBar";
             this.StatusBar.Size = new Size( 631, 22 );
             this.StatusBar.TabIndex = 15;
@@ -213,14 +214,14 @@ namespace BlocklistManager
             // 
             this.OptionsMenu.Location = new Point( 0, 0 );
             this.OptionsMenu.Name = "OptionsMenu";
-            this.OptionsMenu.Size = new Size( 1294, 24 );
+            this.OptionsMenu.Size = new Size( 1350, 24 );
             this.OptionsMenu.TabIndex = 18;
             this.OptionsMenu.Text = "&Remote DownloadSite Options";
             // 
             // ProcessAllButton
             // 
             this.ProcessAllButton.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Right ;
-            this.ProcessAllButton.Location = new Point( 722, 397 );
+            this.ProcessAllButton.Location = new Point( 778, 457 );
             this.ProcessAllButton.Name = "ProcessAllButton";
             this.ProcessAllButton.Size = new Size( 127, 42 );
             this.ProcessAllButton.TabIndex = 19;
@@ -232,7 +233,7 @@ namespace BlocklistManager
             // 
             this.AutoScaleDimensions = new SizeF( 7F, 15F );
             this.AutoScaleMode = AutoScaleMode.Font;
-            this.ClientSize = new Size( 1294, 669 );
+            this.ClientSize = new Size( 1350, 729 );
             this.Controls.Add( this.ProcessAllButton );
             this.Controls.Add( this.ShowAllCheckBox );
             this.Controls.Add( this.FirewallEntryName );
@@ -243,7 +244,7 @@ namespace BlocklistManager
             this.Controls.Add( this.label4 );
             this.Controls.Add( this.RemoteData );
             this.Controls.Add( this.UpdateButton );
-            this.Controls.Add( this.label3 );
+            this.Controls.Add( this.FirewallRulesLabel );
             this.Controls.Add( this.FirewallRulesData );
             this.Controls.Add( this.label2 );
             this.Controls.Add( this.RemoteSites );
@@ -269,7 +270,7 @@ namespace BlocklistManager
         internal DataGridView RemoteSites;
         internal Label label2;
         internal DataGridView FirewallRulesData;
-        internal Label label3;
+        internal Label FirewallRulesLabel;
         internal Button UpdateButton;
         internal DataGridView RemoteData;
         internal Label label4;

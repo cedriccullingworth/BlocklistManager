@@ -16,7 +16,9 @@ using System.Xml.Serialization;
 
 namespace BlocklistManager;
 
-/// <remarks/>
+/// <summary>
+/// Class to help with deserialization of Shodan data.
+/// </summary>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.9037.0")]
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]

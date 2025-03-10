@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,12 +10,22 @@ using System.Xml.Serialization;
 using BlocklistManager.Interfaces;
 using BlocklistManager.Models;
 
-using SBS.Utilities;
-
 namespace BlocklistManager.Classes;
 
+/// <summary>
+/// Tranlator for XML downloads
+/// </summary>
 internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
 {
+    /// <summary>
+    /// The public method for translating XML downloaded data streams
+    /// </summary>
+    /// <param name="site">The downlod site's details</param>
+    /// <param name="dataStream">A stream of the data in the file</param>
+    /// <param name="fileName">The file name</param>
+    /// <returns>The data translated from the download</returns>
+    [RequiresUnreferencedCode( "Calls BlocklistManager.Classes.DataTranslatorXml.TranslateShodan(RemoteSite, Stream, String, String)" )]
+#pragma warning disable CA1822 // Mark members as static
     public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
     {
         return site.ID switch
@@ -25,10 +36,16 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
         };
 
     }
-
 #pragma warning disable CA1822 // Mark members as static
-    private List<CandidateEntry> TranslateCyberCrimeTracker( RemoteSite site, Stream dataStream, string fileName, string logFilePath = "" )
-#pragma warning restore CA1822 // Mark members as static
+
+    /// <summary>
+    /// Translate a CyberCrime-Tracker file
+    /// </summary>
+    /// <param name="site">The downlod site's details</param>
+    /// <param name="dataStream">The data stream to tranlate</param>
+    /// <param name="fileName">The file name</param>
+    /// <returns>The data translated from the download</returns>
+    private static List<CandidateEntry> TranslateCyberCrimeTracker( RemoteSite site, Stream dataStream, string fileName, string logFilePath = "" )
     {
         try
         {
@@ -62,9 +79,14 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
         return [];
     }
 
-#pragma warning disable CA1822 // Mark members as static
-    private List<CandidateEntry> TranslateShodan( RemoteSite site, Stream dataStream, string fileName, string logFilePath = "" )
-#pragma warning restore CA1822 // Mark members as static
+    /// <summary>
+    /// Translate an Internet Storm Center Shodan file
+    /// </summary>
+    /// <param name="site">The downlod site's details</param>
+    /// <param name="dataStream">The data stream to tranlate</param>
+    /// <param name="fileName">The file name</param>
+    /// <returns>The data translated from the download</returns>
+    private static List<CandidateEntry> TranslateShodan( RemoteSite site, Stream dataStream, string fileName, string logFilePath = "" )
     {
         try
         {
@@ -88,8 +110,14 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
         return [];
     }
 
+    /// <summary>
+    /// Default disposing property
+    /// </summary>
     private bool disposedValue;
 
+    /// <summary>
+    /// Default disposing method
+    /// </summary>
     private void Dispose( bool disposing )
     {
         if ( !disposedValue )
@@ -112,6 +140,9 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
     //     Dispose(disposing: false);
     // }
 
+    /// <summary>
+    /// Default disposing method
+    /// </summary>
     public void Dispose( )
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
@@ -119,11 +150,19 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
         GC.SuppressFinalize( this );
     }
 
+    /// <summary>
+    /// Not in use
+    /// </summary>
+    /// <exception cref="NotImplementedException"></exception>
     public List<CandidateEntry> TranslateFileData( RemoteSite site, string data, string fileName )
     {
         throw new NotImplementedException( );
     }
 
+    /// <summary>
+    /// Not in use
+    /// </summary>
+    /// <exception cref="NotImplementedException"></exception>
     List<CandidateEntry> IDataTranslator.TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
     {
         throw new System.NotImplementedException( );

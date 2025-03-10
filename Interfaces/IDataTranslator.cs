@@ -7,6 +7,9 @@ using BlocklistManager.Models;
 
 namespace BlocklistManager.Interfaces;
 
+/// <summary>
+/// An interface to standardise data translation methods
+/// </summary>
 public interface IDataTranslator : IDisposable
 {
     List<CandidateEntry> TranslateFileData( RemoteSite site, string data, string fileName );

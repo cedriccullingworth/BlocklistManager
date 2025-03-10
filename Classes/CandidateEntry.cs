@@ -13,56 +13,62 @@ using static BlocklistManager.Classes.IAddressExtensions;
 
 namespace BlocklistManager.Classes;
 
+/// <summary>
+/// The class defining a firewall rule candidate entry
+/// </summary>
+/// <param name="siteName">The name of the download site. Windows Firewall and are created with rule names composed by appending '_Blocklist' to this name</param>
+/// <param name="blocklistFileName">The file name containing the source data. Currently only used for debugging.</param>
+/// <param name="address">The IP address to block (as a string)</param>
+/// <param name="subnetSuffix">Any subnet suffix which may have been inculded in the downloaded data. This will be converted to an IP address range</param>
+/// <param name="addressRange">The IP address range to block</param>
+/// <param name="addressSet">An IP address or IP address range array containing up to 10,000 entries (Win 11) or 1,000 entries (<= Win 10) after consolidation</param>
 public sealed record class CandidateEntry( string? siteName, string blocklistFileName, string? address, int? subnetSuffix, IPRange? addressRange, IAddress[] addressSet/*, ushort[] portsArg, FirewallProtocol protocolArg*/ ) : IComparable<CandidateEntry>, IDisposable
 {
-
+    /// <summary>
+    /// The private copy of the sort order for the IP address
+    /// </summary>
     private long[] _sort = [ 0, 0, 0, 0 ];
 
     /// <summary>
-    /// Constructor
+    /// The name of the download site. Windows Firewall and are created with rule names composed by appending '_Blocklist' to this name
     /// </summary>
-    /// <param name="name"></param>
-    /// <param name="iPAddress"></param>
-    /// <param name="iPAddressRange"></param>
-    /// <param name="iPAddressSet"></param>
-    /// <param name="ports"></param>
-    /// <param name="protocol"></param>
-    //public CandidateEntry( string? siteName, string? address, IPRange? addressRange, IAddress[] addressSet, ushort[] portsArg, FirewallProtocol protocolArg )
-    //{
-    //    this.Name = siteName;
-    //    this.IPAddress = address;
-    //    this.IPAddressRange = addressRange;
-    //    this.IPAddressSet = addressSet;
-    //    this.Ports = portsArg;
-    //    this.Protocol = protocolArg;
-    //}
-
     [Display( Description = "Name" )]
     [Length( 2, 50 )]
     [UnconditionalSuppressMessage( "Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>" )]
     public string? Name { get; set; } = siteName;
 
-    //    [Required]
+    /// <summary>
+    /// The IP address to block (as a string), NULL when IP address range is used
+    /// </summary>
     [Display( Description = "IP Address" )]
     public string? IPAddress { get; set; } = address;
 
+    /// <summary>
+    /// Any subnet suffix which may have been inculded in the downloaded data. This will be converted to an IP address range
+    /// </summary>
     [Display( Description = "Subnet if applicable" )]
     public int? Subnet { get; set; } = subnetSuffix;
 
+    /// <summary>
+    /// The IP address range to block, NULL when IP address is used
+    /// </summary>
     [Display( Description = "IP Address Range" )]
     public IPRange? IPAddressRange { get; set; } = addressRange;
 
+    /// <summary>
+    /// An IP address or IP address range array containing up to 10,000 entries (Win 11) or 1,000 entries (<= Win 10) after consolidation
+    /// </summary>
     [Display( AutoGenerateField = true, Description = "IP Address Batch", Name = "IPAddressSet" )]
     public IAddress[] IPAddressSet { get; set; } = addressSet;
 
+    /// <summary>
+    /// IPAddressSet as a string for display purposes
+    /// </summary>
     public string? IPAddressBatch => Maintain.IAddressesToString( IPAddressSet );
-    //{
-    //    get
-    //    {
-    //        return Maintain.IAddressesToString( this.IPAddressSet );
-    //    }
-    //}
 
+    /// <summary>
+    /// The type of IP address: IPv4, IPv6, or Invalid
+    /// </summary>
     internal IPAddressType AddressType { get; set; } // => DetermineAddressType( ); // string.IsNullOrEmpty( this.IPAddress ) ? IPAddressType.Invalid : this.IPAddress.IndexOf( ':' ) > 0 ? IPAddressType.IPv6 : IPAddressType.IPv4; // { get; set; } = Maintain.IPAddressType.IPv4;
 
     /// <summary>
@@ -73,7 +79,7 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
     /// <summary>
     /// New: Simply record whether the IP address(es) or ranger has been validated
     /// </summary>
-    public bool Validated { get; set; } = false;
+    public bool Validated { get; set; }
 
     /// <summary>
     /// No longer needed as we need both port numbers and protocols before we can set these in the Windows Firewall and I'd rather fully block the IP address
@@ -104,6 +110,9 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
     //public string? Malware { get; set; }
 
     [Display( AutoGenerateField = false )]
+    /// <summary>
+    /// An array to help sort IP addresses
+    /// </summary>
     internal long[] Sort => DetermineSort( );
 
     internal long Sort0 => Sort[ 0 ];
@@ -128,6 +137,9 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
     //        return IPAddressType.IPv4;
     //}
 
+    /// <summary>
+    /// A single IP address representing the IP address, address range or IPAddressBatch as an IPAddress
+    /// </summary>
     private IPAddress? RepresentativeIPAddress
     {
         get
@@ -151,6 +163,10 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
         }
     }
 
+    /// <summary>
+    /// Internal: Calculates values for the Sort property
+    /// </summary>
+    /// <returns>Values for the Sort property</returns>
     private long[] DetermineSort( )
     {
         if ( _sort.Sum( ) > 0 ) // _sort[ 0 ] > 0 && _sort[ 3 ] > 0 )
@@ -198,6 +214,11 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
         }
     }
 
+    /// <summary>
+    /// Compares this CandidateEntry to another CandidateEntry
+    /// </summary>
+    /// <param name="other">The entry to compare to</param>
+    /// <returns>-1 if 'other' follows this, 0 it equal, 1 if this follows 'other'</returns>
     public int CompareTo( CandidateEntry? other )
     {
         int ret = 1;
@@ -216,28 +237,58 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
         return ret;
     }
 
+    /// <summary>
+    /// Compares this CandidateEntry to another CandidateEntry
+    /// </summary>
+    /// <param name="left">The entry to compare</param>
+    /// <param name="right">The entry to compare to</param>
+    /// <returns>True if 'left' is less than 'right'</returns>
     public static bool operator <( CandidateEntry left, CandidateEntry right )
     {
         return left.CompareTo( right ) < 0;
     }
 
+    /// <summary>
+    /// Compares this CandidateEntry to another CandidateEntry
+    /// </summary>
+    /// <param name="left">The entry to compare</param>
+    /// <param name="right">The entry to compare to</param>
+    /// <returns>True if 'left' is less than or equal to 'right'</returns>
     public static bool operator <=( CandidateEntry left, CandidateEntry right )
     {
         return left.CompareTo( right ) <= 0;
     }
 
+    /// <summary>
+    /// Compares this CandidateEntry to another CandidateEntry
+    /// </summary>
+    /// <param name="left">The entry to compare</param>
+    /// <param name="right">The entry to compare to</param>
+    /// <returns>True if 'left' is greater than 'right'</returns>
     public static bool operator >( CandidateEntry left, CandidateEntry right )
     {
         return left.CompareTo( right ) > 0;
     }
 
+    /// <summary>
+    /// Compares this CandidateEntry to another CandidateEntry
+    /// </summary>
+    /// <param name="left">The entry to compare</param>
+    /// <param name="right">The entry to compare to</param>
+    /// <returns>True if 'left' is greater than or equal to 'right'</returns>
     public static bool operator >=( CandidateEntry left, CandidateEntry right )
     {
         return left.CompareTo( right ) >= 0;
     }
 
+    /// <summary>
+    /// Default disposing property
+    /// </summary>
     private bool disposedValue;
 
+    /// <summary>
+    /// Default disposing method
+    /// </summary>
     private void Dispose( bool disposing )
     {
         if ( !disposedValue )
@@ -253,6 +304,9 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
         }
     }
 
+    /// <summary>
+    /// Default disposing method
+    /// </summary>
     public void Dispose( )
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

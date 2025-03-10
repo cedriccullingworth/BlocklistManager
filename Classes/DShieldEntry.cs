@@ -2,6 +2,9 @@
 
 namespace BlocklistManager;
 
+/// <summary>
+/// Class to help with deserialization of DShield data.
+/// </summary>
 internal sealed class DShieldEntry : IDisposable
 {
     internal string rangeStart { get; set; } = string.Empty;

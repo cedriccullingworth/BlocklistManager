@@ -89,6 +89,7 @@ partial class UpdateScheduler
         this.FrequencyComboBox.Name = "FrequencyComboBox";
         this.FrequencyComboBox.Size = new Size( 203, 23 );
         this.FrequencyComboBox.TabIndex = 2;
+        this.FrequencyComboBox.SelectedIndexChanged +=  this.FrequencyComboBox_SelectedIndexChanged ;
         // 
         // label3
         // 
@@ -316,7 +317,6 @@ partial class UpdateScheduler
         this.AcceptButton = this.OKButton;
         this.AutoScaleDimensions = new SizeF( 7F, 15F );
         this.AutoScaleMode = AutoScaleMode.Font;
-        this.CancelButton = this.CancelButton;
         this.ClientSize = new Size( 800, 591 );
         this.Controls.Add( this.label1 );
         this.Controls.Add( this.ApplicationName );
@@ -347,7 +347,7 @@ partial class UpdateScheduler
         this.Controls.Add( this.TaskNameLabel );
         this.Name = "UpdateScheduler";
         this.StartPosition = FormStartPosition.CenterParent;
-        this.Text = "Schedule Automatic Updates";
+        this.Text = "Schedule Automatic Firewall Updates";
         this.Load +=  this.UpdateScheduler_Load ;
         this.ResumeLayout( false );
         this.PerformLayout( );
