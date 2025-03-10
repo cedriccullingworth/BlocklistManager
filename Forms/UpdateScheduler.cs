@@ -45,7 +45,7 @@ public partial class UpdateScheduler : Form
         List<string> accounts = [];
         try
         {
-            accounts = AdminUsers.Select( s => $"{s.DomainOrComputerName}\\{s.UserName}" ).ToList( );
+            accounts = GetAdminUsers( ).Select( s => $"{s.DomainOrComputerName}\\{s.UserName}" ).ToList( );
             if ( accounts.Count < 1 )
                 accounts.Add( $"{Environment.UserDomainName}\\{Environment.UserName}" );
         }
@@ -458,62 +458,59 @@ public partial class UpdateScheduler : Form
     /// <summary>
     /// Fetch a list of active local administrators using PowerShell
     /// </summary>
-    public static List<UserAccount> AdminUsers
+    public static List<UserAccount> GetAdminUsers( )
     {
-        get
+        try
         {
-            try
+            List<UserAccount> users = [];
+            using ( PrincipalContext ctx = new PrincipalContext( ContextType.Machine ) )
             {
-                List<UserAccount> users = [];
-                using ( PrincipalContext ctx = new PrincipalContext( ContextType.Machine ) )
+                if ( ctx is null )
                 {
-                    if ( ctx is null )
+                    Logger.Log( "GetAdminUsers", "Principal FAILED." );
+                    return users;
+                }
+
+                using ( GroupPrincipal grpHost = new GroupPrincipal( ctx ) )
+                {
+                    if ( grpHost is null )
                     {
-                        Logger.Log( "GetAdminUsers", "Principal FAILED." );
+                        Logger.Log( "GetAdminUsers", "Group Principal FAILED." );
                         return users;
                     }
 
-                    using ( GroupPrincipal grpHost = new GroupPrincipal( ctx ) )
+                    var grp = GroupPrincipal.FindByIdentity( ctx, IdentityType.Name, "Administrators" );
+                    if ( grp is not null )
                     {
-                        if ( grpHost is null )
+                        List<AuthenticablePrincipal> allAdmins = grp.GetMembers( recursive: true )
+                                                                    .Cast<AuthenticablePrincipal>( )
+                                                                    .Where( w => w.Enabled != false )
+                                                                    .Where( static w => w.AccountExpirationDate is null || w.AccountExpirationDate > DateTime.Today )
+                                                                    .ToList( );
+
+                        foreach ( AuthenticablePrincipal p in allAdmins )
                         {
-                            Logger.Log( "GetAdminUsers", "Group Principal FAILED." );
-                            return users;
+                            users.Add( new( ctx.ConnectedServer, p.Name ) );
                         }
-
-                        var grp = GroupPrincipal.FindByIdentity( ctx, IdentityType.Name, "Administrators" );
-                        if ( grp is not null )
-                        {
-                            List<AuthenticablePrincipal> allAdmins = grp.GetMembers( recursive: true )
-                                                                        .Cast<AuthenticablePrincipal>( )
-                                                                        .Where( w => w.Enabled != false )
-                                                                        .Where( static w => w.AccountExpirationDate is null || w.AccountExpirationDate > DateTime.Today )
-                                                                        .ToList( );
-
-                            foreach ( AuthenticablePrincipal p in allAdmins )
-                            {
-                                users.Add( new( ctx.ConnectedServer, p.Name ) );
-                            }
-                        }
-
-                        return users;
                     }
+
+                    return users;
                 }
             }
-            catch ( Exception ex ) // It's not getting here
+        }
+        catch ( Exception ex ) // It's not getting here
+        {
+            Logger.Log( "GetAdminUsers", ex.Message );
+            if ( ex.InnerException is not null )
             {
-                Logger.Log( "GetAdminUsers", ex.Message );
-                if ( ex.InnerException is not null )
+                Logger.Log( "GetAdminUsers", ex.InnerException.Message );
+                if ( ex.InnerException.InnerException is not null )
                 {
-                    Logger.Log( "GetAdminUsers", ex.InnerException.Message );
-                    if ( ex.InnerException.InnerException is not null )
-                    {
-                        Logger.Log( "GetAdminUsers", ex.InnerException.InnerException.Message );
-                    }
+                    Logger.Log( "GetAdminUsers", ex.InnerException.InnerException.Message );
                 }
-                Logger.Log( "AdminUsers", ex.StackTrace! );
-                return [];
             }
+            Logger.Log( "AdminUsers", ex.StackTrace! );
+            return [];
         }
     }
 
