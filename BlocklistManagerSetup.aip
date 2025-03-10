@@ -45,8 +45,8 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="APPDIR" ComponentId="{3CE6606F-72DD-4365-AFA2-C21815AFF16F}" Directory_="APPDIR" Attributes="0"/>
     <ROW Component="Accessibility.dll" ComponentId="{F3A4C966-D58B-4AF9-9D22-BFC993B7B87E}" Directory_="APPDIR" Attributes="0" KeyPath="Accessibility.dll"/>
-    <ROW Component="BlocklistManager.dll" ComponentId="{B7DD3285-59EA-4328-A6E8-F9CD83F8C224}" Directory_="APPDIR" Attributes="0" KeyPath="BlocklistManager.dll"/>
-    <ROW Component="BlocklistManager.exe" ComponentId="{9BA99ADD-DA0C-4685-8770-02C87D37391C}" Directory_="APPDIR" Attributes="256" KeyPath="BlocklistManager.exe"/>
+    <ROW Component="BlocklistManager.dll" ComponentId="{FD61A52B-70F7-41A0-A4A4-6CCF1D205554}" Directory_="APPDIR" Attributes="0" KeyPath="BlocklistManager.dll"/>
+    <ROW Component="BlocklistManager.exe" ComponentId="{1996D038-A635-4FF9-8515-0F496459E404}" Directory_="APPDIR" Attributes="256" KeyPath="BlocklistManager.exe"/>
     <ROW Component="BlocklistManager.runtimeconfig.json" ComponentId="{2387C7A5-BAAD-4C88-AAFE-1CE766D0C23D}" Directory_="APPDIR" Attributes="0" KeyPath="BlocklistManager.runtimeconfig.json" Type="0"/>
     <ROW Component="IPAddressRange.dll" ComponentId="{D9C5A969-2696-48D2-A0BD-0C77A4A22292}" Directory_="APPDIR" Attributes="0" KeyPath="IPAddressRange.dll"/>
     <ROW Component="Markdig.Signed.dll" ComponentId="{FD93885D-F216-4314-8901-E0D5992F7D9A}" Directory_="APPDIR" Attributes="0" KeyPath="Markdig.Signed.dll"/>
@@ -74,10 +74,9 @@
     <ROW Component="Microsoft.Win32.TaskScheduler.dll" ComponentId="{B09909B6-D13A-4112-9394-0B4E3FE683F1}" Directory_="APPDIR" Attributes="0" KeyPath="Microsoft.Win32.TaskScheduler.dll"/>
     <ROW Component="Microsoft.Windows.SDK.NET.dll" ComponentId="{9093682A-B605-4AAF-8830-537CCCC12A0F}" Directory_="APPDIR" Attributes="0" KeyPath="Microsoft.Windows.SDK.NET.dll"/>
     <ROW Component="Newtonsoft.Json.dll" ComponentId="{3EEFDA48-8226-4106-8977-CD2EC5BF4AD3}" Directory_="APPDIR" Attributes="0" KeyPath="Newtonsoft.Json.dll"/>
-    <ROW Component="OSVersionExtension.dll" ComponentId="{904CA4C0-37EE-4C4C-B942-2D6692569F68}" Directory_="APPDIR" Attributes="0" KeyPath="OSVersionExtension.dll"/>
+    <ROW Component="OSVersionExtension.dll" ComponentId="{D1C74116-06F3-4B7D-8ECA-D2678D2EC726}" Directory_="APPDIR" Attributes="0" KeyPath="OSVersionExtension.dll"/>
     <ROW Component="PowerShell.Core.Instrumentation.dll" ComponentId="{7E241987-D20E-431D-848D-E470FF161139}" Directory_="APPDIR" Attributes="256" KeyPath="PowerShell.Core.Instrumentation.dll"/>
     <ROW Component="ProductInformation" ComponentId="{583BB2DE-9EE2-4F30-BF45-05B199544D8E}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
-    <ROW Component="SBS.Utilities.dll" ComponentId="{AB1CA16A-58E0-4809-9F27-8E08680266A3}" Directory_="APPDIR" Attributes="0" KeyPath="SBS.Utilities.dll"/>
     <ROW Component="SharpCompress.dll" ComponentId="{8E0158ED-2769-429F-856C-67E6C8BEC0D2}" Directory_="APPDIR" Attributes="0" KeyPath="SharpCompress.dll"/>
     <ROW Component="System.AppContext.dll" ComponentId="{49EA0024-4431-411F-A652-95464DA34584}" Directory_="APPDIR" Attributes="0" KeyPath="System.AppContext.dll"/>
     <ROW Component="System.Buffers.dll" ComponentId="{79E3DA02-3BCE-47FC-A843-6797ADD789C8}" Directory_="APPDIR" Attributes="0" KeyPath="System.Buffers.dll"/>
@@ -113,8 +112,9 @@
     <ROW Component="System.Diagnostics.Tools.dll" ComponentId="{532CBBF5-1090-421B-8947-EFD2BAD8D360}" Directory_="APPDIR" Attributes="0" KeyPath="System.Diagnostics.Tools.dll"/>
     <ROW Component="System.Diagnostics.TraceSource.dll" ComponentId="{A62362F0-0F56-4EC2-B50C-92712A1B43A3}" Directory_="APPDIR" Attributes="0" KeyPath="System.Diagnostics.TraceSource.dll"/>
     <ROW Component="System.Diagnostics.Tracing.dll" ComponentId="{C3F72D8E-88D3-46ED-B893-1704E26CA574}" Directory_="APPDIR" Attributes="0" KeyPath="System.Diagnostics.Tracing.dll"/>
-    <ROW Component="System.DirectoryServices.AccountManagement.dll" ComponentId="{04C6D891-7F61-48D6-9BFA-43231DCC8EC7}" Directory_="APPDIR" Attributes="0" KeyPath="System.DirectoryServices.AccountManagement.dll"/>
-    <ROW Component="System.DirectoryServices.dll" ComponentId="{AD56ECA5-8399-4FC2-986E-ECA8F1900B0B}" Directory_="APPDIR" Attributes="0" KeyPath="System.DirectoryServices.dll"/>
+    <ROW Component="System.DirectoryServices.AccountManagement.dll" ComponentId="{4AF98E45-390C-49A8-84BC-DB7C25A24985}" Directory_="APPDIR" Attributes="0" KeyPath="System.DirectoryServices.AccountManagement.dll"/>
+    <ROW Component="System.DirectoryServices.Protocols.dll" ComponentId="{D966EE63-A82D-485D-866B-68BC81FF7E71}" Directory_="APPDIR" Attributes="0" KeyPath="System.DirectoryServices.Protocols.dll"/>
+    <ROW Component="System.DirectoryServices.dll" ComponentId="{52DB1467-B643-4867-9810-3D41CB6588E3}" Directory_="APPDIR" Attributes="0" KeyPath="System.DirectoryServices.dll"/>
     <ROW Component="System.Drawing.Common.dll" ComponentId="{E49FAF0A-D314-4110-B8A7-17A5DD2FD069}" Directory_="APPDIR" Attributes="0" KeyPath="System.Drawing.Common.dll"/>
     <ROW Component="System.Drawing.Design.dll" ComponentId="{79033CDA-E62F-4D18-9A10-3339FAC9A57E}" Directory_="APPDIR" Attributes="0" KeyPath="System.Drawing.Design.dll"/>
     <ROW Component="System.Drawing.Primitives.dll" ComponentId="{429E3828-795D-4B3F-9805-4A13A8AF2734}" Directory_="APPDIR" Attributes="0" KeyPath="System.Drawing.Primitives.dll"/>
@@ -148,7 +148,7 @@
     <ROW Component="System.Linq.Queryable.dll" ComponentId="{A4415BA0-4133-4489-8B29-BDA1B1A5BD2E}" Directory_="APPDIR" Attributes="0" KeyPath="System.Linq.Queryable.dll"/>
     <ROW Component="System.Linq.dll" ComponentId="{99F378B7-B3C8-4B22-897A-D7D230DD6C19}" Directory_="APPDIR" Attributes="0" KeyPath="System.Linq.dll"/>
     <ROW Component="System.Management.Automation.dll" ComponentId="{4DA84C3D-B552-4E32-85CC-43EFBC972B11}" Directory_="APPDIR" Attributes="0" KeyPath="System.Management.Automation.dll"/>
-    <ROW Component="System.Management.dll" ComponentId="{9660BC31-9E09-419A-8879-64DE594B207A}" Directory_="APPDIR" Attributes="0" KeyPath="System.Management.dll"/>
+    <ROW Component="System.Management.dll" ComponentId="{6F0AFB62-322A-46A4-AE47-5A0909124813}" Directory_="APPDIR" Attributes="0" KeyPath="System.Management.dll"/>
     <ROW Component="System.Memory.dll" ComponentId="{C55E60D0-7E8B-4F87-A529-EDDBC5E004EE}" Directory_="APPDIR" Attributes="0" KeyPath="System.Memory.dll"/>
     <ROW Component="System.Net.Http.Json.dll" ComponentId="{9FD2E1DF-5FAB-4EBD-B0BA-D3995420D2F6}" Directory_="APPDIR" Attributes="0" KeyPath="System.Net.Http.Json.dll"/>
     <ROW Component="System.Net.Http.dll" ComponentId="{126CD31A-89F1-4528-A97D-DA2BA4E16219}" Directory_="APPDIR" Attributes="0" KeyPath="System.Net.Http.dll"/>
@@ -286,7 +286,6 @@
     <ROW File="Markdig.Signed.dll" Component_="Markdig.Signed.dll" FileName="MARKDI~1.DLL|Markdig.Signed.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Users\Cedric\.nuget\packages\markdig.signed\0.31.0\lib\net6.0\Markdig.Signed.dll" SelfReg="false"/>
     <ROW File="System.ComponentModel.dll" Component_="System.ComponentModel.dll" FileName="SYSTEM~4.DLL|System.ComponentModel.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.2\ref\net9.0\System.ComponentModel.dll" SelfReg="false"/>
     <ROW File="System.Security.Cryptography.Xml.dll" Component_="System.Security.Cryptography.Xml.dll" FileName="SYSTEM~5.DLL|System.Security.Cryptography.Xml.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\9.0.2\ref\net9.0\System.Security.Cryptography.Xml.dll" SelfReg="false"/>
-    <ROW File="BlocklistManager.dll" Component_="BlocklistManager.dll" FileName="BLOCKL~1.DLL|BlocklistManager.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\BlocklistManager.dll" SelfReg="false"/>
     <ROW File="Microsoft.Management.Infrastructure.Native.dll" Component_="Microsoft.Management.Infrastructure.Native.dll" FileName="MICROS~1.DLL|Microsoft.Management.Infrastructure.Native.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Users\Cedric\.nuget\packages\microsoft.management.infrastructure.runtime.win\3.0.0\runtimes\win-x64\lib\netstandard1.6\microsoft.management.infrastructure.native.dll" SelfReg="false"/>
     <ROW File="Microsoft.CSharp.dll" Component_="Microsoft.CSharp.dll" FileName="MICROS~2.DLL|Microsoft.CSharp.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.2\ref\net9.0\Microsoft.CSharp.dll" SelfReg="false"/>
     <ROW File="IPAddressRange.dll" Component_="IPAddressRange.dll" FileName="IPADDR~1.DLL|IPAddressRange.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Users\Cedric\.nuget\packages\ipaddressrange\6.1.0\lib\net9.0\IPAddressRange.dll" SelfReg="false"/>
@@ -337,8 +336,6 @@
     <ROW File="netstandard.dll" Component_="netstandard.dll" FileName="NETSTA~1.DLL|netstandard.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.2\ref\net9.0\netstandard.dll" SelfReg="false"/>
     <ROW File="System.Diagnostics.EventLog.dll" Component_="System.Diagnostics.EventLog.dll" FileName="SYSTE~27.DLL|System.Diagnostics.EventLog.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\9.0.2\ref\net9.0\System.Diagnostics.EventLog.dll" SelfReg="false"/>
     <ROW File="Newtonsoft.Json.dll" Component_="Newtonsoft.Json.dll" FileName="NEWTON~1.DLL|Newtonsoft.Json.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Users\Cedric\.nuget\packages\newtonsoft.json\13.0.3\lib\net6.0\Newtonsoft.Json.dll" SelfReg="false"/>
-    <ROW File="OSVersionExtension.dll" Component_="OSVersionExtension.dll" FileName="OSVERS~1.DLL|OSVersionExtension.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="bin\Release\net9.0-windows10.0.17763.0\OSVersionExtension.dll" SelfReg="false"/>
-    <ROW File="SBS.Utilities.dll" Component_="SBS.Utilities.dll" FileName="SBSUTI~1.DLL|SBS.Utilities.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\SBS.Utilities\bin\Release\net9.0-windows7.0\SBS.Utilities.dll" SelfReg="false"/>
     <ROW File="System.ComponentModel.Annotations.dll" Component_="System.ComponentModel.Annotations.dll" FileName="SYSTE~28.DLL|System.ComponentModel.Annotations.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.2\ref\net9.0\System.ComponentModel.Annotations.dll" SelfReg="false"/>
     <ROW File="System.Data.dll" Component_="System.Data.dll" FileName="SYSTE~29.DLL|System.Data.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.2\ref\net9.0\System.Data.dll" SelfReg="false"/>
     <ROW File="System.Collections.Concurrent.dll" Component_="System.Collections.Concurrent.dll" FileName="SYSTE~30.DLL|System.Collections.Concurrent.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.2\ref\net9.0\System.Collections.Concurrent.dll" SelfReg="false"/>
@@ -402,7 +399,6 @@
     <ROW File="System.Linq.Parallel.dll" Component_="System.Linq.Parallel.dll" FileName="SYSTE~87.DLL|System.Linq.Parallel.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.2\ref\net9.0\System.Linq.Parallel.dll" SelfReg="false"/>
     <ROW File="System.Linq.Queryable.dll" Component_="System.Linq.Queryable.dll" FileName="SYSTE~88.DLL|System.Linq.Queryable.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.2\ref\net9.0\System.Linq.Queryable.dll" SelfReg="false"/>
     <ROW File="System.Management.Automation.dll" Component_="System.Management.Automation.dll" FileName="SYSTE~89.DLL|System.Management.Automation.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Users\Cedric\.nuget\packages\system.management.automation\7.5.0\ref\net9.0\System.Management.Automation.dll" SelfReg="false"/>
-    <ROW File="System.Management.dll" Component_="System.Management.dll" FileName="SYSTE~90.DLL|System.Management.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="bin\Release\net9.0-windows10.0.17763.0\runtimes\win\lib\net9.0\System.Management.dll" SelfReg="false"/>
     <ROW File="System.Memory.dll" Component_="System.Memory.dll" FileName="SYSTE~91.DLL|System.Memory.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.2\ref\net9.0\System.Memory.dll" SelfReg="false"/>
     <ROW File="WindowsBase.dll" Component_="WindowsBase.dll" FileName="WINDOW~1.DLL|WindowsBase.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\9.0.2\ref\net9.0\WindowsBase.dll" SelfReg="false"/>
     <ROW File="System.Security.Permissions.dll" Component_="System.Security.Permissions.dll" FileName="SYSTE~92.DLL|System.Security.Permissions.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\9.0.2\ref\net9.0\System.Security.Permissions.dll" SelfReg="false"/>
@@ -502,9 +498,13 @@
     <ROW File="pwrshplugin.dll" Component_="pwrshplugin.dll" FileName="PWRSHP~1.DLL|pwrshplugin.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Users\Cedric\.nuget\packages\microsoft.powershell.native\7.4.0\runtimes\win-x64\native\pwrshplugin.dll" SelfReg="false"/>
     <ROW File="getfilesiginforedist.dll" Component_="getfilesiginforedist.dll" FileName="GETFIL~2.DLL|getfilesiginforedist.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Users\Cedric\.nuget\packages\microsoft.security.extensions\1.3.0\runtimes\win-x64\native\getfilesiginforedist.dll" SelfReg="false"/>
     <ROW File="BlocklistManager.docx" Component_="BlocklistManager.runtimeconfig.json" FileName="BLOCKL~1.DOC|BlocklistManager.docx" Version="65535.65535.65535.65535" Attributes="0" SourcePath="BlocklistManager.docx" SelfReg="false"/>
-    <ROW File="BlocklistManager.exe" Component_="BlocklistManager.exe" FileName="BLOCKL~1.EXE|BlocklistManager.exe" Version="65535.65535.65535.65535" Attributes="0" SourcePath="bin\Release\net9.0-windows10.0.17763.0\BlocklistManager.exe" SelfReg="false" DigSign="true"/>
-    <ROW File="System.DirectoryServices.AccountManagement.dll" Component_="System.DirectoryServices.AccountManagement.dll" FileName="SYSTE~55.DLL|System.DirectoryServices.AccountManagement.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="bin\Release\net9.0-windows10.0.17763.0\System.DirectoryServices.AccountManagement.dll" SelfReg="false"/>
-    <ROW File="System.DirectoryServices.dll" Component_="System.DirectoryServices.dll" FileName="SYST~181.DLL|System.DirectoryServices.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="bin\Release\net9.0-windows10.0.17763.0\System.DirectoryServices.dll" SelfReg="false"/>
+    <ROW File="BlocklistManager.dll" Component_="BlocklistManager.dll" FileName="BLOCKL~1.DLL|BlocklistManager.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\BlocklistManager.dll" SelfReg="false"/>
+    <ROW File="BlocklistManager.exe" Component_="BlocklistManager.exe" FileName="BLOCKL~1.EXE|BlocklistManager.exe" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\BlocklistManager.exe" SelfReg="false" DigSign="true"/>
+    <ROW File="System.Management.dll" Component_="System.Management.dll" FileName="SYSTE~90.DLL|System.Management.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\System.Management.dll" SelfReg="false"/>
+    <ROW File="System.DirectoryServices.AccountManagement.dll" Component_="System.DirectoryServices.AccountManagement.dll" FileName="SYSTE~55.DLL|System.DirectoryServices.AccountManagement.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\System.DirectoryServices.AccountManagement.dll" SelfReg="false"/>
+    <ROW File="System.DirectoryServices.dll" Component_="System.DirectoryServices.dll" FileName="SYST~181.DLL|System.DirectoryServices.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\System.DirectoryServices.dll" SelfReg="false"/>
+    <ROW File="System.DirectoryServices.Protocols.dll" Component_="System.DirectoryServices.Protocols.dll" FileName="SYST~182.DLL|System.DirectoryServices.Protocols.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\System.DirectoryServices.Protocols.dll" SelfReg="false"/>
+    <ROW File="OSVersionExtension.dll" Component_="OSVersionExtension.dll" FileName="OSVERS~1.DLL|OSVersionExtension.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\OSVersionExtension.dll" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
     <ROW BuildKey="AnyCPU_Release" BuildName="AnyCPU_Release" BuildOrder="1" BuildType="0" PackageFolder="\\Sbsnb1\c$\Downloads" PackageFileName="BlocklistManagerSetup" Languages="en_GB" InstallationType="4" SummInfoMetadata="Page Count:450" UseLargeSchema="true" MsiPackageType="x64"/>
@@ -603,7 +603,6 @@
     <ROW Feature_="MainFeature" Component_="Markdig.Signed.dll"/>
     <ROW Feature_="MainFeature" Component_="System.ComponentModel.dll"/>
     <ROW Feature_="MainFeature" Component_="System.Security.Cryptography.Xml.dll"/>
-    <ROW Feature_="MainFeature" Component_="BlocklistManager.dll"/>
     <ROW Feature_="MainFeature" Component_="Microsoft.Management.Infrastructure.Native.dll"/>
     <ROW Feature_="MainFeature" Component_="Microsoft.CSharp.dll"/>
     <ROW Feature_="MainFeature" Component_="IPAddressRange.dll"/>
@@ -654,8 +653,6 @@
     <ROW Feature_="MainFeature" Component_="netstandard.dll"/>
     <ROW Feature_="MainFeature" Component_="System.Diagnostics.EventLog.dll"/>
     <ROW Feature_="MainFeature" Component_="Newtonsoft.Json.dll"/>
-    <ROW Feature_="MainFeature" Component_="OSVersionExtension.dll"/>
-    <ROW Feature_="MainFeature" Component_="SBS.Utilities.dll"/>
     <ROW Feature_="MainFeature" Component_="System.ComponentModel.Annotations.dll"/>
     <ROW Feature_="MainFeature" Component_="System.Data.dll"/>
     <ROW Feature_="MainFeature" Component_="System.Collections.Concurrent.dll"/>
@@ -718,7 +715,6 @@
     <ROW Feature_="MainFeature" Component_="System.Linq.Parallel.dll"/>
     <ROW Feature_="MainFeature" Component_="System.Linq.Queryable.dll"/>
     <ROW Feature_="MainFeature" Component_="System.Management.Automation.dll"/>
-    <ROW Feature_="MainFeature" Component_="System.Management.dll"/>
     <ROW Feature_="MainFeature" Component_="System.Memory.dll"/>
     <ROW Feature_="MainFeature" Component_="WindowsBase.dll"/>
     <ROW Feature_="MainFeature" Component_="System.Security.Permissions.dll"/>
@@ -815,9 +811,13 @@
     <ROW Feature_="MainFeature" Component_="PowerShell.Core.Instrumentation.dll"/>
     <ROW Feature_="MainFeature" Component_="pwrshplugin.dll"/>
     <ROW Feature_="MainFeature" Component_="getfilesiginforedist.dll"/>
-    <ROW Feature_="MainFeature" Component_="BlocklistManager.exe"/>
+    <ROW Feature_="MainFeature" Component_="BlocklistManager.dll"/>
     <ROW Feature_="MainFeature" Component_="System.DirectoryServices.AccountManagement.dll"/>
     <ROW Feature_="MainFeature" Component_="System.DirectoryServices.dll"/>
+    <ROW Feature_="MainFeature" Component_="System.DirectoryServices.Protocols.dll"/>
+    <ROW Feature_="MainFeature" Component_="BlocklistManager.exe"/>
+    <ROW Feature_="MainFeature" Component_="System.Management.dll"/>
+    <ROW Feature_="MainFeature" Component_="OSVersionExtension.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="BlocklistManager.exe" SourcePath="Images\BlocklistManager.ico" Index="0"/>

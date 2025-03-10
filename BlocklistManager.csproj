@@ -16,7 +16,7 @@
     <PackageIcon>Images\BlocklistManager.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blocklist blacklist blocklists blacklists windows firewall information security</PackageTags>
-	<Version>1.8.3</Version>
+	<Version>1.8.3.2</Version>
     <AssemblyVersion>1.8.3</AssemblyVersion>
     <FileVersion>1.8.3</FileVersion>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
@@ -91,12 +91,10 @@
     <PackageReference Include="IPAddressRange" Version="6.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.2" />
     <PackageReference Include="SharpCompress" Version="0.39.0" />
-    <PackageReference Include="System.DirectoryServices" Version="9.0.2">
-      <GeneratePathProperty>True</GeneratePathProperty>
-    </PackageReference>
-    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.2">
-      <GeneratePathProperty>True</GeneratePathProperty>
-    </PackageReference>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.2" />
+    <PackageReference Include="System.DirectoryServices" Version="9.0.2" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.2" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="9.0.2" />
     <PackageReference Include="TaskScheduler" Version="2.12.1" />
     <PackageReference Include="WindowsFirewallHelper" Version="2.2.0.86" />
   </ItemGroup>
@@ -128,6 +126,9 @@
     <None Update="BlocklistManager.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="BlocklistManager.snk">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Images\BlocklistManager.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -147,17 +148,8 @@
 
   <ItemGroup>
     <Reference Include="OSVersionExtension">
-      <HintPath>..\detect-windows-version\src\OSVersionExt\bin\Debug\net9.0\OSVersionExtension.dll</HintPath>
+      <HintPath>bin\Release\net9.0\OSVersionExtension.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="SBS.Utilities">
-      <HintPath>..\SBS.Utilities\bin\Release\net9.0-windows7.0\SBS.Utilities.dll</HintPath>
-    </Reference>
-    <Reference Include="System.DirectoryServices.AccountManagement">
-      <HintPath>C:\Program Files\PowerShell\7\System.DirectoryServices.AccountManagement.dll</HintPath>
-    </Reference>
-    <Reference Include="System.DirectoryServices.Protocols">
-      <HintPath>C:\Program Files\PowerShell\7\System.DirectoryServices.Protocols.dll</HintPath>
     </Reference>
   </ItemGroup>
 
