@@ -15,7 +15,7 @@
     <ROW Property="ProductCode" Value="2057:{8D27E54B-9BF9-4ADC-9553-9832B8E1F378} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="BlocklistManager"/>
-    <ROW Property="ProductVersion" Value="1.8.3" Options="8"/>
+    <ROW Property="ProductVersion" Value="1.8.3.3" Options="8"/>
     <ROW Property="RUNAPPLICATION" Value="1" Type="4"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{FC84E2E4-D999-4C63-94C3-B6516CA9EF0C}"/>
@@ -36,6 +36,9 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1" DirectoryOptions="3"/>
+    <ROW Directory="DesktopFolder" Directory_Parent="TARGETDIR" DefaultDir="DESKTO~1|DesktopFolder" IsPseudoRoot="1"/>
+    <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
+    <ROW Directory="StartMenuFolder" Directory_Parent="TARGETDIR" DefaultDir="STARTM~1|StartMenuFolder" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.SideBySideGuidComponent">
@@ -45,8 +48,8 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="APPDIR" ComponentId="{3CE6606F-72DD-4365-AFA2-C21815AFF16F}" Directory_="APPDIR" Attributes="0"/>
     <ROW Component="Accessibility.dll" ComponentId="{F3A4C966-D58B-4AF9-9D22-BFC993B7B87E}" Directory_="APPDIR" Attributes="0" KeyPath="Accessibility.dll"/>
-    <ROW Component="BlocklistManager.dll" ComponentId="{FD61A52B-70F7-41A0-A4A4-6CCF1D205554}" Directory_="APPDIR" Attributes="0" KeyPath="BlocklistManager.dll"/>
-    <ROW Component="BlocklistManager.exe" ComponentId="{1996D038-A635-4FF9-8515-0F496459E404}" Directory_="APPDIR" Attributes="256" KeyPath="BlocklistManager.exe"/>
+    <ROW Component="BlocklistManager.dll" ComponentId="{69FDD073-0678-4797-BAA9-5A4E0E2E9CBB}" Directory_="APPDIR" Attributes="0" KeyPath="BlocklistManager.dll"/>
+    <ROW Component="BlocklistManager.exe" ComponentId="{FD6C41CE-A0D4-42FD-ADC3-026C82AF58BE}" Directory_="APPDIR" Attributes="256" KeyPath="BlocklistManager.exe"/>
     <ROW Component="BlocklistManager.runtimeconfig.json" ComponentId="{2387C7A5-BAAD-4C88-AAFE-1CE766D0C23D}" Directory_="APPDIR" Attributes="0" KeyPath="BlocklistManager.runtimeconfig.json" Type="0"/>
     <ROW Component="IPAddressRange.dll" ComponentId="{D9C5A969-2696-48D2-A0BD-0C77A4A22292}" Directory_="APPDIR" Attributes="0" KeyPath="IPAddressRange.dll"/>
     <ROW Component="Markdig.Signed.dll" ComponentId="{FD93885D-F216-4314-8901-E0D5992F7D9A}" Directory_="APPDIR" Attributes="0" KeyPath="Markdig.Signed.dll"/>
@@ -77,6 +80,7 @@
     <ROW Component="OSVersionExtension.dll" ComponentId="{D1C74116-06F3-4B7D-8ECA-D2678D2EC726}" Directory_="APPDIR" Attributes="0" KeyPath="OSVersionExtension.dll"/>
     <ROW Component="PowerShell.Core.Instrumentation.dll" ComponentId="{7E241987-D20E-431D-848D-E470FF161139}" Directory_="APPDIR" Attributes="256" KeyPath="PowerShell.Core.Instrumentation.dll"/>
     <ROW Component="ProductInformation" ComponentId="{583BB2DE-9EE2-4F30-BF45-05B199544D8E}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
+    <ROW Component="SHORTCUTDIR" ComponentId="{096794CC-5322-44A9-9E63-6CF4DCB88681}" Directory_="SHORTCUTDIR" Attributes="0"/>
     <ROW Component="SharpCompress.dll" ComponentId="{8E0158ED-2769-429F-856C-67E6C8BEC0D2}" Directory_="APPDIR" Attributes="0" KeyPath="SharpCompress.dll"/>
     <ROW Component="System.AppContext.dll" ComponentId="{49EA0024-4431-411F-A652-95464DA34584}" Directory_="APPDIR" Attributes="0" KeyPath="System.AppContext.dll"/>
     <ROW Component="System.Buffers.dll" ComponentId="{79E3DA02-3BCE-47FC-A843-6797ADD789C8}" Directory_="APPDIR" Attributes="0" KeyPath="System.Buffers.dll"/>
@@ -498,13 +502,13 @@
     <ROW File="pwrshplugin.dll" Component_="pwrshplugin.dll" FileName="PWRSHP~1.DLL|pwrshplugin.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Users\Cedric\.nuget\packages\microsoft.powershell.native\7.4.0\runtimes\win-x64\native\pwrshplugin.dll" SelfReg="false"/>
     <ROW File="getfilesiginforedist.dll" Component_="getfilesiginforedist.dll" FileName="GETFIL~2.DLL|getfilesiginforedist.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Users\Cedric\.nuget\packages\microsoft.security.extensions\1.3.0\runtimes\win-x64\native\getfilesiginforedist.dll" SelfReg="false"/>
     <ROW File="BlocklistManager.docx" Component_="BlocklistManager.runtimeconfig.json" FileName="BLOCKL~1.DOC|BlocklistManager.docx" Version="65535.65535.65535.65535" Attributes="0" SourcePath="BlocklistManager.docx" SelfReg="false"/>
-    <ROW File="BlocklistManager.dll" Component_="BlocklistManager.dll" FileName="BLOCKL~1.DLL|BlocklistManager.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\BlocklistManager.dll" SelfReg="false"/>
-    <ROW File="BlocklistManager.exe" Component_="BlocklistManager.exe" FileName="BLOCKL~1.EXE|BlocklistManager.exe" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\BlocklistManager.exe" SelfReg="false" DigSign="true"/>
     <ROW File="System.Management.dll" Component_="System.Management.dll" FileName="SYSTE~90.DLL|System.Management.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\System.Management.dll" SelfReg="false"/>
     <ROW File="System.DirectoryServices.AccountManagement.dll" Component_="System.DirectoryServices.AccountManagement.dll" FileName="SYSTE~55.DLL|System.DirectoryServices.AccountManagement.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\System.DirectoryServices.AccountManagement.dll" SelfReg="false"/>
     <ROW File="System.DirectoryServices.dll" Component_="System.DirectoryServices.dll" FileName="SYST~181.DLL|System.DirectoryServices.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\System.DirectoryServices.dll" SelfReg="false"/>
     <ROW File="System.DirectoryServices.Protocols.dll" Component_="System.DirectoryServices.Protocols.dll" FileName="SYST~182.DLL|System.DirectoryServices.Protocols.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\System.DirectoryServices.Protocols.dll" SelfReg="false"/>
     <ROW File="OSVersionExtension.dll" Component_="OSVersionExtension.dll" FileName="OSVERS~1.DLL|OSVersionExtension.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Release\net9.0-windows10.0.17763.0\OSVersionExtension.dll" SelfReg="false"/>
+    <ROW File="BlocklistManager.dll" Component_="BlocklistManager.dll" FileName="BLOCKL~1.DLL|BlocklistManager.dll" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Debug\net9.0-windows10.0.17763.0\BlocklistManager.dll" SelfReg="false"/>
+    <ROW File="BlocklistManager.exe" Component_="BlocklistManager.exe" FileName="BLOCKL~1.EXE|BlocklistManager.exe" Version="65535.65535.65535.65535" Attributes="0" SourcePath="C:\Program Files\BlocklistManager\bin\Debug\net9.0-windows10.0.17763.0\BlocklistManager.exe" SelfReg="false" DigSign="true"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
     <ROW BuildKey="AnyCPU_Release" BuildName="AnyCPU_Release" BuildOrder="1" BuildType="0" PackageFolder="\\Sbsnb1\c$\Downloads" PackageFileName="BlocklistManagerSetup" Languages="en_GB" InstallationType="4" SummInfoMetadata="Page Count:450" UseLargeSchema="true" MsiPackageType="x64"/>
@@ -573,6 +577,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="APPDIR" Component_="APPDIR" ManualDelete="true"/>
+    <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR" ManualDelete="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
@@ -811,13 +816,14 @@
     <ROW Feature_="MainFeature" Component_="PowerShell.Core.Instrumentation.dll"/>
     <ROW Feature_="MainFeature" Component_="pwrshplugin.dll"/>
     <ROW Feature_="MainFeature" Component_="getfilesiginforedist.dll"/>
-    <ROW Feature_="MainFeature" Component_="BlocklistManager.dll"/>
     <ROW Feature_="MainFeature" Component_="System.DirectoryServices.AccountManagement.dll"/>
     <ROW Feature_="MainFeature" Component_="System.DirectoryServices.dll"/>
     <ROW Feature_="MainFeature" Component_="System.DirectoryServices.Protocols.dll"/>
-    <ROW Feature_="MainFeature" Component_="BlocklistManager.exe"/>
     <ROW Feature_="MainFeature" Component_="System.Management.dll"/>
     <ROW Feature_="MainFeature" Component_="OSVersionExtension.dll"/>
+    <ROW Feature_="MainFeature" Component_="BlocklistManager.dll"/>
+    <ROW Feature_="MainFeature" Component_="BlocklistManager.exe"/>
+    <ROW Feature_="MainFeature" Component_="SHORTCUTDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="BlocklistManager.exe" SourcePath="Images\BlocklistManager.ico" Index="0"/>
@@ -853,6 +859,11 @@
     <ROW Registry="ProductName" Root="-1" Key="Software\[Manufacturer]\[ProductName]" Name="\"/>
     <ROW Registry="Software" Root="-1" Key="Software" Name="\"/>
     <ROW Registry="Version" Root="-1" Key="Software\[Manufacturer]\[ProductName]" Name="Version" Value="[ProductVersion]" Component_="ProductInformation"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
+    <ROW Shortcut="BlocklistManager" Directory_="SHORTCUTDIR" Name="BLOCKL~1|BlocklistManager" Component_="BlocklistManager.exe" Target="[#BlocklistManager.exe]" Hotkey="0" Icon_="BlocklistManager.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="BlocklistManager_1" Directory_="DesktopFolder" Name="BLOCKL~1|BlocklistManager" Component_="BlocklistManager.exe" Target="[#BlocklistManager.exe]" Hotkey="0" Icon_="BlocklistManager.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="BlocklistManager_2" Directory_="StartMenuFolder" Name="BLOCKL~1|BlocklistManager" Component_="BlocklistManager.exe" Target="[#BlocklistManager.exe]" Hotkey="0" Icon_="BlocklistManager.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiThemeComponent">
     <ATTRIBUTE name="UsedTheme" value="classic"/>

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.Globalization;
 
@@ -53,8 +55,17 @@ public partial class UpdateScheduler : Form
         }
         catch ( Exception ex )
         {
-            string message = StringUtilities.ExceptionMessage( "UpdateScheduler", ex );
-            Logger.Log( "UpdateScheduler", message );
+            if ( accounts.Count < 1 )
+            {
+                GetAdminUsersAlternative( accounts );
+            }
+
+            if ( accounts.Count < 1 )
+            {
+                accounts.Add( $"{Environment.UserDomainName}\\{Environment.UserName}" );
+                string message = StringUtilities.ExceptionMessage( "UpdateScheduler", ex );
+                Logger.Log( "UpdateScheduler (Retrieving a list of local administrators failed):", message );
+            }
         }
 
         AccountsComboBox.DataSource = accounts;
@@ -65,6 +76,22 @@ public partial class UpdateScheduler : Form
         ArgumentsText.Text = $"/Sites:AllCurrent /LogPath:\"{LogFolder.Text}\"";
 
         _activeUser = accounts.FirstOrDefault( c => c == $"{Environment.UserDomainName}\\{Environment.UserName}" ) ?? $"{Environment.UserDomainName}\\{Environment.UserName}";
+    }
+
+    private static void GetAdminUsersAlternative( List<string> accounts )
+    {
+        DirectoryEntry localMachine = new DirectoryEntry( "WinNT://" + Environment.MachineName );
+        DirectoryEntry admGroup = localMachine.Children.Find( "administrators", "group" );
+        object? members = admGroup.Invoke( "members", null );
+        if ( members is not null )
+        {
+            foreach ( object groupMember in (IEnumerable)members )
+            {
+                DirectoryEntry member = new DirectoryEntry( groupMember );
+                string[] pathParts = member.Path.Split( '/' );
+                accounts.Add( pathParts[ 3 ] + "\\" + member.Name );
+            }
+        }
     }
 
     [RequiresUnreferencedCode( "Calls BlocklistManager.UpdateScheduler.LoadSitesComboBox()" )]

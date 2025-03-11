@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-	<ApplicationVersion>1.8.3</ApplicationVersion>
+	<ApplicationVersion>1.</ApplicationVersion>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <BaseOutputPath>C:\Program Files\BlocklistManager\bin</BaseOutputPath>
     <StartupObject>BlocklistManager.Program</StartupObject>
@@ -16,9 +16,9 @@
     <PackageIcon>Images\BlocklistManager.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blocklist blacklist blocklists blacklists windows firewall information security</PackageTags>
-	<Version>1.8.3.2</Version>
-    <AssemblyVersion>1.8.3</AssemblyVersion>
-    <FileVersion>1.8.3</FileVersion>
+	<Version>1.8.3.3</Version>
+    <AssemblyVersion>1.8.3.3</AssemblyVersion>
+    <FileVersion>1.8.3.3</FileVersion>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <NeutralLanguage>en-001</NeutralLanguage>

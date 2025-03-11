@@ -255,6 +255,7 @@ namespace BlocklistManager
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "Maintain Blocklists";
             this.Load +=  this.MaintainUI_Load ;
+            this.Resize +=  this.MaintainUI_Resize ;
             ( (System.ComponentModel.ISupportInitialize)this.RemoteSites ).EndInit( );
             ( (System.ComponentModel.ISupportInitialize)this.FirewallRulesData ).EndInit( );
             ( (System.ComponentModel.ISupportInitialize)this.RemoteData ).EndInit( );

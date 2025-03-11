@@ -42,16 +42,37 @@ public partial class MaintainUI : Form
 
     private void FixBounds( )
     {
-        if ( Height > Screen.PrimaryScreen!.Bounds.Height )
+        // Adjust the form height and width to fit the working area of the screen
+        if ( Height > /*Screen.PrimaryScreen.Bounds.Height - */Screen.PrimaryScreen!.WorkingArea.Height )
         {
-            Height = Screen.PrimaryScreen.Bounds.Height;
-            Top = 0;
+            Height = /*Screen.PrimaryScreen.Bounds.Height - */Screen.PrimaryScreen.WorkingArea.Height;
         }
 
-        if ( Width > Screen.PrimaryScreen.Bounds.Width )
+        if ( Width > /*Screen.PrimaryScreen.Bounds.Width - */Screen.PrimaryScreen.WorkingArea.Width )
         {
-            Width = Screen.PrimaryScreen.Bounds.Width;
+            Width = /*Screen.PrimaryScreen.Bounds.Width - */Screen.PrimaryScreen.WorkingArea.Width;
+        }
+
+        // Find out whether the taskbar is situated at the bottom, top, left or right of the screen
+        if ( Screen.PrimaryScreen!.Bounds.Top == Screen.PrimaryScreen.WorkingArea.Top )
+        {
+            // Taskbar is at the top
+            Top = Screen.PrimaryScreen.WorkingArea.Top;
+        }
+        else if ( Screen.PrimaryScreen.Bounds.Left == Screen.PrimaryScreen.WorkingArea.Left )
+        {
+            // Taskbar is at the left
+            Left = Screen.PrimaryScreen.WorkingArea.Left;
+        }
+        else if ( Screen.PrimaryScreen.Bounds.Right == Screen.PrimaryScreen.WorkingArea.Right )
+        {
+            // Taskbar is at the right
             Left = 0;
+        }
+        else
+        {
+            // Taskbar is at the bottom
+            Top = 0;
         }
     }
 
@@ -104,6 +125,7 @@ public partial class MaintainUI : Form
         RemoteSites.Rows[ 0 ].Selected = false;
         //this.RemoteSites_SelectionChanged( sender, e );
 
+        RemoteSites.SelectionChanged += RemoteSites_SelectionChanged!;
         StatusMessage.Text = IDLE;
         StatusProgress.Value = 0;
         RemoteSites.SelectionChanged += RemoteSites_SelectionChanged!;
@@ -504,5 +526,32 @@ public partial class MaintainUI : Form
 
         // Select the found DataGridViewRow
         dgv.Rows[ rowIndex ].Selected = true;
+    }
+
+    //FormWindowState LastWindowState = FormWindowState.Minimized;
+    private void MaintainUI_Resize( object sender, EventArgs e )
+    {
+        if ( WindowState == FormWindowState.Maximized )
+        {
+            FixBounds( );
+        }
+        else
+        {
+            CenterToScreen( );
+        }
+        // When window state changes
+        //if ( WindowState != LastWindowState )
+        //{
+        //    LastWindowState = WindowState;
+        //    if ( WindowState == FormWindowState.Maximized )
+        //    {
+        //        // Maximized!
+        //    }
+        //    if ( WindowState == FormWindowState.Normal )
+        //    {
+
+        //        // Restored!
+        //    }
+        //}
     }
 }
