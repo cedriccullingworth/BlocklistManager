@@ -27,9 +27,8 @@ Protocols are no longer specified as none of the current blocklists provide this
 
 ## Current status (Version 1.8.3)
 
-I have put a lot of effort into improving performance, reducing "Process All" performance from about an hour to under 10 minutes to process more than 600,000 blocklist entries, then a current runtime of 
-under 5 minutes using a 10 year old entry-level i5 with 4GB RAM and a 500GB SSD...but the overall run time is mostly dependent on the time taken to remove and add firewall rules. Downloading the blocklists and
-preparing the firewall rules takes less than 1 minute.
+I have put a lot of effort into improving performance, reducing "Process All" performance from about an hour to under 10 minutes to process more than 600,000 blocklist entries, then a current runtime 
+of under 5 minutes using a 10 year old entry-level i5 with 4GB RAM and a 500GB SSD.
 
 ## If it works for you...
 
@@ -81,7 +80,7 @@ The project has the following direct dependencies:
 - Note that the only stored identifying information is your device's MAC address which is only used to track last time downloaded per site as certain sites disallow too-frequent downloads (e.g. dan.me.uk)
 
 ### Other
-- OSVersionExtension version 3.0.1, recompiled with .NET 9.0 [https://github.com/pruggitorg/detect-windows-version](https://github.com/pruggitorg/detect-windows-version), so is 
+- OSVersionExtension version 3.0.1, recompiled with .NET 8.0 and then upgraded to 9.0 [https://github.com/pruggitorg/detect-windows-version](https://github.com/pruggitorg/detect-windows-version), so is 
 not the same as the available Nuget version.
 
 ## General

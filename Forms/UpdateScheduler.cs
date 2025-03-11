@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
-using System.Globalization;
-
 
 //using System.DirectoryServices.AccountManagement;
 using System.IO;
@@ -28,7 +26,7 @@ namespace BlocklistManager;
 public partial class UpdateScheduler : Form
 {
     private List</*OSVersionExtension.OperatingSystem*/OSSchedulerVersion> _compatibleOperatingSystems = [];
-    private string[] _remoteSiteIDs = [ "AllCurrent" ];
+    private string _remoteSiteIDs = "AllCurrent";
     [UnconditionalSuppressMessage( "SingleFile", "IL3000:Avoid accessing Assembly file path when publishing as a single file", Justification = "<Pending>" )]
     private static readonly Assembly assembly = Assembly.GetExecutingAssembly( );
     private readonly string _applicationDirectory = assembly.Location[ 0..Assembly.GetExecutingAssembly( ).Location.LastIndexOf( '\\' ) ];
@@ -73,7 +71,7 @@ public partial class UpdateScheduler : Form
         AuthorLabel.Text = $"Author:  {Environment.UserName}";
         LogFolder.Text = Maintain.LogFileFullname[ 0..Maintain.LogFileFullname.LastIndexOf( '\\' ) ]; // $"{_applicationDirectory}\\Log";
         Notes.Text = CurrentNotes;
-        ArgumentsText.Text = $"/Sites:AllCurrent /LogPath:\"{LogFolder.Text}\"";
+        ArgumentsText.Text = @$"/Sites:AllCurrent /LogPath:{LogFolder.Text}";
 
         _activeUser = accounts.FirstOrDefault( c => c == $"{Environment.UserDomainName}\\{Environment.UserName}" ) ?? $"{Environment.UserDomainName}\\{Environment.UserName}";
     }
@@ -102,7 +100,7 @@ public partial class UpdateScheduler : Form
         RecurrenceComboBox.SelectedIndex = 0; // Every x number of <frequency>, default value 1 e.g. every 1 day
         LoadSitesComboBox( );
         SetAuthorLabel( );
-        ArgumentsText.Text = $"/Sites:{string.Join( ';', _remoteSiteIDs )} /LogPath:\"{LogFolder.Text}\"";
+        ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{LogFolder.Text}";
 
         // UseExisting( );
         var existing = TaskService.Instance.GetTask( $"{_applicationShortName}\\{_taskName}" );
@@ -113,8 +111,8 @@ public partial class UpdateScheduler : Form
             ExecAction action = (ExecAction)existing.Definition.Actions.First( );
             if ( action is not null )
             {
-                ArgumentsText.Text = action.Arguments; //.Replace( "\"",  string.Empty );
-                LogFolder.Text = $"{action.WorkingDirectory.Replace( "\"", string.Empty )}";
+                ArgumentsText.Text = action.Arguments;
+                LogFolder.Text = action.WorkingDirectory;
                 string sitesPart = action.Arguments[ ( action.Arguments.IndexOf( "/sites:", StringComparison.CurrentCultureIgnoreCase ) + 7 ).. ];
                 sitesPart = sitesPart[ ..sitesPart.IndexOf( ' ' ) ];
                 string[] sites = sitesPart.Split( ';' );
@@ -183,14 +181,8 @@ public partial class UpdateScheduler : Form
         List<RemoteSite> sites = new BlocklistData( ).ListDownloadSites( Maintain.ConnectedDevice!.ID, null );
         SitesList.View = View.List;
         foreach ( var site in sites )
-        {
             SitesList.Items.Add( new ListViewItem( site.Name ) { Checked = true, Tag = site.ID } );
-        }
 
-        _remoteSiteIDs = [ "AllCurrent" ];
-        //_remoteSiteIDs = sites.OrderBy( o => o.ID )
-        //                      .Select( s => s.ID.As<string>( ) )
-        //                      .ToArray( );
         SelectAllCheckBox.Checked = true;
         SelectAllCheckBox.CheckedChanged += SelectAllCheckBox_CheckedChanged!;
         SitesList.ItemChecked += SitesList_ItemChecked!;
@@ -203,22 +195,7 @@ public partial class UpdateScheduler : Form
 
     private void SitesList_ItemChecked( object sender, ItemCheckedEventArgs e )
     {
-        UpdateSiteIDsList( );
-        //if ( SitesList.Items
-        //             .Cast<ListViewItem>( )
-        //             .Count( w => w.Checked ) == SitesList.Items.Count )
-        //{
-        //    _remoteSiteIDs = [ "AllCurrent" ];
-        //}
-        //else
-        //{
-        //    _remoteSiteIDs = SitesList.Items
-        //                              .Cast<ListViewItem>( )
-        //                              .Where( w => w.Checked )
-        //                              .OrderBy( o => Convert.ToInt32( o.Tag, CultureInfo.InvariantCulture ) )
-        //                              .Select( s => Convert.ToString( s.Tag, CultureInfo.InvariantCulture )! )
-        //                              .ToArray( );
-        //}
+        SelectAllCheckBox.Checked = AllSitesChecked( );
     }
 
     private bool AllSitesChecked( )
@@ -228,7 +205,7 @@ public partial class UpdateScheduler : Form
 
     private void OKButton_Click( object sender, EventArgs e )
     {
-        if ( !Directory.Exists( LogFolder.Text.Replace( "\"", string.Empty ) ) )
+        if ( !Directory.Exists( LogFolder.Text ) )
             Directory.CreateDirectory( LogFolder.Text );
 
         // Register the task in the BlocklistManager folder of the local machine
@@ -261,7 +238,7 @@ public partial class UpdateScheduler : Form
             DefineRegistrationInfo( definition );
             definition.Triggers.Add( DefineTrigger( ) );
             DefineSettings( ref definition );
-            definition.Actions.Add( $"\"{_assemblyFullName}\"", ArgumentsText.Text, $"{_applicationDirectory}" );
+            definition.Actions.Add( $"{_assemblyFullName}", ArgumentsText.Text, $"{LogFolder.Text}" );
             definition.CanUseUnifiedSchedulingEngine( );
             return definition;
         }
@@ -392,60 +369,30 @@ public partial class UpdateScheduler : Form
 
     private void SelectAllCheckBox_CheckedChanged( object sender, EventArgs e )
     {
-
-        SelectAllCheckBox.CheckedChanged -= SelectAllCheckBox_CheckedChanged!;
-        SelectAllCheckBox.Checked = !SelectAllCheckBox.Checked;
-        SelectAllCheckBox.CheckedChanged += SelectAllCheckBox_CheckedChanged!;
         if ( SelectAllCheckBox.Checked )
         {
             foreach ( ListViewItem item in SitesList.Items.Cast<ListViewItem>( ).Where( w => w.Checked != SelectAllCheckBox.Checked ) )
             {
                 item.Checked = true; // this.SelectAllCheckBox.Checked;
             }
-
-            _remoteSiteIDs = [ "AllCurrent" ];
         }
 
-        //UpdateSiteIDsList( );
-        //if ( SitesList.Items
-        //             .Cast<ListViewItem>( )
-        //             .Count( w => w.Checked ) == SitesList.Items.Count )
-        //{
-        //    _remoteSiteIDs = [ "AllCurrent" ];
-        //}
-        //else
-        //{
-        //    _remoteSiteIDs = SitesList.Items
-        //                              .Cast<ListViewItem>( )
-        //                              .Where( w => w.Checked )
-        //                              .Select( s => Convert.ToString( s.Tag, CultureInfo.InvariantCulture )! )
-        //                              .ToArray( );
-        //}
-
-        //ArgumentsText.Text = $"/Sites:{string.Join( ';', _remoteSiteIDs )} /LogPath:\"{LogFolder.Text}\"";
-        //ArgumentsText.Refresh( );
-    }
-
-    private void UpdateSiteIDsList( )
-    {
         if ( SitesList.Items
                      .Cast<ListViewItem>( )
                      .Count( w => w.Checked ) == SitesList.Items.Count )
         {
-            _remoteSiteIDs = [ "AllCurrent" ];
+            _remoteSiteIDs = "AllCurrent";
         }
         else
         {
-            _remoteSiteIDs = SitesList.Items
-                                      .Cast<ListViewItem>( )
-                                      .Where( w => w.Checked )
-                                      .OrderBy( o => Convert.ToInt32( o.Tag, CultureInfo.InvariantCulture ) )
-                                      .Select( s => Convert.ToString( s.Tag, CultureInfo.InvariantCulture )! )
-                                      .ToArray( );
+            _remoteSiteIDs = string.Join( ';', SitesList.Items
+                                                        .Cast<ListViewItem>( )
+                                                        .Where( w => w.Checked )
+                                                        .Select( s => s.Tag )
+                                                );
         }
 
-        SelectAllCheckBox.Checked = AllSitesChecked( );
-        ArgumentsText.Text = $"/Sites:{string.Join( ';', _remoteSiteIDs )} /LogPath:\"{LogFolder.Text}\"";
+        ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{LogFolder.Text}";
         ArgumentsText.Refresh( );
     }
 
@@ -463,14 +410,14 @@ public partial class UpdateScheduler : Form
         };
 
         dialog.ShowDialog( this );
-        LogFolder.Text = $"{dialog.SelectedPath}";
-        ArgumentsText.Text = $"/Sites:{string.Join( ';', _remoteSiteIDs )} /LogPath:\"{LogFolder.Text}\"";
+        LogFolder.Text = dialog.SelectedPath;
+        ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{LogFolder.Text}";
         ArgumentsText.Refresh( );
     }
 
     private void LogFolder_Leave( object sender, EventArgs e )
     {
-        ArgumentsText.Text = $"/Sites:{string.Join( ';', _remoteSiteIDs )} /LogPath:\"{LogFolder.Text}\"";
+        ArgumentsText.Text = $"/Sites:{_remoteSiteIDs} /LogPath:{LogFolder.Text}";
     }
 
     private void FrequencyComboBox_SelectedIndexChanged( object sender, EventArgs e )
@@ -593,6 +540,7 @@ public partial class UpdateScheduler : Form
             return [];
         }
     }
+
 }
 
 internal sealed class OSSchedulerVersion

@@ -156,7 +156,7 @@ partial class UpdateScheduler
         // label6
         // 
         this.label6.AutoSize = true;
-        this.label6.Location = new Point( 26, 307 );
+        this.label6.Location = new Point( 26, 360 );
         this.label6.Name = "label6";
         this.label6.Size = new Size( 104, 15 );
         this.label6.TabIndex = 10;
@@ -165,7 +165,7 @@ partial class UpdateScheduler
         // label7
         // 
         this.label7.AutoSize = true;
-        this.label7.Location = new Point( 26, 354 );
+        this.label7.Location = new Point( 26, 408 );
         this.label7.Name = "label7";
         this.label7.Size = new Size( 69, 15 );
         this.label7.TabIndex = 11;
@@ -173,7 +173,7 @@ partial class UpdateScheduler
         // 
         // ArgumentsText
         // 
-        this.ArgumentsText.Location = new Point( 163, 350 );
+        this.ArgumentsText.Location = new Point( 163, 404 );
         this.ArgumentsText.Name = "ArgumentsText";
         this.ArgumentsText.Size = new Size( 614, 23 );
         this.ArgumentsText.TabIndex = 12;
@@ -190,7 +190,7 @@ partial class UpdateScheduler
         // 
         // OKButton
         // 
-        this.OKButton.Location = new Point( 700, 494 );
+        this.OKButton.Location = new Point( 700, 548 );
         this.OKButton.Name = "OKButton";
         this.OKButton.Size = new Size( 75, 23 );
         this.OKButton.TabIndex = 16;
@@ -200,7 +200,7 @@ partial class UpdateScheduler
         // 
         // CancelButton
         // 
-        this.CancelButton.Location = new Point( 700, 465 );
+        this.CancelButton.Location = new Point( 700, 519 );
         this.CancelButton.Name = "CancelButton";
         this.CancelButton.Size = new Size( 75, 23 );
         this.CancelButton.TabIndex = 17;
@@ -214,14 +214,14 @@ partial class UpdateScheduler
         this.SitesList.CheckBoxes = true;
         this.SitesList.Location = new Point( 26, 151 );
         this.SitesList.Name = "SitesList";
-        this.SitesList.Size = new Size( 747, 122 );
+        this.SitesList.Size = new Size( 747, 177 );
         this.SitesList.TabIndex = 18;
         this.SitesList.UseCompatibleStateImageBehavior = false;
         // 
         // label9
         // 
         this.label9.AutoSize = true;
-        this.label9.Location = new Point( 26, 330 );
+        this.label9.Location = new Point( 26, 384 );
         this.label9.Name = "label9";
         this.label9.Size = new Size( 100, 15 );
         this.label9.TabIndex = 19;
@@ -229,7 +229,7 @@ partial class UpdateScheduler
         // 
         // LogFolder
         // 
-        this.LogFolder.Location = new Point( 163, 326 );
+        this.LogFolder.Location = new Point( 163, 380 );
         this.LogFolder.Name = "LogFolder";
         this.LogFolder.Size = new Size( 577, 23 );
         this.LogFolder.TabIndex = 20;
@@ -247,7 +247,7 @@ partial class UpdateScheduler
         // 
         // BrowseFoldersButton
         // 
-        this.BrowseFoldersButton.Location = new Point( 734, 324 );
+        this.BrowseFoldersButton.Location = new Point( 734, 378 );
         this.BrowseFoldersButton.Name = "BrowseFoldersButton";
         this.BrowseFoldersButton.Size = new Size( 37, 26 );
         this.BrowseFoldersButton.TabIndex = 22;
@@ -259,7 +259,7 @@ partial class UpdateScheduler
         // 
         this.Notes.BackColor = SystemColors.Control;
         this.Notes.BorderStyle = BorderStyle.None;
-        this.Notes.Location = new Point( 26, 377 );
+        this.Notes.Location = new Point( 26, 431 );
         this.Notes.Multiline = true;
         this.Notes.Name = "Notes";
         this.Notes.Size = new Size( 656, 136 );
@@ -269,7 +269,7 @@ partial class UpdateScheduler
         // label10
         // 
         this.label10.AutoSize = true;
-        this.label10.Location = new Point( 26, 283 );
+        this.label10.Location = new Point( 26, 336 );
         this.label10.Name = "label10";
         this.label10.Size = new Size( 111, 15 );
         this.label10.TabIndex = 24;
@@ -280,7 +280,7 @@ partial class UpdateScheduler
         this.AccountsComboBox.BackColor = SystemColors.Control;
         this.AccountsComboBox.FlatStyle = FlatStyle.Flat;
         this.AccountsComboBox.FormattingEnabled = true;
-        this.AccountsComboBox.Location = new Point( 163, 279 );
+        this.AccountsComboBox.Location = new Point( 163, 332 );
         this.AccountsComboBox.Name = "AccountsComboBox";
         this.AccountsComboBox.Size = new Size( 201, 23 );
         this.AccountsComboBox.TabIndex = 25;
@@ -298,7 +298,7 @@ partial class UpdateScheduler
         // 
         this.ApplicationName.BackColor = SystemColors.Control;
         this.ApplicationName.BorderStyle = BorderStyle.None;
-        this.ApplicationName.Location = new Point( 163, 306 );
+        this.ApplicationName.Location = new Point( 163, 359 );
         this.ApplicationName.Name = "ApplicationName";
         this.ApplicationName.Size = new Size( 229, 16 );
         this.ApplicationName.TabIndex = 27;
@@ -306,7 +306,7 @@ partial class UpdateScheduler
         // label1
         // 
         this.label1.AutoSize = true;
-        this.label1.Location = new Point( 370, 283 );
+        this.label1.Location = new Point( 370, 336 );
         this.label1.Name = "label1";
         this.label1.Size = new Size( 169, 15 );
         this.label1.TabIndex = 28;
@@ -317,7 +317,7 @@ partial class UpdateScheduler
         this.AcceptButton = this.OKButton;
         this.AutoScaleDimensions = new SizeF( 7F, 15F );
         this.AutoScaleMode = AutoScaleMode.Font;
-        this.ClientSize = new Size( 800, 527 );
+        this.ClientSize = new Size( 800, 591 );
         this.Controls.Add( this.label1 );
         this.Controls.Add( this.ApplicationName );
         this.Controls.Add( this.AuthorLabel );

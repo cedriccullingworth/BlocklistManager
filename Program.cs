@@ -120,7 +120,7 @@ internal static class Program
             string endedAt = now.ToLocalTime( ).ToString( "T", culture.DateTimeFormat );
             Logger.Log( _appName!, $"................. END OF BLOCKLIST UPDATES (STARTED AT {startedAt}, ENDED AT {endedAt}) .................\r\n" );
 
-            Logger.Log( _appName!, $"Processed {ipAddressCount} IP addresses/ranges from {allAddressCount} downloaded, and created {processedCount * 2} ({processedCount} inbound, {processedCount} outbound) firewall rules{Environment.NewLine}{Environment.NewLine}" );
+            Logger.Log( _appName!, $"Processed {ipAddressCount} IP addresses/ranges from {allAddressCount} downloaded and created {processedCount * 2} ({processedCount} inbound, {processedCount} outbound) firewall rules{Environment.NewLine}{Environment.NewLine}" );
         }
     }
 
@@ -131,8 +131,6 @@ internal static class Program
         string path = arg.ToLower( culture )
                          .Replace( "/logpath:", string.Empty );
         Maintain.LogFileFullname = ( path.EndsWith( '\\' ) ? path : path + "\\" ) + _logFileName;
-        if ( !Directory.Exists( path ) )
-            Directory.CreateDirectory( path );
         Logger.LogPath = Maintain.LogFileFullname;
     }
 
