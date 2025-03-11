@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-	<ApplicationVersion>1.</ApplicationVersion>
+	<ApplicationVersion>1.8.3.3</ApplicationVersion>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <BaseOutputPath>C:\Program Files\BlocklistManager\bin</BaseOutputPath>
     <StartupObject>BlocklistManager.Program</StartupObject>
