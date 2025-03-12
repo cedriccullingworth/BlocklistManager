@@ -24,6 +24,7 @@ public partial class MaintainUI : Form
     // private RemoteSite? _activeSite;
     private bool _processAll;
     private string _ruleName = "_Blocklist";
+    private NormalPosition _normalPosition = new( 0, 0, 0, 0 );
 
     //    internal bool _startUp = true;
 
@@ -81,6 +82,7 @@ public partial class MaintainUI : Form
     {
         RemoteSites.SelectionChanged -= RemoteSites_SelectionChanged!;
         Show( );
+        _normalPosition = new NormalPosition( Top, Left, Height, Width );
         StatusMessage.Text = "Fetching download site details ...";
         Refresh( );
         RemoteSites.DataSource = Maintain.ListDownloadSites( null, false )
@@ -104,28 +106,19 @@ public partial class MaintainUI : Form
         RemoteSites.Columns[ "FilePaths" ]!.Visible = false; // ID
         RemoteSites.Columns[ "FileType" ]!.Visible = false; // ID
         RemoteSites.Columns[ "MinimumIntervalMinutes" ]!.Visible = false; // ID
+        RemoteSites.Refresh( );
 
         if ( RemoteSites.RowCount < 1 )
             Maintain.StatusMessage( "Load", "Blocklist data was downloaded too recently to update now.\r\nTry again after 30 minutes." );
-        //else if ( _startUp && this.RemoteSites.SelectedRows.Count > 0 )
-        //    foreach ( var row in this.RemoteSites.Rows.Cast<DataGridViewRow>( ).Where( w => w.Selected ) )
-        //        row.Selected = false;
-        //else
-        //{
-        //    _ruleName = $"{this.RemoteSites.Rows[ 0 ].Cells[ 1 ].Value}_Blocklist";
-        //}
 
         FirewallEntryName.Text = _ruleName == "_Blocklist" ? string.Empty : _ruleName;
-        //        _startUp = false;
-
         StatusBar.Left = FirewallRulesData.Left;
         StatusMessage.Width = FirewallRulesData.Width / 2;
         StatusProgress.Width = FirewallRulesData.Width / 2;
 
-        RemoteSites.Rows[ 0 ].Selected = false;
+        //RemoteSites.Rows[ 0 ].Selected = false;
         //this.RemoteSites_SelectionChanged( sender, e );
 
-        RemoteSites.SelectionChanged += RemoteSites_SelectionChanged!;
         StatusMessage.Text = IDLE;
         StatusProgress.Value = 0;
         RemoteSites.SelectionChanged += RemoteSites_SelectionChanged!;
@@ -189,14 +182,8 @@ public partial class MaintainUI : Form
             siteName = ( (RemoteSite)RemoteSites.SelectedRows[ 0 ].DataBoundItem! ).Name;
 
         var rules = Maintain.FetchFirewallRulesFor( siteName );
-        //        if ( _processAll )
         FirewallRulesData.DataSource = rules.Select( s => new { s.Name, s.RemoteAddressList, s.Action, s.Direction, Enabled = s.IsEnable, s.Profiles, Post = s.RemotePorts } )
                                             .ToList( );
-        //else if ( RemoteSites.SelectedRows.Count > 0 )
-        //    FirewallRulesData.DataSource = rules.Select( s => new { s.Name, s.RemoteAddressList, s.Action, s.Direction, Enabled = s.IsEnable, s.Profiles, Post = s.RemotePorts } )
-        //                                        .ToList( );
-
-        //this.FirewallRulesData.ForeColor = Color.Green;
         FirewallRulesData.Refresh( );
         SetFirewallRuleColumnWidths( );
     }
@@ -211,13 +198,6 @@ public partial class MaintainUI : Form
                           .Select( s => s! )
                           .ToList( );
     }
-
-    //private void ReplaceRulesForSite( RemoteSite site )
-    //{
-    //    _ruleName = $"{site.Name}_Blocklist";
-    //    this.FirewallEntryName.Text = _ruleName;
-    //    Maintain.ReplaceSiteRules( site, _candidateRules, this );
-    //}
 
     private void RemoteSites_SelectionChanged( object sender, EventArgs e )
     {
@@ -265,119 +245,6 @@ public partial class MaintainUI : Form
 
         Cursor = Cursors.Default;
     }
-
-    //private void SetRemoteDataColumnWidths( )
-    //{
-    //    foreach ( DataGridViewColumn col in RemoteData.Columns )
-    //    {
-    //        if ( col.Name.StartsWith( "IPAddress" ) && col.Width > MAX_BATCH_COLUMN_SIZE )
-    //        {
-    //            col.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-    //            col.Width = MAX_BATCH_COLUMN_SIZE;
-    //        }
-    //        else if ( col.Name == "Name" && col.Width > MAX_NAME_SIZE )
-    //        {
-    //            col.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-    //            col.Width = MAX_NAME_SIZE;
-    //        }
-    //        else
-    //        {
-    //            col.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-    //        }
-    //    }
-    //}
-
-    //internal void LoadRules( bool all )
-    //{
-    //    this.RemoteData.DataSource = null;
-    //    this.RemoteData.Refresh( );
-    //    this.Cursor = Cursors.WaitCursor;
-    //    if ( all )
-    //        RemoteSites.SelectAll( );
-
-    //    List<RemoteSite> sitesList = SitesListFromGridView( );
-
-    //    if ( all )
-    //    {
-    //        this.FirewallRulesData.DataSource = null;
-    //        this.FirewallRulesData.Refresh( );
-    //        foreach ( RemoteSite site in sitesList )
-    //        {
-    //            this.StatusMessage.Text = $"Downloading blocklist(s) from {site.Name} ...";
-    //            this.Refresh( );
-    //            _candidateRules.AddRange( Maintain.DownloadBlocklists( this, site ) );
-    //        }
-
-    //        this.StatusMessage.Text = "Removing private address ranges ...";
-    //        Maintain.RemovePrivateAddressesRanges( ref _candidateRules, out int numberRemoved );
-
-    //        this.StatusMessage.Text = "Removing duplicates ...";
-    //        Maintain.RemoveDuplicates( ref _candidateRules, out numberRemoved );
-
-    //        this.StatusMessage.Text = "Removing any invalid addresses ...";
-    //        Maintain.RemoveInvalidIPAddresses( ref _candidateRules, out numberRemoved );
-
-    //        StatusMessage.Text = $"Consolidating addresses into sets of {Maintain.MaximumFirewallBatchSize} ...";
-    //        Maintain.ConvertIPAddressesToIPAddressSets( ref _candidateRules, sitesList );
-
-    //        this.RemoteData.DataSource = _candidateRules; // blocklistData; // Maintain.DownloadBlocklists( );
-    //        this.RemoteData.Refresh( );
-    //        this.ReplaceButton_Click( this, new EventArgs( ) );
-    //    }
-
-    //    if ( sitesList.Count == 1 )
-    //    {
-    //        RemoteSite? chosenSite = sitesList.First( ); // RemoteSites.SelectedRows[ 0 ].DataBoundItem as RemoteSite;
-    //        bool load = ( _activeSite is null && chosenSite is not null )
-    //                 || ( chosenSite is not null && _activeSite!.Name != chosenSite.Name );
-    //        if ( load )
-    //        {
-    //            _activeSite = chosenSite;
-    //            _ruleName = $"{_activeSite!.Name}_Blocklist";
-    //            this.FirewallEntryName.Text = _ruleName;
-    //            this.FirewallEntryName.Refresh( );
-
-    //            StatusMessage.Text = $"Downloading blocklist(s) from {_activeSite!.Name} ...";
-    //            _candidateRules = Maintain.DownloadBlocklists( this, _activeSite );
-
-    //            this.StatusMessage.Text = "Removing private address ranges ...";
-    //            Maintain.RemovePrivateAddressesRanges( ref _candidateRules, out int numberRemoved );
-
-    //            this.StatusMessage.Text = "Removing duplicates ...";
-    //            Maintain.RemoveDuplicates( ref _candidateRules, out numberRemoved );
-
-    //            this.StatusMessage.Text = "Removing any invalid addresses ...";
-    //            Maintain.RemoveInvalidIPAddresses( ref _candidateRules, out numberRemoved );
-
-    //            StatusMessage.Text = $"Consolidating addresses into sets of {Maintain.MaximumFirewallBatchSize} ...";
-    //            Maintain.ConvertIPAddressesToIPAddressSets( ref _candidateRules, [ chosenSite ] );
-    //            this.RemoteData.DataSource = _candidateRules.OrderBy( o => o.Sort0 )
-    //                                                        .ThenBy( t => t.Sort1 )
-    //                                                        .ThenBy( t => t.Sort2 )
-    //                                                        .ThenBy( t => t.Sort3 )
-    //                                                        .ToList( );
-
-    //            SetDownloadedRuleColumnWidths( );
-    //            StatusMessage.Text = $"Reading existing firewall rules for the {_activeSite.Name} blocklist(s) ...";
-    //            FirewallRulesData.DataSource = Maintain.FetchFirewallRulesFor( _ruleName );
-    //        }
-    //    }
-
-    //    SetFirewallRuleColumnWidths( );
-    //    this.Cursor = Cursors.Default;
-    //    StatusMessage.Text = $"Idle";
-    //}
-
-    //private void SetDownloadedRuleColumnWidths( )
-    //{
-    //    if ( RemoteData.Columns[ "IPAddressBatch" ].Width > MAX_BATCH_COLUMN_SIZE )
-    //    {
-    //        RemoteData.Columns[ "IPAddressBatch" ].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-    //        RemoteData.Columns[ "IPAddressBatch" ].Width = MAX_BATCH_COLUMN_SIZE;
-    //    }
-    //    else
-    //        RemoteData.Columns[ "IPAddressBatch" ].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-    //}
 
     internal void SetFirewallRuleColumnWidths( )
     {
@@ -459,9 +326,7 @@ public partial class MaintainUI : Form
     {
         RemoteSites.SelectionChanged -= RemoteSites_SelectionChanged!;
         RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked )
-            //            .Select( s => new { s.ID, s.Name, s.LastDownloaded, s.SiteUrl, s.FileUrls, FileType = s.FileType!.Name, s.Active } )
-            .ToList( ); // Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
-                        //        _startUp = false;
+                                         .ToList( );
         RemoteSites.SelectionChanged += RemoteSites_SelectionChanged!;
     }
 
@@ -470,31 +335,6 @@ public partial class MaintainUI : Form
         using UpdateScheduler scheduler = new( );
         scheduler.ShowDialog( this );
     }
-
-    //private void RemoteSites_Click( object sender, EventArgs e )
-    //{
-    //    RemoteSites_SelectionChanged( sender, e );
-    //}
-
-    //private void RemoteSite_Add_Click( object sender, EventArgs e )
-    //{
-    //    // RemoteSiteForm form = new( );
-    //    form.Show( this );
-    //    RemoteSites.DataSource = Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked ).ToList( ); // Maintain.ListDownloadSites( null, ShowAllCheckBox.Checked );
-    //}
-
-    //private void RemoteSite_Edit_Click( object sender, EventArgs e )
-    //{
-    //    if ( RemoteSites.SelectedRows.Count == 1 )
-    //    {
-    //        // RemoteSiteForm form = new( )
-    //        {
-    //            DownloadSite = (RemoteSite)RemoteSites.SelectedRows[ 0 ].DataBoundItem
-    //        };
-
-    //        form.ShowDialog( );
-    //    }
-    //}
 
     [RequiresUnreferencedCode( "Calls BlocklistManager.Classes.Maintain.ListDownloadSites(RemoteSite, Boolean)" )]
     private void ProcessAllButton_Click( object sender, EventArgs e )
@@ -528,7 +368,6 @@ public partial class MaintainUI : Form
         dgv.Rows[ rowIndex ].Selected = true;
     }
 
-    //FormWindowState LastWindowState = FormWindowState.Minimized;
     private void MaintainUI_Resize( object sender, EventArgs e )
     {
         if ( WindowState == FormWindowState.Maximized )
@@ -537,21 +376,13 @@ public partial class MaintainUI : Form
         }
         else
         {
-            CenterToScreen( );
+            Top = _normalPosition.Top;
+            Left = _normalPosition.Left;
+            Height = _normalPosition.Height;
+            Width = _normalPosition.Width;
+            ResizeRedraw = true;
         }
-        // When window state changes
-        //if ( WindowState != LastWindowState )
-        //{
-        //    LastWindowState = WindowState;
-        //    if ( WindowState == FormWindowState.Maximized )
-        //    {
-        //        // Maximized!
-        //    }
-        //    if ( WindowState == FormWindowState.Normal )
-        //    {
-
-        //        // Restored!
-        //    }
-        //}
     }
+
+    private sealed record NormalPosition( int Top, int Left, int Height, int Width );
 }

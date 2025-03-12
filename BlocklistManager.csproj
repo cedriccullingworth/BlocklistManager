@@ -9,7 +9,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
 	<ApplicationVersion>1.8.3.3</ApplicationVersion>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-    <BaseOutputPath>C:\Program Files\BlocklistManager\bin</BaseOutputPath>
+    <BaseOutputPath>bin\</BaseOutputPath>
     <StartupObject>BlocklistManager.Program</StartupObject>
     <ApplicationIcon>Images\BlocklistManager.ico</ApplicationIcon>
     <Copyright>Cedric Cullingworth</Copyright>
@@ -25,7 +25,7 @@
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     <SignAssembly>True</SignAssembly>
     <TargetFramework>net9.0-windows10.0.17763.0</TargetFramework>
-    <AssemblyOriginatorKeyFile>BlocklistManager.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>D:\Projects\BlocklistManager excluded from GitHub\BlocklistManager.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
   </PropertyGroup>
 
@@ -100,6 +100,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="OSVersionExtension">
+      <HintPath>bin\Release\net9.0\OSVersionExtension.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -144,13 +150,6 @@
     <None Update="SampleFiles\threatlist.xsd">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="OSVersionExtension">
-      <HintPath>bin\Release\net9.0\OSVersionExtension.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
