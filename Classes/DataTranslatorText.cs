@@ -7,8 +7,6 @@ using System.Linq;
 using BlocklistManager.Interfaces;
 using BlocklistManager.Models;
 
-using static BlocklistManager.Classes.IAddressExtensions;
-
 namespace BlocklistManager.Classes;
 
 /// <summary>
@@ -68,11 +66,10 @@ internal sealed class DataTranslatorText : IDataTranslator
                              .Select( s => s.Split( ',' ) )
                              .ToList( );
 
-        //var allText = textLines.Select( s => s.Split( ',' ) )
-        //                                    .ToList( );
-
-        return allText.Select( s => new CandidateEntry( site.Name, fileName, s[ 0 ].Trim( ), null, null, []/*, [], FirewallProtocol.Any*/ ) )
+        List<CandidateEntry> unsorted = allText.Select( s => new CandidateEntry( site.Name, fileName, s[ 0 ].Trim( ), null, null, []/*, [], FirewallProtocol.Any*/ ) )
                       .ToList( );
+        Maintain.ValidateIPAddressesAndRanges( ref unsorted );
+        return unsorted;
     }
 
     /// <summary>
@@ -84,7 +81,6 @@ internal sealed class DataTranslatorText : IDataTranslator
     /// <returns>The standardised structured list built fro the file contents</returns>
     private static List<CandidateEntry> TranslateSingleColumn( RemoteSite site, string textData, string fileName )
     {
-        List<CandidateEntry> remoteData = [];
         string[] textLines = [];
         if ( textData.Contains( Environment.NewLine ) )
         {
@@ -103,11 +99,11 @@ internal sealed class DataTranslatorText : IDataTranslator
 
         if ( textLines is not null && textLines.Length > 0 )
         {
-            AddSingleColumnEntries( site, fileName, ref remoteData, textLines.ToList( ), IPAddressType.IPv4 );
-            AddSingleColumnEntries( site, fileName, ref remoteData, textLines.ToList( ), IPAddressType.IPv6 );
+            return AddSingleColumnEntries( site, fileName, textLines.ToList( ) ); // , IPAddressType.IPv4 );
+            //AddSingleColumnEntries( site, fileName, ref remoteData, textLines.ToList( ), IPAddressType.IPv6 );
         }
 
-        return remoteData;
+        return [];
     }
 
     /// <summary>
@@ -119,14 +115,14 @@ internal sealed class DataTranslatorText : IDataTranslator
     /// <param name="allText">An array of string IP addresses</param>
     /// <param name="addressType">The type of IP address</param>
     /// <returns>The standardised structured list built from the file contents</returns>
-    private static void AddSingleColumnEntries( RemoteSite site, string fileName, ref List<CandidateEntry> remoteData, List<string> allText, IPAddressType addressType )
+    private static List<CandidateEntry> AddSingleColumnEntries( RemoteSite site, string fileName, List<string> allText ) //, IPAddressType addressType )
     {
         CultureInfo culture = CultureInfo.CurrentCulture;
         //char ipDelimiter = '.';
         //if ( addressType == Maintain.IPAddressType.IPv6 )
         //    ipDelimiter = ':';
 
-        var unsorted = allText.Select( s => new CandidateEntry
+        List<CandidateEntry> unsorted = allText.Select( s => new CandidateEntry
                                                                             (
                                                                                 site.Name,
                                                                                 fileName,
@@ -139,16 +135,11 @@ internal sealed class DataTranslatorText : IDataTranslator
                                                                                 /* We can stop carrying ports */ // [], // s.Contains( '/' ) ? [ Convert.ToUInt16( s[ ( s.IndexOf( '/' ) + 1 ).. ], culture ) ] : [],
                                                                                 /* We can stop carrying protocol */ // FirewallProtocol.Any
                                                                             ) )
-                                                     .Where( w => w.AddressType == addressType );
+                                                     //.Where( w => w.AddressType == addressType )
+                                                     .ToList( );
 
-        if ( addressType == IPAddressType.IPv4 )
-        {
-            remoteData.AddRange( unsorted );
-        }
-        else
-        {
-            remoteData.AddRange( unsorted.ToList( ) );
-        }
+        Maintain.ValidateIPAddressesAndRanges( ref unsorted );
+        return unsorted;
     }
 
     /// <summary>

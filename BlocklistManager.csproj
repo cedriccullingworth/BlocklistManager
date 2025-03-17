@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-	<ApplicationVersion>1.8.3.3</ApplicationVersion>
+	<ApplicationVersion>1.8.3.4</ApplicationVersion>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <BaseOutputPath>bin\</BaseOutputPath>
     <StartupObject>BlocklistManager.Program</StartupObject>
@@ -16,9 +16,9 @@
     <PackageIcon>Images\BlocklistManager.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blocklist blacklist blocklists blacklists windows firewall information security</PackageTags>
-	<Version>1.8.3.3</Version>
-    <AssemblyVersion>1.8.3.3</AssemblyVersion>
-    <FileVersion>1.8.3.3</FileVersion>
+	<Version>1.8.3.4</Version>
+    <AssemblyVersion>1.8.3.4</AssemblyVersion>
+    <FileVersion>1.8.3.4</FileVersion>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <NeutralLanguage>en-001</NeutralLanguage>
@@ -82,6 +82,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="SampleFiles\XML Battle.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Images\BlocklistManager.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -89,9 +93,9 @@
 
   <ItemGroup>
     <PackageReference Include="IPAddressRange" Version="6.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.3" />
     <PackageReference Include="SharpCompress" Version="0.39.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.2" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.3" />
     <PackageReference Include="System.DirectoryServices" Version="9.0.2" />
     <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.2" />
     <PackageReference Include="System.DirectoryServices.Protocols" Version="9.0.2" />

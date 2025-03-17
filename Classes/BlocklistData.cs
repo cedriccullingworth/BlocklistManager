@@ -84,7 +84,7 @@ internal sealed class BlocklistData : IDisposable
             };
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue( "localhost" );
-            var results = client.GetAsync( "/FileTypes/Index" )
+            var results = client.GetAsync( "/FileTypes/ListFileTypes" )
                                             .Result;
 
             string json = new StreamReader( results.Content.ReadAsStream( ) ).ReadToEnd( );
@@ -105,7 +105,7 @@ internal sealed class BlocklistData : IDisposable
     /// <param name="showAll">If true, list all sites, including those that have been processed recently, otherwise only those whic weren't downloaded in the past 30 minutes</param>
     /// <returns>A list of blocklist download sites</returns>
     [RequiresDynamicCode( "Calls System.Text.Json.JsonSerializer.Deserialize<TValue>(String, JsonSerializerOptions)" )]
-    internal List<RemoteSite> ListDownloadSites( int deviceID, RemoteSite? remoteSite, bool showAll = false )
+    internal ICollection<RemoteSite> ListDownloadSites( int deviceID, RemoteSite? remoteSite, bool showAll = false )
     {
         try
         {
@@ -124,7 +124,7 @@ internal sealed class BlocklistData : IDisposable
 
             var response = client.GetAsync( endpointUrl ).Result;
             string json = new StreamReader( response.Content.ReadAsStream( ) ).ReadToEnd( );
-            return JsonSerializer.Deserialize<List<RemoteSite>>( json ) ?? [];
+            return JsonSerializer.Deserialize<ICollection<RemoteSite>>( json ) ?? [];
         }
         catch ( Exception ex )
         {

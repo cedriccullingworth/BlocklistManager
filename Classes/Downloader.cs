@@ -97,18 +97,10 @@ internal sealed class Downloader : IDisposable
             using StreamReader reader = new( stream );
             textData = reader.ReadToEnd( );
         }
-        catch // ( Exception e )
+        catch
         {
-            //if ( Maintain.LogFileFullname != string.Empty )
-            //{
-            //    Logger.LogPath = Maintain.LogFileFullname;
-            //    Logger.Log( "DownloadText", StringUtilities.ExceptionMessage( $"Text download attempt from {site.Name} failed", e ) );
-            //    Logger.Log( _appName, "Trying a different approach now" );
-            //}
-
             // Try to open the data directly
             client.CancelPendingRequests( );
-
             try
             {
                 // Trying WebRequest because HttpClient failed
@@ -131,7 +123,6 @@ internal sealed class Downloader : IDisposable
             }
             catch ( Exception ex )
             {
-                //Logger.Log( "BlocklistManager", StringUtilities.ExceptionMessage( $"Text download attempt from {site.Name} failed", ex ) );
                 Maintain.StatusMessage( url, StringUtilities.ExceptionMessage( "DownloadText", ex ) );
             }
         }

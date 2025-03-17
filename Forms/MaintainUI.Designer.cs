@@ -31,7 +31,6 @@ namespace BlocklistManager
         ///  Required method for Designer support - do not modify
         ///  the contents of this method with the code editor.
         /// </summary>
-        [RequiresUnreferencedCode( "Calls BlocklistManager.MaintainUI.ShowAllCheckBox_CheckedChanged(Object, EventArgs)" )]
         private void InitializeComponent( )
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager( typeof( MaintainUI ) );
@@ -77,6 +76,7 @@ namespace BlocklistManager
             this.RemoteSites.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.RemoteSites.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.RemoteSites.Location = new Point( 13, 52 );
+            this.RemoteSites.MultiSelect = false;
             this.RemoteSites.Name = "RemoteSites";
             this.RemoteSites.ReadOnly = true;
             this.RemoteSites.SelectionMode = DataGridViewSelectionMode.FullRowSelect;

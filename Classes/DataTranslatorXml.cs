@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -24,7 +22,6 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
     /// <param name="dataStream">A stream of the data in the file</param>
     /// <param name="fileName">The file name</param>
     /// <returns>The data translated from the download</returns>
-    [RequiresUnreferencedCode( "Calls BlocklistManager.Classes.DataTranslatorXml.TranslateShodan(RemoteSite, Stream, String, String)" )]
 #pragma warning disable CA1822 // Mark members as static
     public List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream, string fileName )
     {
@@ -47,6 +44,7 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
     /// <returns>The data translated from the download</returns>
     private static List<CandidateEntry> TranslateCyberCrimeTracker( RemoteSite site, Stream dataStream, string fileName, string logFilePath = "" )
     {
+        List<CandidateEntry> unsorted = [];
         try
         {
             XmlReader reader = new XmlTextReader( dataStream );
@@ -55,25 +53,23 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
             if ( rssData is not null )
             {
                 rss data = (rss)rssData;
-                IEnumerable<string> addressesOnly = data.channel[ 0 ]
+                string[] addressesOnly = data.channel[ 0 ]
                                                         .item
                                                         .Select( s => System.Net.Dns.GetHostAddresses( s.title.Contains( '/' ) ? s.title[ ..s.title.IndexOf( '/' ) ] : s.title )
                                                                                                 .First( )
                                                                                                 .ToString( ) )
-                                                        .Distinct( );
+                                                        .Distinct( )
+                                                        .ToArray( );
 
                 // Remove duplicate IP addresses (as found in https://cybercrime-tracker.net/rss.xml
-                return addressesOnly.Select( s => new CandidateEntry( site.Name, fileName, s.Trim( ), null, null, []/*, [], FirewallProtocol.Any*/ ) )
-                                    .ToList( );
+                unsorted = addressesOnly.Select( s => new CandidateEntry( site.Name, fileName, s.Trim( ), null, null, [] ) ).ToList( );
+                Maintain.ValidateIPAddressesAndRanges( ref unsorted );
+                return unsorted;
             }
         }
         catch ( Exception ex )
         {
             Maintain.StatusMessage( "TranslateCyberCrimeTracker", ex.Message );
-            //if ( logFilePath != "" )
-            //    Logger.Log( "TranslateShodan", ex );
-            //else
-            MessageBox.Show( StringUtilities.ExceptionMessage( "TranslateShodan", ex ) );
         }
 
         return [];
@@ -93,18 +89,16 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
             XmlReader reader = new XmlTextReader( dataStream );
             XmlSerializer serializer = new( typeof( threatlist ) );
             threatlist threats = (threatlist)serializer.Deserialize( reader )!;
-            //IEnumerable<threatlistShodan> typed = threats.shodan!; //.Select( s => s );
+            //List<threatlistShodan> typed = threats.shodan!; //.Select( s => s );
 
-            return threats.shodan!.Select( s => new CandidateEntry( site.Name, fileName, s.ipv4, null, null, []/*, [], FirewallProtocol.Any*/ ) )
-                          .ToList( );
+            List<CandidateEntry> unsorted = threats.shodan!.Select( s => new CandidateEntry( site.Name, fileName, s.ipv4, null, null, []/*, [], FirewallProtocol.Any*/ ) )
+                                                           .ToList( );
+            Maintain.ValidateIPAddressesAndRanges( ref unsorted );
+            return unsorted;
         }
         catch ( Exception ex )
         {
-            //if ( logFilePath != "" )
-            //    Logger.Log( "TranslateShodan", ex );
-            //else
             Maintain.StatusMessage( "TranslateShodan", ex.Message );
-            MessageBox.Show( StringUtilities.ExceptionMessage( "TranslateShodan", ex ) );
         }
 
         return [];
@@ -167,4 +161,6 @@ internal sealed class DataTranslatorXml : IDataTranslator //, IDisposable
     {
         throw new System.NotImplementedException( );
     }
+
+    List<CandidateEntry> IDataTranslator.TranslateFileData( RemoteSite site, string data, string fileName ) => TranslateFileData( site, data, fileName );
 }

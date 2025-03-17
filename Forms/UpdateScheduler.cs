@@ -27,7 +27,6 @@ public partial class UpdateScheduler : Form
 {
     private List</*OSVersionExtension.OperatingSystem*/OSSchedulerVersion> _compatibleOperatingSystems = [];
     private string _remoteSiteIDs = "AllCurrent";
-    [UnconditionalSuppressMessage( "SingleFile", "IL3000:Avoid accessing Assembly file path when publishing as a single file", Justification = "<Pending>" )]
     private static readonly Assembly assembly = Assembly.GetExecutingAssembly( );
     private readonly string _applicationDirectory = assembly.Location[ 0..Assembly.GetExecutingAssembly( ).Location.LastIndexOf( '\\' ) ];
     private readonly string _applicationShortName = assembly/* $"{Assembly.GetExecutingAssembly( )*/.GetName( )!.Name!;
@@ -39,6 +38,9 @@ public partial class UpdateScheduler : Form
 
     //public Microsoft.Win32.TaskScheduler.Task ScheduledTask { get; set; }
 
+    /// <summary>
+    /// This form is simply to help the user to schedule regular background processing by this app
+    /// </summary>
     public UpdateScheduler( )
     {
         InitializeComponent( );
@@ -92,8 +94,6 @@ public partial class UpdateScheduler : Form
         }
     }
 
-    [RequiresUnreferencedCode( "Calls BlocklistManager.UpdateScheduler.LoadSitesComboBox()" )]
-    [RequiresDynamicCode( "Calls BlocklistManager.UpdateScheduler.LoadSitesComboBox()" )]
     private void UpdateScheduler_Load( object sender, EventArgs e )
     {
         FrequencyComboBox.SelectedIndex = 1; // Daily
@@ -168,8 +168,6 @@ public partial class UpdateScheduler : Form
         }
     }
 
-    [RequiresUnreferencedCode( "Calls BlocklistManager.Classes.BlocklistData.ListDownloadSites(Int32, RemoteSite, Boolean)" )]
-    [RequiresDynamicCode( "Calls BlocklistManager.Classes.BlocklistData.ListDownloadSites(Int32, RemoteSite, Boolean)" )]
     private void LoadSitesComboBox( )
     {
         if ( Maintain.ConnectedDevice is null )
@@ -178,7 +176,7 @@ public partial class UpdateScheduler : Form
             return;
         }
 
-        List<RemoteSite> sites = new BlocklistData( ).ListDownloadSites( Maintain.ConnectedDevice!.ID, null );
+        ICollection<RemoteSite> sites = new BlocklistData( ).ListDownloadSites( Maintain.ConnectedDevice!.ID, null );
         SitesList.View = View.List;
         foreach ( var site in sites )
             SitesList.Items.Add( new ListViewItem( site.Name ) { Checked = true, Tag = site.ID } );

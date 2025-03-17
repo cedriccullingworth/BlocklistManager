@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -24,8 +23,7 @@ internal static class Program
     ///  The main entry point for the application.
     /// </summary>
     [STAThread]
-    [RequiresUnreferencedCode( "Calls BlocklistManager.Classes.Maintain.ListDownloadSites(RemoteSite, Boolean)" )]
-    static void Main( string[] args )
+    private static void Main( string[] args )
     {
         // To customize application configuration such as set high DPI settings or default font,
         // see https://aka.ms/applicationconfiguration.
@@ -36,7 +34,6 @@ internal static class Program
         */
 
         ApplicationConfiguration.Initialize( );
-
 
         _appName = Assembly.GetEntryAssembly( )!.GetName( )!.Name!;
         var settings = AppSettings.Sections;
@@ -58,6 +55,14 @@ internal static class Program
             if ( args.Length > 1 )
             {
                 string arg = args[ 1 ];
+                if ( args.Length > 2 ) // The second argument has been split by a space
+                {
+                    // Append the third argument to the second and add back the space which separated them
+                    // I haven't attempted to cater for the log folder containing additional spaces
+                    arg += $" {args[ 2 ]}";
+                    // Lose the third argument
+                    args = new string[] { args[ 0 ], arg };
+                }
                 ReadLogPathArgument( arg );
             }
         }
@@ -67,8 +72,6 @@ internal static class Program
             Directory.CreateDirectory( logPath );
 
         Logger.LogPath = Maintain.LogFileFullname;
-        Logger.Log( _appName, string.Empty );
-        Logger.Log( _appName, "BlocklistManager starting..." );
 
         if ( args.Length == 0 )
         {
@@ -81,14 +84,17 @@ internal static class Program
         else
         {
             bool allActive = true;
-            List<RemoteSite> sites = [ .. Maintain.ListDownloadSites( null ) ];
+            Logger.Log( _appName, string.Empty );
+            Logger.Log( _appName, "BlocklistManager starting..." );
+            ICollection<RemoteSite> sites = new BlocklistData( ).ListDownloadSites( Maintain.ConnectedDevice!.ID, null );
+
             foreach ( string arg in args )
             {
-                if ( arg.StartsWith( "/sites:", StringComparison.CurrentCultureIgnoreCase ) )
+                if ( arg.ToLower( CultureInfo.InvariantCulture ).StartsWith( "/sites:", StringComparison.CurrentCultureIgnoreCase ) )
                 {
                     ReadSitesArgument( ref allActive, ref sites, arg );
                 }
-                else if ( arg.StartsWith( "/logpath:", StringComparison.CurrentCultureIgnoreCase ) )
+                else if ( arg.ToLower( CultureInfo.InvariantCulture ).StartsWith( "/logpath:", StringComparison.CurrentCultureIgnoreCase ) )
                 {
                     ReadLogPathArgument( arg );
                 }
@@ -111,7 +117,7 @@ internal static class Program
             CultureInfo culture = CultureInfo.CurrentCulture;
             string startedAt = now.ToLocalTime( ).ToString( "F", culture.DateTimeFormat );
             Logger.Log( string.Empty, string.Empty );
-            Logger.Log( _appName!, $"................. BLOCKLIST UPDATES STARTED AT {startedAt} .................\r\n" );
+            Logger.Log( _appName!, $"................. START OF BLOCKLIST UPDATES AT {startedAt} .................\r\n" );
 
             int processedCount = 0;
             Maintain.ProcessDownloads( sites, null, true, out processedCount, out int ipAddressCount, out int allAddressCount );
@@ -120,21 +126,23 @@ internal static class Program
             string endedAt = now.ToLocalTime( ).ToString( "T", culture.DateTimeFormat );
             Logger.Log( _appName!, $"................. END OF BLOCKLIST UPDATES (STARTED AT {startedAt}, ENDED AT {endedAt}) .................\r\n" );
 
-            Logger.Log( _appName!, $"Processed {ipAddressCount} IP addresses/ranges from {allAddressCount} downloaded and created {processedCount * 2} ({processedCount} inbound, {processedCount} outbound) firewall rules{Environment.NewLine}{Environment.NewLine}" );
+            Logger.Log( _appName!, $"Processed {ipAddressCount} IP addresses/ranges from {allAddressCount} downloaded, and created {processedCount * 2} ({processedCount} inbound, {processedCount} outbound) firewall rules{Environment.NewLine}{Environment.NewLine}" );
         }
     }
 
     private static void ReadLogPathArgument( string arg )
     {
         string _logFileName = $"{_appName}.log";
-        CultureInfo culture = CultureInfo.InvariantCulture;
-        string path = arg.ToLower( culture )
+        string path = arg.ToLower( CultureInfo.InvariantCulture )
                          .Replace( "/logpath:", string.Empty );
+        if ( !Directory.Exists( path ) )
+            Directory.CreateDirectory( path );
+
         Maintain.LogFileFullname = ( path.EndsWith( '\\' ) ? path : path + "\\" ) + _logFileName;
         Logger.LogPath = Maintain.LogFileFullname;
     }
 
-    private static void ReadSitesArgument( ref bool allActive, ref List<RemoteSite> sites, string arg )
+    private static void ReadSitesArgument( ref bool allActive, ref ICollection<RemoteSite> sites, string arg )
     {
         CultureInfo culture = CultureInfo.InvariantCulture;
         if ( !arg.ToLower( culture )

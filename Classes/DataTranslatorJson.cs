@@ -148,8 +148,10 @@ public sealed class DataTranslatorJson : IDataTranslator
         }
 
         // Removed: // Number = Convert.ToString(s.as_number),
-        return processed.Select( s => new CandidateEntry( site.Name, fileName, s.ip_address, null, null, []/*, s.ports, FirewallProtocol.Any*/ ) )
+        List<CandidateEntry> unsorted = processed.Select( s => new CandidateEntry( site.Name, fileName, s.ip_address, null, null, []/*, s.ports, FirewallProtocol.Any*/ ) )
                         .ToList( );
+        Maintain.ValidateIPAddressesAndRanges( ref unsorted );
+        return unsorted;
     }
 
     /// <summary>

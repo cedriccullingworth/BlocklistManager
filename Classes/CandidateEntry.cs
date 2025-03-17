@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -34,7 +33,6 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
     /// </summary>
     [Display( Description = "Name" )]
     [Length( 2, 50 )]
-    [UnconditionalSuppressMessage( "Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>" )]
     public string? Name { get; set; } = siteName;
 
     /// <summary>
@@ -58,7 +56,7 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
     /// <summary>
     /// An IP address or IP address range array containing up to 10,000 entries (Win 11) or 1,000 entries (<= Win 10) after consolidation
     /// </summary>
-    [Display( AutoGenerateField = true, Description = "IP Address Batch", Name = "IPAddressSet" )]
+    [Display( AutoGenerateField = true, Description = "IP Address Set", Name = "IPAddressSet" )]
     public IAddress[] IPAddressSet { get; set; } = addressSet;
 
     /// <summary>
@@ -69,7 +67,7 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
     /// <summary>
     /// The type of IP address: IPv4, IPv6, or Invalid
     /// </summary>
-    internal IPAddressType AddressType { get; set; } // => DetermineAddressType( ); // string.IsNullOrEmpty( this.IPAddress ) ? IPAddressType.Invalid : this.IPAddress.IndexOf( ':' ) > 0 ? IPAddressType.IPv6 : IPAddressType.IPv4; // { get; set; } = Maintain.IPAddressType.IPv4;
+    internal IPAddressType AddressType { get; set; } = IPAddressType.Invalid;
 
     /// <summary>
     /// The name of the blocklist file that this entry came from
@@ -80,34 +78,6 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
     /// New: Simply record whether the IP address(es) or ranger has been validated
     /// </summary>
     public bool Validated { get; set; }
-
-    /// <summary>
-    /// No longer needed as we need both port numbers and protocols before we can set these in the Windows Firewall and I'd rather fully block the IP address
-    /// </summary>
-    //[Display( Description = "Ports (default 'Any')" )]
-    //public ushort[] Ports { get; set; } = portsArg;
-
-    /// <summary>
-    /// No longer needed as we need both port numbers and protocols before we can set these in the Windows Firewall and I'd rather fully block the IP address
-    /// </summary>
-    //[Display( Description = "Protocol (default 'Any')" )]
-    //public FirewallProtocol Protocol { get; set; } = protocolArg;
-
-    /* Removed because none of these are used for the firewall rules */
-    //[Display( Description = "Status" )]
-    //public string? Status { get; set; } = "-";
-
-    //public string? Number { get; set; }
-
-    //[Length( 2, 255 )]
-    //internal string? Description { get; set; } = null;
-
-    //[Display( Description = "Country" )]
-    //[Length( 2, 50 )]
-    //public string? Country { get; set; } = null;
-
-    //[Display( Description = "Malware Name" )]
-    //public string? Malware { get; set; }
 
     [Display( AutoGenerateField = false )]
     /// <summary>
@@ -120,22 +90,22 @@ public sealed record class CandidateEntry( string? siteName, string blocklistFil
     internal long Sort2 => Sort.Length > 1 ? Sort[ 2 ] : 0;
     internal long Sort3 => Sort.Length > 2 ? Sort[ 3 ] : 0;
 
-    //private IPAddressType DetermineAddressType( )
-    //{
-    //    string tmpAddress = string.Empty;
-    //    if ( string.IsNullOrEmpty( IPAddress ) && IPAddressRange is not null )
-    //        tmpAddress = IPAddressRange!.StartAddress.ToString( );
-    //    else if ( !string.IsNullOrEmpty( IPAddressBatch ) )
-    //        tmpAddress = IPAddressSet[ 0 ].ToString( );
-    //    else
-    //        tmpAddress = IPAddress!;
+    private IPAddressType DetermineAddressType( )
+    {
+        string tmpAddress = string.Empty;
+        if ( string.IsNullOrEmpty( IPAddress ) && IPAddressRange is not null )
+            tmpAddress = IPAddressRange!.StartAddress.ToString( );
+        else if ( !string.IsNullOrEmpty( IPAddressBatch ) )
+            tmpAddress = IPAddressSet[ 0 ].ToString( );
+        else
+            tmpAddress = IPAddress!;
 
 
-    //    if ( tmpAddress.IndexOf( ':' ) > 0 )
-    //        return IPAddressType.IPv6;
-    //    else
-    //        return IPAddressType.IPv4;
-    //}
+        if ( tmpAddress.IndexOf( ':' ) > 0 )
+            return IPAddressType.IPv6;
+        else
+            return IPAddressType.IPv4;
+    }
 
     /// <summary>
     /// A single IP address representing the IP address, address range or IPAddressBatch as an IPAddress

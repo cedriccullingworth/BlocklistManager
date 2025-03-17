@@ -50,12 +50,14 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
     /// <returns>The data translated from the download</returns>
     private static List<CandidateEntry> TranslateCommaDelimited( RemoteSite site, List<string> lineData, string fileName )
     {
-        return lineData
+        List<CandidateEntry> unsorted = lineData
                     .Select( s => s.Replace( "# ", "," ).Replace( "#", string.Empty ) )
                     .Select( s => s.Split( ',', StringSplitOptions.TrimEntries ) )
                     //                    .Where( w => Maintain.InternetAddressType( w[ 0 ] ) != IPAddressType.Invalid )
                     .Select( s => new CandidateEntry( site.Name, fileName, s[ 0 ], null, null, []/*, [], FirewallProtocol.Any*/ ) )
                     .ToList( );
+        Maintain.ValidateIPAddressesAndRanges( ref unsorted );
+        return unsorted;
     }
 
     //private static List<CandidateEntry> TranslateMyIP( RemoteSite site, List<string> lineData ) => lineData.Take( 10 )
@@ -100,9 +102,11 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
     /// <returns>The data translated from the download</returns>
     private static List<CandidateEntry> ReadDelimitedDataScriptzTeam( char delimiter, List<string> allText, RemoteSite site, string fileName )
     {
-        return allText.Select( s => s.Split( delimiter ) )
+        List<CandidateEntry> unsorted = allText.Select( s => s.Split( delimiter ) )
                                     .Select( s => new CandidateEntry( site.Name, fileName, s[ 0 ], null, null, []/*, [], FirewallProtocol.Any*/ ) )
                                     .ToList( );
+        Maintain.ValidateIPAddressesAndRanges( ref unsorted );
+        return unsorted;
     }
 
     /// <summary>
@@ -144,6 +148,7 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
             candidates.Add( new CandidateEntry( site.Name, fileName, null, null, addressRange, []/*, [], FirewallProtocol.Any*/ ) );
         }
 
+        Maintain.ValidateIPAddressesAndRanges( ref candidates );
         return candidates;
     }
 
@@ -186,9 +191,4 @@ internal sealed class DataTranslatorDelimited : IDataTranslator
         Dispose( disposing: true );
         GC.SuppressFinalize( this );
     }
-
-    //static List<CandidateEntry> TranslateDataStream( RemoteSite site, Stream dataStream )
-    //{
-    //    throw new NotImplementedException( );
-    //}
 }

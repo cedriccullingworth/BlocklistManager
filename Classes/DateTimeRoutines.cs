@@ -151,7 +151,7 @@ public static class DateTimeRoutines
                 return _DefaultDate;
         }
     }
-    static DateTime _DefaultDate = DateTime.Now;
+    private static DateTime _DefaultDate = DateTime.Now;
 
     /// <summary>
     /// If true then DefaultDate property is ignored and DefaultDate is always DateTime.Now
@@ -592,7 +592,7 @@ public static class DateTimeRoutines
         return false;
     }
 
-    static bool convert_to_date( int year, int month, int day, out DateTime date )
+    private static bool convert_to_date( int year, int month, int day, out DateTime date )
     {
         if ( year >= 100 )
         {

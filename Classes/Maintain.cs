@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -13,8 +11,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 using BlocklistManager.Models;
-
-using Microsoft.Extensions.Configuration;
 
 using NetTools;
 
@@ -33,19 +29,13 @@ internal static class Maintain
     internal static readonly OSVersionExtension.OperatingSystem OsVersion = GetOSVersion( );
     internal static readonly int MaximumFirewallBatchSize = GetFirewallBatchSize;
     private const char BatchDelimiter = ';';
-    //private const int MaxIpv4PartValue = 255;
     private static readonly string AppName = Assembly.GetEntryAssembly( )!.GetName( )!.Name!;
     private static Device? _device;
-    [UnconditionalSuppressMessage( "Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>" )]
     private static readonly string? MacAddress = GetMACAddress( ); // "00:00:00:00:00:00";
     private static readonly CultureInfo Culture = CultureInfo.CurrentCulture;
     private static readonly Regex Ipv4Regex = new Regex( "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])" );
     //    private static readonly Regex Ipv6Regex = new Regex( "((([0-9a-fA-F]){1,4})\\:){7}([0-9a-fA-F]){1,4}" );
     private static readonly Regex Ipv6Regex = new Regex( "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))" );
-
-    [UnconditionalSuppressMessage( "Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>" )]
-    [UnconditionalSuppressMessage( "AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>" )]
-    //internal static List<FileType> FileTypes => new BlocklistData( ).ListFileTypes( );
 
     internal static FirewallProfiles AllProfiles = FirewallProfiles.Public | FirewallProfiles.Domain | FirewallProfiles.Private;
 
@@ -78,22 +68,20 @@ internal static class Maintain
         }
     }
 
-    internal static Device? ConnectedDevice
-    {
-        [UnconditionalSuppressMessage( "Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>" )]
-        [UnconditionalSuppressMessage( "AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>" )]
-        get
-        {
-            if ( _device == null )
-            {
-                BlocklistData data = new( );
-                if ( MacAddress is not null )
-                    _device = data.GetDevice( MacAddress! );
-            }
+    internal static Device? ConnectedDevice => _device is not null ? _device : new BlocklistData( ).GetDevice( MacAddress! );
+    //{
+    //    get
+    //    {
+    //        if ( _device == null )
+    //        {
+    //            BlocklistData data = new( );
+    //            if ( MacAddress is not null )
+    //                _device = data.GetDevice( MacAddress! );
+    //        }
 
-            return _device!;
-        }
-    }
+    //        return _device!;
+    //    }
+    //}
 
     //internal enum IPAddressType
     //{
@@ -109,8 +97,6 @@ internal static class Maintain
     /// NOTE: This currently only considers Ethernet and 802.11 WiFi adapters with IP addresses and an active gateway, add other types as required
     /// </summary>
     /// <returns>The MAC addressRange of the first active Ethernet or WiFi adapter found</returns>
-    [UnconditionalSuppressMessage( "AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>" )]
-    [RequiresUnreferencedCode( "Calls BlocklistManager.Classes.BlocklistData.GetDevice(String)" )]
     public static string? GetMACAddress( )
     {
         string firstMACAddressFound = NetworkInterface.GetAllNetworkInterfaces( )
@@ -164,11 +150,6 @@ internal static class Maintain
     /// <returns></returns>
     private static string MACAddress( PhysicalAddress physicalAddress )
     {
-        /* MAC Address for tests: 2C:3B:70:0C:DA:F5 */
-        /*
-         * 1 (SBSNB2) : 2C:3B:70:0C:DA:F5
-         * 2 (SBSNB1) : 24:0A:64:32:7F:2B
-         */
         string s = physicalAddress.ToString( );
         if ( s.Length >= 12 )
             return string.Format( new CultureInfo( "en-US" ), "{0}:{1}:{2}:{3}:{4}:{5}", s[ ..2 ], s[ 2..4 ], s[ 4..6 ], s[ 6..8 ], s[ 8..10 ], s[ 10..12 ] );
@@ -176,24 +157,11 @@ internal static class Maintain
             return "00:00:00:00:00:00";
     }
 
-    [UnconditionalSuppressMessage( "AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>" )]
-    [RequiresUnreferencedCode( "Calls BlocklistManager.Classes.BlocklistData.ListDownloadSites(Int32, RemoteSite, Boolean)" )]
-    internal static List<RemoteSite> ListDownloadSites( RemoteSite? remoteSite, bool showAll = false )
-    {
-        try
-        {
-            using BlocklistData data = new BlocklistData( );
-            return data.ListDownloadSites( ConnectedDevice!.ID, remoteSite, showAll );
-        }
-        catch ( Exception ex )
-        {
-            StatusMessage( AppName, StringUtilities.ExceptionMessage( "ListDownloadSites", ex ) );
-            return new BlocklistData( ).ListDownloadSites( ConnectedDevice!.ID, remoteSite, showAll );
-        }
-    }
-
-    [UnconditionalSuppressMessage( "AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.", Justification = "<Pending>" )]
-    [RequiresUnreferencedCode( "Calls BlocklistManager.Classes.BlocklistData.SetLastDownloaded(Int32, Int32)" )]
+    /// <summary>
+    /// Update the last downlioaded date and time for a site by this device
+    /// </summary>
+    /// <param name="site"></param>
+    /// <returns></returns>
     internal static DateTime UpdateLastDownloaded( RemoteSite site )
     {
         if ( ConnectedDevice is null )
@@ -269,10 +237,11 @@ internal static class Maintain
         if ( name is not null && !name.EndsWith( "_Blocklist", comparison ) )
             name = $"{name}_Blocklist";
 
-        IEnumerable<IFirewallRule> rules = FirewallManager.Instance
+        List<IFirewallRule> rules = FirewallManager.Instance
                                                           .Rules
                                                           .Where( w => w.Name.EndsWith( "_Blocklist", comparison ) )
-                                                          .Where( w => name is null || w.Name == name );
+                                                          .Where( w => name is null || w.Name == name )
+                                                          .ToList( );
 
         return [ .. rules.Select( s => new FirewallRule( s.Name, s.Action, s.Direction, s.Profiles, s.RemoteAddresses, s.Protocol, s.RemotePorts ) )
                     .OrderBy( o => o.Name )
@@ -339,13 +308,13 @@ internal static class Maintain
 
         // Delete any existing rules matching on name and IP ipAddress set
         // This is redundant as all entries for the ruleName are deleted before this, but leaving it here to make sure
-        DeleteMatchingEntries( ruleName, ipAddressSet, ipAddressRange, remoteIPRange );
+        // DeleteMatchingEntries( ruleName, ipAddressSet, ipAddressRange, remoteIPRange );
 
-        SingleIP[] local = [ new( IPAddress.Any ) ];
+        SingleIP[] localAddress = [ new( IPAddress.Any ) ];
 
         // Create and add the new rules. I have separated these because assigning property values to elements in a collection didn't work
-        IFirewallRule ruleOut = CreateRule( ruleName, ipAddressSet, ports, remoteIPRange, local, FirewallDirection.Outbound );
-        IFirewallRule ruleIn = CreateRule( ruleName, ipAddressSet, ports, remoteIPRange, local, FirewallDirection.Inbound );
+        IFirewallRule ruleOut = CreateRule( ruleName, ipAddressSet, ports, remoteIPRange, localAddress, FirewallDirection.Outbound );
+        IFirewallRule ruleIn = CreateRule( ruleName, ipAddressSet, ports, remoteIPRange, localAddress, FirewallDirection.Inbound );
 
         try
         {
@@ -371,17 +340,19 @@ internal static class Maintain
     /// <param name="remoteIPRange"></param>
     private static void DeleteMatchingEntries( string ruleName, IAddress[]? ipAddressSet, IPRange? ipAddressRange, IAddress[] remoteIPRange )
     {
-        IEnumerable<IFirewallRule> existing = [];
+        List<IFirewallRule> existing = [];
         if ( ipAddressSet is not null && ipAddressSet.Length > 0 )
             existing = FirewallManager.Instance
                                       .Rules
-                                      .Where( f => f.Name == ruleName && f.RemoteAddresses == remoteIPRange );
+                                      .Where( f => f.Name == ruleName && f.RemoteAddresses == remoteIPRange )
+                                      .ToList( );
         else if ( ipAddressRange is not null && ipAddressRange.StartAddress is not null && ipAddressRange.EndAddress is not null )
             existing = FirewallManager.Instance
                                       .Rules
-                                      .Where( f => f.Name == ruleName && f.RemoteAddresses == ipAddressSet );
+                                      .Where( f => f.Name == ruleName && f.RemoteAddresses == ipAddressSet )
+                                      .ToList( );
 
-        if ( existing is not null && existing.Any( ) )
+        if ( existing is not null && existing.Count > 0 )
         {
             foreach ( var item in existing )
                 FirewallManager.Instance
@@ -479,7 +450,7 @@ internal static class Maintain
     /// <param name="newRules">Returns the list of firewall rules created</param>
     /// <param name="maintainUI">A by-reference variable containing the UI form when applicable</param>
     /// <returns>The list of firewall rules created</returns>
-    internal static void AddFirewallRulesFor( string ruleName, string siteName, ref List<CandidateEntry> newEntries, ref List<IFirewallRule> newRules, ref MaintainUI? maintainUI )
+    internal static void AddFirewallRulesFor( string ruleName, string siteName, ref ICollection<CandidateEntry> newEntries, ref List<IFirewallRule> newRules, ref MaintainUI? maintainUI )
     {
         try
         {
@@ -503,7 +474,7 @@ internal static class Maintain
     /// <param name="newEntries">The list of all blocklist entries</param>
     /// <param name="newRules">Return the windows firewall rules which were created</param>
     /// <returns>True if completed without errors</returns>
-    private static void CreateRulesForAddressRanges( string ruleName, string siteName, ref List<CandidateEntry> newEntries, ref List<IFirewallRule> newRules )
+    private static void CreateRulesForAddressRanges( string ruleName, string siteName, ref ICollection<CandidateEntry> newEntries, ref List<IFirewallRule> newRules )
     {
         foreach ( var entry in newEntries.Where( w => w.Name == siteName && w.IPAddressRange is not null )
                                                      .OrderBy( o => o.Sort[ 0 ] )
@@ -516,6 +487,9 @@ internal static class Maintain
             {
                 IPRange? addressRange = entry.IPAddressRange;
                 newRules.AddRange( AddInboundAndOutboundRules( ruleName, null, entry.IPAddressRange/*, entry.Protocol, entry.Ports*/ ) );
+                // These aren't really helping...
+                newEntries.Remove( entry );
+                entry.Dispose( );
             }
         }
     }
@@ -528,7 +502,7 @@ internal static class Maintain
     /// <param name="newEntries">The list of all blocklist entries</param>
     /// <param name="newRules">Return the windows firewall rules which were created</param>
     /// <returns>True if completed without errors</returns>
-    private static bool CreateRulesForAddressSets( string ruleName, string siteName, ref List<CandidateEntry> newEntries, ref List<IFirewallRule> newRules )
+    private static bool CreateRulesForAddressSets( string ruleName, string siteName, ref ICollection<CandidateEntry> newEntries, ref List<IFirewallRule> newRules )
     {
         int savedCount = 0;
 
@@ -536,6 +510,8 @@ internal static class Maintain
         {
             newRules.AddRange( AddInboundAndOutboundRules( ruleName, entry.IPAddressSet, entry.IPAddressRange/*, entry.Protocol, entry.Ports*/ ) );
             savedCount++;
+            newEntries.Remove( entry );
+            entry.Dispose( );
         }
 
         return savedCount == newEntries.Where( w => w.Name == siteName && w.IPAddressSet is not null && w.IPAddressSet.Length > 0 ).Count( );
@@ -551,10 +527,10 @@ internal static class Maintain
     //{
     //    IPAddressType addressType = IPAddressType.Invalid;
 
-    //    //if ( IPAddress.TryParse( address, out IPAddress? ipAddress ) ) // Not a good validator, converts "207.63.218" to "207.63.0.218"
+    //    //if ( ipAddress.TryParse( address, out ipAddress? ipAddress ) ) // Not a good validator, converts "207.63.218" to "207.63.0.218"
     //    if ( ValidateIPAddress( address, out IPAddressType addresstype ) )
     //    {
-    //        IPAddress ipAddress = IPAddress.Parse( address );
+    //        ipAddress ipAddress = ipAddress.Parse( address );
     //        if ( ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork )
     //        {
     //            addressType = IPAddressType.IPv4;
@@ -580,8 +556,7 @@ internal static class Maintain
     /// <param name="sitesToProcess">A list of download sites to download from ( limited to 1 for the interactive app )</param>
     /// <param name="logPath">The log file path (optional)</param>
     /// <returns>A list of the downloaded addressRange entries</returns>
-    [UnconditionalSuppressMessage( "Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>" )]
-    internal static List<CandidateEntry> DownloadBlocklists( MaintainUI? maintainUIForm, List<RemoteSite> sitesToProcess )
+    internal static List<CandidateEntry> DownloadBlocklists( MaintainUI? maintainUIForm, ICollection<RemoteSite> sitesToProcess )
     {
         List<CandidateEntry> data = [];
 
@@ -595,24 +570,27 @@ internal static class Maintain
             string newLineText = counter == sitesToProcess.Count ? "\r\n" : string.Empty;
             try
             {
-                List<CandidateEntry> newData = DownloadSiteData( site );
-                if ( newData.Count > 0 )
+                string description = "blocklist";
+                if ( site.FilePaths.Count > 1 )
                 {
-                    data.AddRange( newData );
-                    newLineText = "";
-                    bool addLineFeed = sitesToProcess[ sitesToProcess.Count - 1 ].Name == site.Name;
-                    string newLine = addLineFeed ? Environment.NewLine : string.Empty;
-                    StatusMessage( AppName, $"Read {site.Name} blocklist(s){newLineText} containing {newData.Count} entries{newLine}", maintainUIForm );
-
-                    if ( maintainUIForm is not null )
-                    {
-                        maintainUIForm.UpdateProgress( counter, sitesToProcess.Count );
-                        maintainUIForm.StatusMessage.Text = $"Updating {site!.Name} downloaded date and time ...";
-                    }
-
-                    DateTime lastDownloaded = UpdateLastDownloaded( site );
-                    UpdateSiteListDateDownloaded( maintainUIForm, site, lastDownloaded );
+                    description += "s";
                 }
+
+                StatusMessage( AppName, $"Reading {description} from {site.Name} ..." );
+                DownloadSiteData( site, ref data, out int entryCount );
+                newLineText = "";
+                bool addLineFeed = sitesToProcess.ToArray( )[ sitesToProcess.Count - 1 ].Name == site.Name;
+                string newLine = addLineFeed ? Environment.NewLine : string.Empty;
+                StatusMessage( AppName, $"Read {site.Name} blocklist(s){newLineText} containing {entryCount} entries{newLine}", maintainUIForm );
+
+                if ( maintainUIForm is not null )
+                {
+                    maintainUIForm.UpdateProgress( counter, sitesToProcess.Count );
+                    maintainUIForm.StatusMessage.Text = $"Updating {site!.Name} downloaded date and time ...";
+                }
+
+                DateTime lastDownloaded = UpdateLastDownloaded( site );
+                UpdateSiteListDateDownloaded( maintainUIForm, site, lastDownloaded );
 
                 if ( maintainUIForm is not null )
                     maintainUIForm.UpdateProgress( counter, sitesToProcess.Count );
@@ -623,11 +601,11 @@ internal static class Maintain
             }
         }
 
-        return [ .. data.Select( s => new CandidateEntry( s.Name, s.FileName, s.IPAddress ?? "", s.Subnet, s.IPAddressRange, s.IPAddressSet/*, s.Ports, s.Protocol*/ ) )
-                   .OrderBy( o => o.Sort0 )
+        return data.OrderBy( o => o.Sort0 )
                    .ThenBy( o => o.Sort1 )
                    .ThenBy( o => o.Sort2 )
-                   .ThenBy( o => o.Sort3 ) ];
+                   .ThenBy( o => o.Sort3 )
+                   .ToList( );
     }
 
     private static void UpdateSiteListDateDownloaded( MaintainUI? maintainUIForm, RemoteSite site, DateTime lastDownloaded )
@@ -647,9 +625,10 @@ internal static class Maintain
     /// </summary>
     /// <param name="data">The data to be rationlised </param>
     /// <param name="sites">The list of sites being processed</param>
-    internal static List<CandidateEntry> ConvertIPAddressesToIPAddressSets( List<CandidateEntry> data, List<RemoteSite> sites )
+    internal static bool ConvertIPAddressesToIPAddressSets( ref List<CandidateEntry> data, ICollection<RemoteSite> sites )
     {
-        // Preserve the data which isn't being manipulated in this step
+        bool succeeded = false;
+        // Preserve the data which isn't being manipulated in this step, i.e. entries for address ranges
         List<CandidateEntry> results = data.Where( w => string.IsNullOrEmpty( w.IPAddress ) && w.IPAddressRange is not null )
                                            .ToList( );
         int unRationalisedCount = data.Count( w => !string.IsNullOrEmpty( w.IPAddress ) && w.IPAddressRange is null ), rationalisedCount = 0;
@@ -663,10 +642,8 @@ internal static class Maintain
 
             while ( work.Count > 0 && work.Count > MaximumFirewallBatchSize )
             {
-                List<CandidateEntry> candidates = work.Take( MaximumFirewallBatchSize )
-                                                      .ToList( );
-
-                results.Add( BuildIPAddressSet( candidates/*, sequence */, MaximumFirewallBatchSize ) );
+                List<CandidateEntry> candidates = work.Take( MaximumFirewallBatchSize ).ToList( );
+                results.Add( BuildIPAddressSet( candidates/*.ToList( )*//*, sequence */, MaximumFirewallBatchSize ) );
                 // Remove the entries which have been processed
                 work = work.Except( candidates ).ToList( );
             }
@@ -674,9 +651,10 @@ internal static class Maintain
             // Finally, add an entry for a set containing the leftover entries
             if ( work.Count > 0 )
             {
-                List<CandidateEntry> candidates = work.ToList( );
-                results.Add( BuildIPAddressSet( candidates, /*sequence, */candidates.Count ) );
+                results.Add( BuildIPAddressSet( work, /*sequence, */work.Count ) );
             }
+
+            succeeded = true;
         }
 
         rationalisedCount = results.Where( w => w.IPAddressRange is null ).Count( );
@@ -688,7 +666,8 @@ internal static class Maintain
         };
 
         StatusMessage( AppName, message );
-        return results;
+        data = results;
+        return succeeded;
     }
 
     /// <summary>
@@ -696,8 +675,9 @@ internal static class Maintain
     /// </summary>
     /// <param name="data">The data to be rationlised </param>
     /// <param name="sites">The list of sites being processed</param>
-    internal static List<CandidateEntry> ConvertIPAddressRangesToIPAddressRangeSets( List<CandidateEntry> data, List<RemoteSite> sites )
+    internal static bool ConvertIPAddressRangesToIPAddressRangeSets( ref List<CandidateEntry> data, ICollection<RemoteSite> sites )
     {
+        bool succeeded = false;
         // Preserve the entries  that aren't being modified in the section
         List<CandidateEntry> results = data.Where( w => w.IPAddressRange is null )
                                            .ToList( );
@@ -707,37 +687,36 @@ internal static class Maintain
         // This should be run per download site
         foreach ( RemoteSite site in sites )
         {
-            var /*List<CandidateEntry> */ work = data.Where( w => w.Name == site.Name ) // Validate
-                                            .Where( w => string.IsNullOrEmpty( w.IPAddress ) && w.IPAddressRange is not null );
-            //.ToList( );
+            List<CandidateEntry> work = data.Where( w => w.Name == site.Name ) // Validate
+                                            .Where( w => string.IsNullOrEmpty( w.IPAddress ) && w.IPAddressRange is not null )
+                                            .ToList( );
 
-            while ( work.Any( ) && work.Count( ) > MaximumFirewallBatchSize )
+            while ( work.Count > 0 && work.Count > MaximumFirewallBatchSize )
             {
-                List<CandidateEntry> candidates = work.Take( MaximumFirewallBatchSize )
-                                                      .ToList( );
-
-                results.Add( BuildIPAddressRangeSet( candidates/*, sequence */, MaximumFirewallBatchSize ) );
+                List<CandidateEntry> candidates = work.Take( MaximumFirewallBatchSize ).ToList( );
+                results.Add( BuildIPAddressRangeSet( candidates, MaximumFirewallBatchSize ) );
                 rationalisedCount++;
+                // Remove the entries which have been processed
                 work = work.Except( candidates ).ToList( );
             }
 
-            // Finally, add an entry for a set containing the leftover entries
-            if ( work.Any( ) )
+            // Finally, add an entry for a set containing the remaining entries
+            if ( work.Count > 0 )
             {
-                List<CandidateEntry> candidates = work.ToList( );
-                results.Add( BuildIPAddressRangeSet( candidates, /*sequence, */candidates.Count ) );
+                results.Add( BuildIPAddressRangeSet( work, work.Count ) );
                 rationalisedCount++;
             }
+
+            succeeded = true;
         }
 
         if ( rationalisedCount == 1 )
             StatusMessage( AppName, $"Consolidated {unRationalisedCount} address ranges into {rationalisedCount} entry{Environment.NewLine}" );
         else if ( rationalisedCount > 1 )
             StatusMessage( AppName, $"Consolidated {unRationalisedCount} address ranges into {rationalisedCount} entries{Environment.NewLine}" );
-        //else if ( rationalisedCount > 0 )
-        //    StatusMessage( AppName, $"Consolidated {unRationalisedCount} address ranges into {rationalisedCount} entries: INVESTIGATE!" );
 
-        return results;
+        data = results;
+        return succeeded;
     }
 
     /// <summary>
@@ -745,7 +724,7 @@ internal static class Maintain
     /// </summary>
     /// <param name="candidates">The list to process</param>
     /// <param name="numberRemoved">Report back on how many were deleted</param>
-    internal static void RemovePrivateAddressesRanges( ref List<CandidateEntry> candidates, out int numberRemoved )
+    internal static void RemovePrivateAddressRanges( ref List<CandidateEntry> candidates, out int numberRemoved )
     {
         // TODO: Store the private addressRange ranges in a configuration file/the database
         StringComparison comparison = StringComparison.OrdinalIgnoreCase;
@@ -780,7 +759,7 @@ internal static class Maintain
         numberRemoved -= candidates.Count;
     }
 
-    // internal record addressIPValid( string? IPAddress, string? IPAddressRangeStart, string? IPAddressRangeEnd, IPAddressType AddressType ) { internal bool Valid { get; set; } };
+    // internal record addressIPValid( string? ipAddress, string? IPAddressRangeStart, string? IPAddressRangeEnd, IPAddressType AddressType ) { internal bool Valid { get; set; } };
 
     /// <summary>
     /// Removes entries containing invalid IP addresses<CandidateEntry>
@@ -789,12 +768,12 @@ internal static class Maintain
     /// <param name="numberRemoved">Report back on how many were deleted</param>
     internal static void RemoveInvalidIPAddresses( ref List<CandidateEntry> data, out int numberRemoved )
     {
-        ValidateIPAddressesAndRanges( data ); // Already done so this is just in case
+        // ValidateIPAddressesAndRanges( ref data ); // Already done
         string[] invalidIPs = data.Where( w => !w.Validated )
                                   .Select( s => string.IsNullOrEmpty( s.IPAddress ) ? s.IPAddressRange!.ToString( ) : s.IPAddress )
                                   .ToArray( );
 
-        numberRemoved = invalidIPs.Length; //  data.Count( c => !c.Validated || w.IPAddress == "0.0.0.0" );
+        numberRemoved = invalidIPs.Length; //  data.Count( c => !c.Validated || w.ipAddress == "0.0.0.0" );
         data = data.Where( w => w.Validated && w.IPAddress != "0.0.0.0" )
                    .ToList( );
         if ( invalidIPs.Length == 0 )
@@ -834,34 +813,34 @@ internal static class Maintain
     }
 
     #region Older version
-    //private static void ValidateIPAddresses( List<CandidateEntry> data )
+    //private static void ValidateIPAddresses( ICollection<CandidateEntry> data )
     //{
     //    //Regex Ipv4Regex = new Regex( "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])" );
     //    //Regex Ipv6Regex = new Regex( "((([0-9a-fA-F]){1,4})\\:){7}([0-9a-fA-F]){1,4}" );
 
     //    foreach ( CandidateEntry item in data.Where( w => !w.Validated ) )
     //    {
-    //        string address = string.IsNullOrEmpty( item.IPAddress )
-    //                           ? item.IPAddressRange!.StartAddress!.ToString( )
-    //                           : item.IPAddress;
+    //        string address = string.IsNullOrEmpty( item.ipAddress )
+    //                           ? item.ipAddressRange!.StartAddress!.ToString( )
+    //                           : item.ipAddress;
     //        item.Validated = ValidateIPAddress( address, out IPAddressType addressType );
     //        item.AddressType = addressType;
-    //        if ( item.Validated && item.IPAddressRange is not null )
+    //        if ( item.Validated && item.ipAddressRange is not null )
     //        {
-    //            item.Validated = ValidateIPAddress( item.IPAddressRange!.EndAddress.ToString( ), out addressType );
+    //            item.Validated = ValidateIPAddress( item.ipAddressRange!.EndAddress.ToString( ), out addressType );
     //        }
 
     //        if ( item.AddressType != addressType && addressType != IPAddressType.Invalid )
     //            item.AddressType = addressType;
 
-    //        //if ( IPAddress.TryParse( address, out IPAddress? ipAddress ) )
+    //        //if ( ipAddress.TryParse( address, out ipAddress? ipAddress ) )
     //        //{
     //        //    if ( item.AddressType == IPAddressType.IPv4 )
     //        //    {
     //        //        Match match = Regex.Match( address, Ipv4Regex.ToString( ) );
-    //        //        if ( match.Success && item.IPAddressRange is not null )
+    //        //        if ( match.Success && item.ipAddressRange is not null )
     //        //        {
-    //        //            match = Regex.Match( item.IPAddressRange.EndAddress.ToString( ), Ipv4Regex.ToString( ) );
+    //        //            match = Regex.Match( item.ipAddressRange.EndAddress.ToString( ), Ipv4Regex.ToString( ) );
     //        //        }
 
     //        //        item.Validated = match.Success;
@@ -870,9 +849,9 @@ internal static class Maintain
     //        //    if ( item.AddressType == IPAddressType.IPv6 )
     //        //    {
     //        //        Match match = Regex.Match( address, Ipv6Regex.ToString( ) );
-    //        //        if ( match.Success && item.IPAddressRange is not null )
+    //        //        if ( match.Success && item.ipAddressRange is not null )
     //        //        {
-    //        //            match = Regex.Match( item.IPAddressRange!.EndAddress.ToString( ), Ipv6Regex.ToString( ) );
+    //        //            match = Regex.Match( item.ipAddressRange!.EndAddress.ToString( ), Ipv6Regex.ToString( ) );
     //        //        }
 
     //        //        item.Validated = match.Success;
@@ -890,14 +869,16 @@ internal static class Maintain
     internal static void SubnetsToRanges( ref List<CandidateEntry> data, out int numberConverted )
     {
         numberConverted = 0;
+
+        List<SubnetRange> entriesChanged = [];
         foreach ( CandidateEntry entry in data.Where( w => !string.IsNullOrEmpty( w.IPAddress ) && w.Subnet != null ) )
         {
             try
             {
                 string addressWithSubnet = $"{entry.IPAddress!.ToString( )}/{Convert.ToString( entry.Subnet, CultureInfo.InvariantCulture )}";
-                entry.IPAddressRange = new IPRange( IPAddressRange.Parse( addressWithSubnet ).Begin, IPAddressRange.Parse( addressWithSubnet ).End );
-                entry.IPAddress = null;
-                entry.Subnet = null;
+                IPAddressRange newRange = IPAddressRange.Parse( addressWithSubnet );
+                SubnetRange tempEntry = new SubnetRange( entry.Name!, entry.IPAddress!, (int)entry.Subnet!, new IPRange( newRange.Begin, newRange.End ) );
+                entriesChanged.Add( tempEntry );
             }
             catch ( Exception ex )
             {
@@ -905,8 +886,23 @@ internal static class Maintain
             }
         }
 
+        numberConverted = entriesChanged.Count;
+        foreach ( SubnetRange subnetRange in entriesChanged )
+        {
+            CandidateEntry entry = data.First( f => f.Name == subnetRange.name && f.IPAddress == subnetRange.ipAddress && f.Subnet == subnetRange.subNet );
+            entry.IPAddressRange = subnetRange.range;
+            entry.IPAddress = null;
+            entry.Subnet = null;
+        }
+
         return;
     }
+
+    private sealed record SubnetRange( string name, string ipAddress, int subNet, IPRange? range );
+
+    private sealed record AddressValidation( string name, string? ipAddress, IPRange? range, bool Validated = false, IPAddressType ipAddressType = IPAddressType.Invalid );
+
+    private sealed record DistinctAddress( string? IPAddress, IPRange? AddressRange, string? Name, string? Filename, IPAddressType AddressType, bool Validated );
 
     /// <summary>
     /// Convert a string too a byte array
@@ -919,45 +915,85 @@ internal static class Maintain
         return enc.GetBytes( source );
     }
 
+    ///// <summary>
+    ///// Removes entries duplicating IP addresses or ranges in a ICollection<CandidateEntry>
+    ///// </summary>
+    ///// <param name="data">The list to process</param>
+    ///// <param name="numberRemoved">Report back on how many were deleted</param>
+    //internal static void RemoveDuplicates( ref List<CandidateEntry> data, out int numberRemoved )
+    //{
+    //    numberRemoved = data.Count;
+    //    // Address ranges stay as they are; not attempting deduplication
+    //    data = data.Where( w => string.IsNullOrEmpty( w.ipAddress ) && w.ipAddressRange is not null )
+    //               .GroupBy( g => g.ipAddressRange )
+    //               .Select( s => new { ipAddressRange = s.Key, data = s/*.AsEnumerable( )*/ } )
+    //               .Select( s => new CandidateEntry
+    //                                                                                    (
+    //                                                                                        s.data.Min( m => m.Name ),
+    //                                                                                        s.data.Min( m => m.FileName )!,
+    //                                                                                        null,
+    //                                                                                        null,
+    //                                                                                        s.ipAddressRange,
+    //                                                                                        s.data.Min( m => m.ipAddressSet ) ?? []/*,
+    //                                                                                        s.data.Min( m => m.Ports ?? [] )!,
+    //                                                                                        s.data.Min( m => m.Protocol ?? FirewallProtocol.Any )! */
+    //                                                                                    )
+    //                )
+    //               // Deduplicate ipAddress entries
+    //               .Union( data.Where( w => w.ipAddress is not null ) // !string.IsNullOrEmpty( w.ipAddress ) )
+    //                           .GroupBy( g => g.ipAddress )
+    //                           .Select( s => new { ipAddress = s.Key, data = s/*.AsEnumerable( )*/ } )
+    //                           .Select( s =>
+    //                                new CandidateEntry( s.data.Min( m => m.Name ), s.data.Min( m => m.FileName )!, s.ipAddress, s.data.Min( m => m.Subnet ), null, []/*, MergeShorts( s.data.Select( t => t.Ports ) ), s.data.Max( m => m.Protocol ?? FirewallProtocol.Any )!*/ )
+    //                           )
+    //                )
+    //               .ToList( );
+
+    //    numberRemoved -= data.Count;
+    //}
+
     /// <summary>
-    /// Removes entries duplicating IP addresses or ranges in a List<CandidateEntry>
+    /// Removes entries duplicating IP addresses or ranges in a ICollection<CandidateEntry>
+    /// This copy is an attempt to improve performance of this method
     /// </summary>
     /// <param name="data">The list to process</param>
     /// <param name="numberRemoved">Report back on how many were deleted</param>
     internal static void RemoveDuplicates( ref List<CandidateEntry> data, out int numberRemoved )
     {
         numberRemoved = data.Count;
-        // Address ranges stay as they are; not attempting deduplication
-        data = data.Where( w => string.IsNullOrEmpty( w.IPAddress ) && w.IPAddressRange is not null )
-                   .GroupBy( g => g.IPAddressRange )
-                   .Select( s => new { IPAddressRange = s.Key, data = s.AsEnumerable( ) } )
-                   .Select( s => new CandidateEntry
-                                                                                        (
-                                                                                            s.data.Min( m => m.Name ),
-                                                                                            s.data.Min( m => m.FileName )!,
-                                                                                            null,
-                                                                                            null,
-                                                                                            s.IPAddressRange,
-                                                                                            s.data.Min( m => m.IPAddressSet ) ?? []/*,
-                                                                                            s.data.Min( m => m.Ports ?? [] )!,
-                                                                                            s.data.Min( m => m.Protocol ?? FirewallProtocol.Any )! */
-                                                                                        )
-                    )
-                   // Deduplicate IPAddress entries
-                   .Union( data.Where( w => !string.IsNullOrEmpty( w.IPAddress ) )
-                               .GroupBy( g => g.IPAddress )
-                               .Select( s => new { IPAddress = s.Key, data = s.AsEnumerable( ) } )
-                               .Select( s =>
-                                    new CandidateEntry( s.data.Min( m => m.Name ), s.data.Min( m => m.FileName )!, s.IPAddress, s.data.Min( m => m.Subnet ), null, []/*, MergeShorts( s.data.Select( t => t.Ports ) ), s.data.Max( m => m.Protocol ?? FirewallProtocol.Any )!*/ )
-                               )
-                    )
-                   .ToList( );
+        List<DistinctAddress> addressRanges = data.Where( w => string.IsNullOrEmpty( w.IPAddress ) && w.IPAddressRange is not null )
+                                                     .GroupBy( g => g.IPAddressRange )
+                                                     .Select( s => new { IPAddressRange = s.Key, data = s } )
+                                                     .Select( s => new DistinctAddress
+                                                        (
+                                                            null,
+                                                            s.IPAddressRange,
+                                                            s.data.Min( m => m.Name ),
+                                                            s.data.Min( m => m.FileName ),
+                                                            s.data.Max( m => m.AddressType ),
+                                                            s.data.Max( M => M.Validated )
+                                                        ) ).ToList( );
+        List<DistinctAddress> addresses = data.Where( w => w.IPAddress is not null )
+                                                     .GroupBy( g => g.IPAddress )
+                                                     .Select( s => new { IPAddress = s.Key, data = s } )
+                                                     .Select( s => new DistinctAddress
+                                                        (
+                                                            s.IPAddress,
+                                                            null,
+                                                            s.data.Min( m => m.Name ),
+                                                            s.data.Min( m => m.FileName ),
+                                                            s.data.Max( m => m.AddressType ),
+                                                            s.data.Max( M => M.Validated )
+                                                        ) ).ToList( );
 
+        data = addresses.Select( s => new CandidateEntry( s.Name, s.Filename ?? string.Empty, s.IPAddress, null, null, [] ) { AddressType = s.AddressType, Validated = s.Validated } )
+                        .ToList( );
+        data.AddRange( addressRanges.Select( s => new CandidateEntry( s.Name, s.Filename ?? string.Empty, null, null, s.AddressRange, [] ) { AddressType = s.AddressType, Validated = s.Validated } ) );
         numberRemoved -= data.Count;
     }
 
     #region Obsolete - we no longer attempt to process ports without protocols
-    //private static ushort[] MergeShorts( IEnumerable<ushort[]> shorts )
+    //private static ushort[] MergeShorts( List<ushort[]> shorts )
     //{
     //    List<ushort> results = [];
 
@@ -985,10 +1021,8 @@ internal static class Maintain
     //}
     #endregion Obsolete - we no longer attempt to process ports without protocols
 
-    [UnconditionalSuppressMessage( "Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>" )]
-    private static List<CandidateEntry> DownloadSiteData( RemoteSite site )
+    private static bool DownloadSiteData( RemoteSite site, ref List<CandidateEntry> data, out int numberOfEntries )
     {
-        List<CandidateEntry> data = [];
         foreach ( string fileUrl in site.FilePaths )
         {
             string url = fileUrl.Replace( ",", "" ); //.ToLower();
@@ -997,18 +1031,18 @@ internal static class Maintain
             {
                 case 2: // Json
                     {
-                        data = ReadJson( site, url, fileName );
+                        data.AddRange( ReadJson( site, url, fileName ).ToList( ) );
                         break;
                     }
                 case 3: // Xml
                     {
-                        data = ReadXml( site, fileUrl, fileName );
+                        data.AddRange( ReadXml( site, fileUrl, fileName ).ToList( ) );
                         break;
                     }
                 case 4: // Tab delimited
                 case 9: // Comma delimited
                     {
-                        data = ReadDelimited( site, url, fileName );
+                        data.AddRange( ReadDelimited( site, url, fileName ).ToList( ) );
                         break;
                     }
                 #region Not in use yet
@@ -1034,13 +1068,14 @@ internal static class Maintain
                 #endregion Not in use yet
                 default:
                     {
-                        data = ReadText( site, url, fileName );
+                        data.AddRange( ReadText( site, url, fileName ).ToList( ) );
                         break;
                     }
             }
         }
 
-        return data;
+        numberOfEntries = data.Count;
+        return true;
     }
 
     /// <summary>
@@ -1053,14 +1088,15 @@ internal static class Maintain
     private static List<CandidateEntry> ReadText( RemoteSite site, string url, string fileName )
     {
         string fileExtension = string.Empty;
-        List<CandidateEntry> processedData = [];
+        //List<CandidateEntry> processedData = [];
         try
         {
             string textData = Downloader.ReadData( site, out fileExtension!, url );
             if ( textData.Length > 0 )
             {
                 using DataTranslatorText translator = new( );
-                processedData = translator.TranslateFileData( site, textData, fileName );
+                /* processedData = */
+                return translator.TranslateFileData( site, textData, fileName );
             }
         }
         catch ( Exception ex )
@@ -1068,7 +1104,8 @@ internal static class Maintain
             StatusMessage( AppName, StringUtilities.ExceptionMessage( "DownloadSiteData", ex ) );
         }
 
-        return processedData;
+        return [];
+        //        return processedData;
     }
 
     /// <param name="site">The download site</param>
@@ -1078,35 +1115,38 @@ internal static class Maintain
     private static List<CandidateEntry> ReadDelimited( RemoteSite site, string url, string fileName )
     {
         string downloaded = Downloader.ReadData( site, out string? fileExtension, url );
-        List<CandidateEntry> processedData = [];
+        //        List<CandidateEntry> processedData = [];
 
         if ( !string.IsNullOrEmpty( downloaded ) )
         {
             using DataTranslatorDelimited translator = new( );
             var rawData = downloaded.Split( Environment.NewLine ); // .Where( w => w.Contains( "207.63.218" ) );
-            processedData = translator.TranslateFileData( site, downloaded, fileName );
+            /* processedData = */
+            return translator.TranslateFileData( site, downloaded, fileName );
         }
 
-        return processedData;
+        return [];
+        //        return processedData;
     }
 
     /// <param name="site">The download site</param>
     /// <param name="fileUrl">The download Url</param>
     /// <param name="fileName">Here only to fit the ITranslator interface</param>
     /// <returns>The processed data for this site</returns>
-    [RequiresUnreferencedCode( "Calls BlocklistManager.Classes.DataTranslatorXml.TranslateDataStream(RemoteSite, Stream, String)" )]
     private static List<CandidateEntry> ReadXml( RemoteSite site, string fileUrl, string fileName )
     {
-        Stream? downloaded = Downloader.ReadHtmlStreamFromUrl( site, fileUrl );
-        List<CandidateEntry> processedData = [];
+        using Stream? downloaded = Downloader.ReadHtmlStreamFromUrl( site, fileUrl );
+        //        List<CandidateEntry> processedData = [];
 
         if ( downloaded is not null )
         {
             using DataTranslatorXml translator = new( );
-            processedData = translator.TranslateDataStream( site, downloaded, fileName );
+            /*processedData = */
+            return translator.TranslateDataStream( site, downloaded, fileName );
         }
 
-        return processedData;
+        return [];
+        //        return processedData;
     }
 
     /// <param name="site">The download site</param>
@@ -1116,15 +1156,16 @@ internal static class Maintain
     private static List<CandidateEntry> ReadJson( RemoteSite site, string url, string fileName )
     {
         string fileExtension = string.Empty;
-        List<CandidateEntry> processedData = [];
+        //        ICollection<CandidateEntry> processedData = [];
         string textData = Downloader.ReadData( site, out fileExtension!, url );
         if ( textData.Length > 2 )
         {
             using DataTranslatorJson translator = new( );
-            processedData = translator.TranslateFileData( site, textData, fileName );
+            /* processedData = */
+            return translator.TranslateFileData( site, textData, fileName );
         }
 
-        return processedData;
+        return [];
     }
 
     /// <summary>
@@ -1171,7 +1212,7 @@ internal static class Maintain
     }
 
     /// <summary>
-    /// Merge a batch of entries into an IPAddressSet( iAddress[] )
+    /// Merge a batch of entries into an ipAddressSet( iAddress[] )
     /// </summary>
     /// <param name="entriesForBatch">Only has the entries to batch, not any others</param>
     /// <param name="sequence"></param>
@@ -1195,8 +1236,8 @@ internal static class Maintain
         }
 
         List<StringAndType> addressSet = entriesForBatch.Where( w => w.IPAddress is not null && w.IPAddressRange is null )
-                                                        .Select( s => new StringAndType( s.IPAddress!, StringToIAddress( s.IPAddress! ), s ) )
-                                                        .ToList( );
+                                                               .Select( s => new StringAndType( s.IPAddress!, StringToIAddress( s.IPAddress! ), s ) )
+                                                               .ToList( );
 
         CandidateEntry result = entriesForBatch.First( );
         if ( addressSet.Count > 0 )
@@ -1210,7 +1251,7 @@ internal static class Maintain
     }
 
     /// <summary>
-    /// Merge a batch of entries into an IPAddressSet( iAddress[] )
+    /// Merge a batch of entries into an ipAddressSet( iAddress[] )
     /// </summary>
     /// <param name="entriesForBatch">Only has the entries to batch, not any others</param>
     /// <param name="sequence"></param>
@@ -1253,22 +1294,26 @@ internal static class Maintain
     /// <param name="sites">The sites to download for</param>
     /// <param name="maintainUI">User interface form when applicable</param>
     /// <returns>A list containing standardised and cleaned up downloaded blocklist data</returns>
-    internal static List<CandidateEntry> ProcessDownloads( List<RemoteSite> sites, MaintainUI? maintainUI, bool createFirewallRules, out int numberOfRules, out int ipAddressCount, out int allAddressCount )
+    internal static List<CandidateEntry> ProcessDownloads( ICollection<RemoteSite> sites, MaintainUI? maintainUI, bool createFirewallRules, out int numberOfRules, out int ipAddressCount, out int allAddressCount )
     {
         // createFirewallRules should only be true when the program is running from command line or scheduler
         StatusMessage( AppName!, "Blocklist downloads started... ", maintainUI );
-        List<CandidateEntry> candidateRules = DownloadBlocklists( maintainUI, sites )!;
+        List<CandidateEntry> candidateRules = DownloadBlocklists( maintainUI, sites ).ToList( );
         allAddressCount = candidateRules.Count;
 
-        //candidateRules = candidateRules.Where( w => w.IPAddress == "171.41.151.160" ).ToList( );
+        //candidateRules = candidateRules.Where( w => w.ipAddress == "171.41.151.160" ).ToList( );
         List<IFirewallRule> newRules = [];
         numberOfRules = 0;
-        candidateRules = CleanupDownloadedIPAddressData( sites, maintainUI, createFirewallRules, candidateRules, out ipAddressCount );
+        CleanupDownloadedIPAddressData( sites, maintainUI, createFirewallRules, ref candidateRules, out ipAddressCount );
         if ( maintainUI is not null )
         {
             maintainUI.RemoteData.DataSource = candidateRules
                 .Select( s => new { s.Name, s.AddressType, s.IPAddress, Range = s.IPAddressRange, AddressBatch = ( s.IPAddressBatch ?? "" ).Length > 15000 ? s.IPAddressBatch!.Substring( 0, 15000 ) : s.IPAddressBatch ?? "", s.FileName } )
                 .ToList( );
+            maintainUI.RemoteData.Columns[ "AddressType" ]!.Visible = false;
+            maintainUI.RemoteData.Columns[ "IPAddress" ]!.Visible = false;
+            maintainUI.RemoteData.Columns[ "Range" ]!.Visible = false;
+            maintainUI.RemoteData.Columns[ "FileName" ]!.Visible = false;
             maintainUI.RemoteData.Refresh( );
         }
 
@@ -1278,10 +1323,11 @@ internal static class Maintain
             sites = ( from s in sites join c in candidateRules on s.Name equals c.Name select s ).Distinct( ).ToList( );
             newRules = ReplaceFirewallRules( sites, maintainUI, candidateRules );
             numberOfRules = newRules.Count;
+            candidateRules.Clear( );
             if ( maintainUI is not null )
             {
-                string siteName = sites.Count == 1 ? sites[ 0 ].Name : "all active sites";
-                maintainUI.FirewallRulesLabel.Text = $"New firewall entries for the {siteName} blocklist";
+                string siteName = sites.Count == 1 ? sites.ToArray( )[ 0 ].Name : "all active sites";
+                maintainUI.FirewallRulesLabel.Text = $"NEW firewall entries for the {siteName} blocklist";
                 maintainUI.FirewallRulesData.DataSource = newRules;
                 maintainUI.FirewallRulesData.ForeColor = Color.Green;
                 maintainUI.FirewallRulesData.Refresh( );
@@ -1291,10 +1337,10 @@ internal static class Maintain
         return candidateRules!;
     }
 
-    internal static List<CandidateEntry> CleanupDownloadedIPAddressData( List<RemoteSite> sites, MaintainUI? maintainUI, bool createFirewallRules, List<CandidateEntry> candidateRules, out int ipAddressCount )
+    internal static bool CleanupDownloadedIPAddressData( ICollection<RemoteSite> sites, MaintainUI? maintainUI, bool createFirewallRules, ref List<CandidateEntry> candidateRules, out int ipAddressCount )
     {
         ipAddressCount = candidateRules.Count;
-        int cleanupSteps = 9, cleanupStep = 0;
+        int cleanupSteps = 7, cleanupStep = 0;
 
         // Reset the progress bar
         if ( maintainUI is not null )
@@ -1314,34 +1360,30 @@ internal static class Maintain
             if ( maintainUI is not null )
                 maintainUI.UpdateProgress( cleanupStep, cleanupSteps );
 
-            StatusMessage( AppName, "Determining IP address types ...", maintainUI );
-            ValidateIPAddressesAndRanges( candidateRules );
-            cleanupStep++;
-            if ( maintainUI is not null )
-                maintainUI.UpdateProgress( cleanupStep, cleanupSteps );
-
-            // Are there any other address types to validate?
-            var peek = candidateRules.Where( w => w.IPAddress is null && w.IPAddressRange is null ).ToList( );
-            if ( peek.Count > 0 )
-                Debug.Print( "" );
+            //StatusMessage( AppName, "Validating IP addresses and determining address types ...", maintainUI );
+            //ValidateIPAddressesAndRanges( ref candidateRules );
+            //cleanupStep++;
+            //if ( maintainUI is not null )
+            //    maintainUI.UpdateProgress( cleanupStep, cleanupSteps );
 
             // Remove invalid addresses so that we don't waste time and effort on them
+            StatusMessage( AppName, "Removing invalid addresses ...", maintainUI );
             RemoveInvalidIPAddresses( ref candidateRules, out numberRemoved );
             cleanupStep++;
             if ( maintainUI is not null )
                 maintainUI.UpdateProgress( cleanupStep, cleanupSteps );
 
-            StatusMessage( AppName, "Removing private addressRange ranges ...", maintainUI );
-            RemovePrivateAddressesRanges( ref candidateRules, out numberRemoved );
+            StatusMessage( AppName, "Removing private address ranges ...", maintainUI );
+            RemovePrivateAddressRanges( ref candidateRules, out numberRemoved );
             cleanupStep++;
             if ( maintainUI is not null )
                 maintainUI.UpdateProgress( cleanupStep, cleanupSteps );
 
-            StatusMessage( AppName, "Removing duplicates ...", maintainUI );
-            RemoveDuplicates( ref candidateRules, out numberRemoved );
-            cleanupStep++;
-            if ( maintainUI is not null )
-                maintainUI.UpdateProgress( cleanupStep, cleanupSteps );
+            //StatusMessage( AppName, "Removing duplicates ...", maintainUI );
+            //RemoveDuplicates( ref candidateRules, out numberRemoved );
+            //cleanupStep++;
+            //if ( maintainUI is not null )
+            //    maintainUI.UpdateProgress( cleanupStep, cleanupSteps );
 
             StatusMessage( AppName, "Convert any IP address subnets to address ranges ...", maintainUI );
             SubnetsToRanges( ref candidateRules, out int numberConverted );
@@ -1357,38 +1399,41 @@ internal static class Maintain
                 maintainUI.UpdateProgress( cleanupStep, cleanupSteps );
 
             StatusMessage( AppName, $"Consolidating {candidateRules.Count( c => c.IPAddressRange is null )} addresses into sets of {MaximumFirewallBatchSize} ...", maintainUI );
-            candidateRules = ConvertIPAddressesToIPAddressSets( candidateRules, sites );
+            ConvertIPAddressesToIPAddressSets( ref candidateRules, sites );
             cleanupStep++;
             if ( maintainUI is not null )
                 maintainUI.UpdateProgress( cleanupStep, cleanupSteps );
 
             StatusMessage( AppName, $"Consolidating {candidateRules.Count( c => c.IPAddressRange is not null )} address ranges into sets of {MaximumFirewallBatchSize} ...", maintainUI );
-            candidateRules = ConvertIPAddressRangesToIPAddressRangeSets( candidateRules, sites );
+            ConvertIPAddressRangesToIPAddressRangeSets( ref candidateRules, sites );
             cleanupStep++;
             if ( maintainUI is not null )
                 maintainUI.UpdateProgress( cleanupStep, cleanupSteps );
         }
 
-        return candidateRules!;
+        return true;
     }
 
     /// <summary>
     /// Validate all IP addresses and address ranges in a list of CandidateEntry
     /// </summary>
     /// <param name="candidateRules">The list of CandidateEntry for validation</param>
-    private static void ValidateIPAddressesAndRanges( List<CandidateEntry> candidateRules )
+    internal static void ValidateIPAddressesAndRanges( ref List<CandidateEntry> candidateRules )
     {
-        foreach ( CandidateEntry entry in candidateRules.Where( w => w.IPAddress is not null && !w.Validated ) )
+        /// (Only Cybercrime-Tracker so far) Changes to 'entry' are not updating in 'candidateRules'
+        foreach ( CandidateEntry entry in candidateRules.Where( w => w.IPAddress is not null && !w.Validated && w.AddressType == IPAddressType.Invalid ) )
         {
-            entry.Validated = ValidateIPAddress( entry.IPAddress!, out IPAddressType addressType );
+            bool validated = ValidateIPAddress( entry.IPAddress!, out IPAddressType addressType );
+            entry.Validated = validated;
             entry.AddressType = addressType;
         }
 
-        foreach ( CandidateEntry entry in candidateRules.Where( w => w.IPAddressRange is not null && !w.Validated ) )
+        foreach ( CandidateEntry entry in candidateRules.Where( w => w.IPAddressRange is not null && !w.Validated && w.AddressType == IPAddressType.Invalid ) )
         {
-            entry.Validated = ValidateIPAddress( entry.IPAddressRange!.StartAddress.ToString( ), out IPAddressType addressType );
-            if ( entry.Validated )
-                entry.Validated = ValidateIPAddress( entry.IPAddressRange!.EndAddress.ToString( ), out addressType );
+            bool validated = ValidateIPAddress( entry.IPAddressRange!.StartAddress.ToString( ), out IPAddressType addressType );
+            if ( validated )
+                validated = ValidateIPAddress( entry.IPAddressRange!.EndAddress.ToString( ), out addressType );
+            entry.Validated = validated;
             entry.AddressType = addressType;
         }
     }
@@ -1400,7 +1445,7 @@ internal static class Maintain
     /// <param name="maintainUI">The user interface by reference to enable status messages and the progress bar to be updated</param>
     /// <param name="candidateRules">The list of data for new rules to be added</param>
     /// <returns>The list of new firewall rules</returns>
-    internal static List<IFirewallRule> ReplaceFirewallRules( List<RemoteSite> sites, MaintainUI? maintainUI, List<CandidateEntry> candidateRules )
+    internal static List<IFirewallRule> ReplaceFirewallRules( ICollection<RemoteSite> sites, MaintainUI? maintainUI, ICollection<CandidateEntry> candidateRules )
     {
         List<IFirewallRule> rules = [];
         int counter = 0;
@@ -1434,7 +1479,7 @@ internal static class Maintain
     /// <param name="candidateRules">The list of data for new rules to be added</param>
     /// <param name="newRules">The list of new rules (by reference) created</param>
     /// <param name="maintainUI">The user interface by reference to enable status messages and the progress bar to be updated</param>
-    internal static void ReplaceSiteRules( RemoteSite site, List<CandidateEntry> candidateRules, ref List<IFirewallRule> newRules, MaintainUI? maintainUI )
+    internal static void ReplaceSiteRules( RemoteSite site, ICollection<CandidateEntry> candidateRules, ref List<IFirewallRule> newRules, MaintainUI? maintainUI )
     {
         string ruleName = $"{site.Name}_Blocklist";
         // Existing rules
@@ -1445,7 +1490,8 @@ internal static class Maintain
         DeleteExistingFirewallRulesFor( ruleName );
         StatusMessage( AppName, $"{ruleCount} existing firewall rules for the {site!.Name} blocklist(s) were removed", maintainUI );
 
-        ruleCount = candidateRules.Where( w => w.Name == site.Name ).Count( ) * 2; /* Inbound AND Outbound rules will be created */
+        ruleCount = candidateRules.Where( w => w.Name == site.Name )
+                                  .Count( ) * 2; /* Inbound AND Outbound rules will be created */
 
         // Add all of the rules that we've just imported
         StatusMessage( AppName, $"Creating {ruleCount} new firewall rules for the {site!.Name} blocklist(s) ...", maintainUI );
