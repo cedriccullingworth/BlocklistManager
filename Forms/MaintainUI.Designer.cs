@@ -80,7 +80,7 @@ namespace BlocklistManager
             this.RemoteSites.Name = "RemoteSites";
             this.RemoteSites.ReadOnly = true;
             this.RemoteSites.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            this.RemoteSites.Size = new Size( 1324, 140 );
+            this.RemoteSites.Size = new Size( 1238, 140 );
             this.RemoteSites.TabIndex = 1;
             this.RemoteSites.SelectionChanged +=  this.RemoteSites_SelectionChanged ;
             this.RemoteSites.Click +=  this.RemoteSites_SelectionChanged ;
@@ -100,16 +100,16 @@ namespace BlocklistManager
             this.FirewallRulesData.Anchor =   AnchorStyles.Bottom  |  AnchorStyles.Left   |  AnchorStyles.Right ;
             this.FirewallRulesData.BackgroundColor = SystemColors.Control;
             this.FirewallRulesData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.FirewallRulesData.Location = new Point( 13, 504 );
+            this.FirewallRulesData.Location = new Point( 13, 456 );
             this.FirewallRulesData.Name = "FirewallRulesData";
-            this.FirewallRulesData.Size = new Size( 1324, 200 );
+            this.FirewallRulesData.Size = new Size( 1238, 200 );
             this.FirewallRulesData.TabIndex = 5;
             // 
             // FirewallRulesLabel
             // 
             this.FirewallRulesLabel.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Left ;
             this.FirewallRulesLabel.AutoSize = true;
-            this.FirewallRulesLabel.Location = new Point( 13, 487 );
+            this.FirewallRulesLabel.Location = new Point( 13, 439 );
             this.FirewallRulesLabel.Name = "FirewallRulesLabel";
             this.FirewallRulesLabel.Size = new Size( 0, 15 );
             this.FirewallRulesLabel.TabIndex = 6;
@@ -117,7 +117,7 @@ namespace BlocklistManager
             // UpdateButton
             // 
             this.UpdateButton.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Right ;
-            this.UpdateButton.Location = new Point( 1210, 457 );
+            this.UpdateButton.Location = new Point( 1124, 409 );
             this.UpdateButton.Name = "UpdateButton";
             this.UpdateButton.Size = new Size( 127, 42 );
             this.UpdateButton.TabIndex = 8;
@@ -133,7 +133,7 @@ namespace BlocklistManager
             this.RemoteData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.RemoteData.Location = new Point( 13, 240 );
             this.RemoteData.Name = "RemoteData";
-            this.RemoteData.Size = new Size( 1324, 211 );
+            this.RemoteData.Size = new Size( 1238, 163 );
             this.RemoteData.TabIndex = 9;
             // 
             // label4
@@ -148,7 +148,7 @@ namespace BlocklistManager
             // DeleteButton
             // 
             this.DeleteButton.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Right ;
-            this.DeleteButton.Location = new Point( 1066, 457 );
+            this.DeleteButton.Location = new Point( 980, 409 );
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new Size( 127, 42 );
             this.DeleteButton.TabIndex = 12;
@@ -159,7 +159,7 @@ namespace BlocklistManager
             // ScheduleButton
             // 
             this.ScheduleButton.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Right ;
-            this.ScheduleButton.Location = new Point( 922, 457 );
+            this.ScheduleButton.Location = new Point( 836, 409 );
             this.ScheduleButton.Name = "ScheduleButton";
             this.ScheduleButton.Size = new Size( 127, 42 );
             this.ScheduleButton.TabIndex = 13;
@@ -172,7 +172,7 @@ namespace BlocklistManager
             this.StatusBar.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Left ;
             this.StatusBar.Dock = DockStyle.None;
             this.StatusBar.Items.AddRange( new ToolStripItem[] { this.StatusMessage, this.StatusProgress } );
-            this.StatusBar.Location = new Point( 13, 707 );
+            this.StatusBar.Location = new Point( 13, 659 );
             this.StatusBar.Name = "StatusBar";
             this.StatusBar.Size = new Size( 631, 22 );
             this.StatusBar.TabIndex = 15;
@@ -216,14 +216,14 @@ namespace BlocklistManager
             // 
             this.OptionsMenu.Location = new Point( 0, 0 );
             this.OptionsMenu.Name = "OptionsMenu";
-            this.OptionsMenu.Size = new Size( 1350, 24 );
+            this.OptionsMenu.Size = new Size( 1264, 24 );
             this.OptionsMenu.TabIndex = 18;
             this.OptionsMenu.Text = "&Remote DownloadSite Options";
             // 
             // ProcessAllButton
             // 
             this.ProcessAllButton.Anchor =  AnchorStyles.Bottom  |  AnchorStyles.Right ;
-            this.ProcessAllButton.Location = new Point( 778, 457 );
+            this.ProcessAllButton.Location = new Point( 692, 409 );
             this.ProcessAllButton.Name = "ProcessAllButton";
             this.ProcessAllButton.Size = new Size( 127, 42 );
             this.ProcessAllButton.TabIndex = 19;
@@ -235,7 +235,7 @@ namespace BlocklistManager
             // 
             this.AutoScaleDimensions = new SizeF( 7F, 15F );
             this.AutoScaleMode = AutoScaleMode.Font;
-            this.ClientSize = new Size( 1350, 729 );
+            this.ClientSize = new Size( 1264, 681 );
             this.Controls.Add( this.ProcessAllButton );
             this.Controls.Add( this.ShowAllCheckBox );
             this.Controls.Add( this.FirewallEntryName );

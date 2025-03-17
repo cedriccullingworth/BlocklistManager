@@ -1,6 +1,6 @@
 # BlocklistManager
 
-This Microsoft Windows application manages Windows Firewall rules for IP addresses found in IP address blocklists. It can be run interactively or be scheduled to run at regular intervals. 
+This Microsoft Windows application maintains Windows Firewall rules for IP addresses found in IP address blocklists. It can be run interactively or be scheduled to run at regular intervals. 
 
 - Interactive mode: Run the program without any command line parameters to open the Windows Forms interface.
 

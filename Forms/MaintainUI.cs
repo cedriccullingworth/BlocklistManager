@@ -40,16 +40,29 @@ public partial class MaintainUI : Form
 
     private void FixBounds( )
     {
-        // Adjust the form height and width to fit the working area of the screen
-        if ( Height > /*Screen.PrimaryScreen.Bounds.Height - */Screen.PrimaryScreen!.WorkingArea.Height )
+        if ( Screen.PrimaryScreen!.WorkingArea.Height > 100 ) // Arbitrary
         {
-            Height = /*Screen.PrimaryScreen.Bounds.Height - */Screen.PrimaryScreen.WorkingArea.Height;
+            // Adjust the form height and width to fit the working area of the screen
+            if ( Height > /*Screen.PrimaryScreen.Bounds.Height - */Screen.PrimaryScreen!.WorkingArea.Height )
+            {
+                Height = /*Screen.PrimaryScreen.Bounds.Height - */Screen.PrimaryScreen.WorkingArea.Height - 20;
+            }
         }
 
-        if ( Width > /*Screen.PrimaryScreen.Bounds.Width - */Screen.PrimaryScreen.WorkingArea.Width )
+        if ( Screen.PrimaryScreen!.WorkingArea.Width > 100 ) // Arbitrary
         {
-            Width = /*Screen.PrimaryScreen.Bounds.Width - */Screen.PrimaryScreen.WorkingArea.Width;
+            if ( Width > /*Screen.PrimaryScreen.Bounds.Width - */Screen.PrimaryScreen.WorkingArea.Width )
+            {
+                Width = /*Screen.PrimaryScreen.Bounds.Width - */Screen.PrimaryScreen.WorkingArea.Width - 20;
+            }
         }
+
+        // Adjust for the taskbar location
+        MessageBox.Show( $"{Screen.PrimaryScreen.WorkingArea.Top},{Screen.PrimaryScreen.WorkingArea.Left}, {Screen.PrimaryScreen.WorkingArea.Bottom}, {Screen.PrimaryScreen.WorkingArea.Right}" );
+        //Top = Screen.PrimaryScreen.WorkingArea.Top;
+        //Left = Screen.PrimaryScreen.WorkingArea.Left;
+        //Height = Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.WorkingArea.Top;
+        //Width = Screen.PrimaryScreen.WorkingArea.Right - Screen.PrimaryScreen.WorkingArea.Left;
 
         // Find out whether the taskbar is situated at the bottom, top, left or right of the screen
         if ( Screen.PrimaryScreen!.Bounds.Top == Screen.PrimaryScreen.WorkingArea.Top )
@@ -59,12 +72,12 @@ public partial class MaintainUI : Form
         }
         else if ( Screen.PrimaryScreen.Bounds.Left == Screen.PrimaryScreen.WorkingArea.Left )
         {
-            // Taskbar is at the left
+            // Taskbar is on the left
             Left = Screen.PrimaryScreen.WorkingArea.Left;
         }
         else if ( Screen.PrimaryScreen.Bounds.Right == Screen.PrimaryScreen.WorkingArea.Right )
         {
-            // Taskbar is at the right
+            // Taskbar is on the right
             Left = 0;
         }
         else
@@ -79,6 +92,10 @@ public partial class MaintainUI : Form
         RemoteSites.SelectionChanged -= RemoteSites_SelectionChanged!;
         Show( );
         _normalPosition = new NormalPosition( Top, Left, Height, Width );
+        StatusBar.Left = FirewallRulesData.Left;
+        StatusMessage.Width = FirewallRulesData.Width / 2;
+        StatusProgress.Width = FirewallRulesData.Width / 2;
+
         StatusMessage.Text = "Fetching download site details ...";
         Refresh( );
         RemoteSites.DataSource = new BlocklistData( ).ListDownloadSites( Maintain.ConnectedDevice!.ID, null, false );
@@ -92,10 +109,6 @@ public partial class MaintainUI : Form
             Maintain.StatusMessage( "Load", "Blocklist data was downloaded too recently to update now.\r\nTry again after 30 minutes." );
 
         FirewallEntryName.Text = _ruleName == "_Blocklist" ? string.Empty : _ruleName;
-        StatusBar.Left = FirewallRulesData.Left;
-        StatusMessage.Width = FirewallRulesData.Width / 2;
-        StatusProgress.Width = FirewallRulesData.Width / 2;
-
         //RemoteSites.Rows[ 0 ].Selected = false;
         //this.RemoteSites_SelectionChanged( sender, e );
 

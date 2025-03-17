@@ -9,7 +9,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
 	<ApplicationVersion>1.8.3.4</ApplicationVersion>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-    <BaseOutputPath>bin\</BaseOutputPath>
+    <BaseOutputPath>D:\Projects\BlocklistManager\bin\</BaseOutputPath>
     <StartupObject>BlocklistManager.Program</StartupObject>
     <ApplicationIcon>Images\BlocklistManager.ico</ApplicationIcon>
     <Copyright>Cedric Cullingworth</Copyright>
@@ -105,7 +105,7 @@
 
   <ItemGroup>
     <Reference Include="OSVersionExtension">
-      <HintPath>bin\Release\net9.0\OSVersionExtension.dll</HintPath>
+      <HintPath>bin\Debug\net9.0\OSVersionExtension.dll</HintPath>
     </Reference>
   </ItemGroup>
 
