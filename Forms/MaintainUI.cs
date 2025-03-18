@@ -58,12 +58,6 @@ public partial class MaintainUI : Form
         }
 
         // Adjust for the taskbar location
-        MessageBox.Show( $"{Screen.PrimaryScreen.WorkingArea.Top},{Screen.PrimaryScreen.WorkingArea.Left}, {Screen.PrimaryScreen.WorkingArea.Bottom}, {Screen.PrimaryScreen.WorkingArea.Right}" );
-        //Top = Screen.PrimaryScreen.WorkingArea.Top;
-        //Left = Screen.PrimaryScreen.WorkingArea.Left;
-        //Height = Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.WorkingArea.Top;
-        //Width = Screen.PrimaryScreen.WorkingArea.Right - Screen.PrimaryScreen.WorkingArea.Left;
-
         // Find out whether the taskbar is situated at the bottom, top, left or right of the screen
         if ( Screen.PrimaryScreen!.Bounds.Top == Screen.PrimaryScreen.WorkingArea.Top )
         {
